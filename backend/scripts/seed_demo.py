@@ -15,6 +15,7 @@ from app.db.models.session import Session as BrowserSession, SessionEvent
 from app.db.models.incident import Incident
 from app.db.models.approval_ticket import ApprovalTicket
 from app.db.models.ai_investigation import AIInvestigation
+from app.core.time import utc_now
 from sqlalchemy.orm import Session
 
 def run_seed(db: Session):
@@ -30,7 +31,7 @@ def run_seed(db: Session):
     db.query(Payment).delete()
     db.commit()
 
-    now = datetime.utcnow()
+    now = utc_now()
     payments_count = 0
 
     # 1. Successful payments cluster (various products and amounts)

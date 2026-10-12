@@ -57,7 +57,7 @@ def list_scenarios():
 def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db)):
     """Triggers a labelled, deterministic demo scenario."""
     scenario_id = req.scenario
-    now = datetime.utcnow()
+    now = utc_now()
 
     if scenario_id == "timeout_before_response":
         p_id = str(uuid.uuid4())

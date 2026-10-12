@@ -10,6 +10,7 @@ from app.db.models.payment import Payment
 from app.agents.tools import evidence_gatherer
 from app.schemas.ai import AIInvestigationResponse
 from app.core.config import settings
+from app.core.time import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -296,7 +297,7 @@ Return ONLY valid JSON matching this exact schema:
             is_incident_likely=inv.is_incident_likely,
             insufficient_evidence=inv.insufficient_evidence,
             model_name=inv.model_name,
-            created_at=datetime.utcnow(),
+            created_at=utc_now(),
         )
         db.add(rec)
         db.commit()
