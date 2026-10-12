@@ -1,0 +1,221 @@
+{
+  "info": {
+    "name": "PayTrace API Collection",
+    "description": "Collection of API requests for PayTrace - AI-powered PayPal payment investigation platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/v1/health"
+      }
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "List Payments",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/payments?page=1&page_size=20"
+          }
+        },
+        {
+          "name": "Get Payment Detail",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/payments/{{paymentId}}"
+          }
+        },
+        {
+          "name": "Get Payment Timeline",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/payments/{{paymentId}}/timeline"
+          }
+        }
+      ]
+    },
+    {
+      "name": "PayPal Checkout",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/paypal/orders",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 49.99,\n  \"currency\": \"USD\",\n  \"customer_ref\": \"postman_shopper\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Capture Order",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/paypal/orders/{{orderId}}/capture",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"simulate_timeout\": false\n}"
+            }
+          }
+        },
+        {
+          "name": "Capture Order (Simulate Timeout)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/paypal/orders/{{orderId}}/capture",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"simulate_timeout\": true\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "Ingest Webhook (Capture Completed)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/webhooks/paypal",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "x-mock-webhook", "value": "true"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"WH-POSTMAN-001\",\n  \"event_type\": \"PAYMENT.CAPTURE.COMPLETED\",\n  \"resource_type\": \"capture\",\n  \"summary\": \"Capture Completed\",\n  \"resource\": {\n    \"id\": \"CAP-001\",\n    \"custom_id\": \"{{paymentId}}\",\n    \"status\": \"COMPLETED\",\n    \"amount\": {\"value\": \"49.99\", \"currency_code\": \"USD\"}\n  }\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Investigator",
+      "item": [
+        {
+          "name": "Investigate Payment",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/ai/investigate",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_id\": \"{{paymentId}}\",\n  \"question\": \"Investigate payment outcome and root cause\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Chat Follow-up",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/ai/chat",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payment_id\": \"{{paymentId}}\",\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"Why shouldn't I retry right now?\"}\n  ]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Incidents",
+      "item": [
+        {
+          "name": "List Incidents",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/incidents"
+          }
+        },
+        {
+          "name": "Generate Incident Report",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/incidents/{{incidentId}}/report"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Approvals & Policy",
+      "item": [
+        {
+          "name": "List Approval Tickets",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/approvals"
+          }
+        },
+        {
+          "name": "Decide Approval Ticket",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/approvals/{{ticketId}}/decision",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"decision\": \"APPROVED\",\n  \"notes\": \"Approved via Postman\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Demo Scenarios",
+      "item": [
+        {
+          "name": "Trigger Timeout Scenario",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/demo/scenarios",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scenario\": \"timeout_before_response\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Reset Demo Data",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/v1/demo/reset"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "paymentId",
+      "value": "demo-timeout-payment-001"
+    },
+    {
+      "key": "orderId",
+      "value": "MOCK-ORD-TIMEOUT-001"
+    },
+    {
+      "key": "ticketId",
+      "value": "ticket-demo-pending-002"
+    },
+    {
+      "key": "incidentId",
+      "value": "inc-demo-001"
+    }
+  ]
+}
