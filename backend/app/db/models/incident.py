@@ -5,6 +5,7 @@ from sqlalchemy import String, Numeric, DateTime, Integer, Float, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, List
 from app.db.base import Base
+from app.core.time import utc_now
 
 class Incident(Base):
     __tablename__ = "incidents"
@@ -13,7 +14,7 @@ class Incident(Base):
     title: Mapped[str] = mapped_column(String(256))
     severity: Mapped[str] = mapped_column(String(32), default="MEDIUM") # LOW, MEDIUM, HIGH, CRITICAL
     status: Mapped[str] = mapped_column(String(32), default="OPEN") # OPEN, INVESTIGATING, RESOLVED
-    started_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    started_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
     ended_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     affected_payment_count: Mapped[int] = mapped_column(Integer, default=0)
     revenue_at_risk: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
@@ -22,8 +23,8 @@ class Incident(Base):
     root_cause: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     ai_summary: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)
 
     investigations: Mapped[List["AIInvestigation"]] = relationship("AIInvestigation", back_populates="incident")
 

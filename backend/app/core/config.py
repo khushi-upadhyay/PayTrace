@@ -1,12 +1,16 @@
 import os
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DEFAULT_DB_PATH = (BASE_DIR / "paytrace.db").as_posix()
 
 class Settings(BaseSettings):
     APP_ENV: str = "development"
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 8000
-    DATABASE_URL: str = "sqlite:///./paytrace.db"
+    DATABASE_URL: str = f"sqlite:///{DEFAULT_DB_PATH}"
 
     PAYPAL_CLIENT_ID: Optional[str] = ""
     PAYPAL_CLIENT_SECRET: Optional[str] = ""

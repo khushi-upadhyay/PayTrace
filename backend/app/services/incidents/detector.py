@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.db.models.incident import Incident
 from app.db.models.payment import Payment
+from app.core.time import utc_now
 
 class IncidentDetector:
     """Evaluates payment patterns and evaluates deterministic threshold incident rules."""
@@ -31,7 +32,7 @@ class IncidentDetector:
             if existing:
                 existing.affected_payment_count = len(uncertain_payments)
                 existing.revenue_at_risk = rev_at_risk
-                existing.updated_at = datetime.utcnow()
+                existing.updated_at = utc_now()
                 incidents.append(existing)
             else:
                 inc = Incident(

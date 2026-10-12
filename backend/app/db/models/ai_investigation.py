@@ -4,6 +4,7 @@ from sqlalchemy import String, Float, Boolean, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, Dict, Any, List
 from app.db.base import Base
+from app.core.time import utc_now
 
 class AIInvestigation(Base):
     __tablename__ = "ai_investigations"
@@ -24,7 +25,7 @@ class AIInvestigation(Base):
     is_incident_likely: Mapped[bool] = mapped_column(Boolean, default=False)
     insufficient_evidence: Mapped[bool] = mapped_column(Boolean, default=False)
     model_name: Mapped[str] = mapped_column(String(64), default="deterministic-rule-engine-v1")
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
 
     payment: Mapped[Optional["Payment"]] = relationship("Payment", back_populates="investigations")
     incident: Mapped[Optional["Incident"]] = relationship("Incident", back_populates="investigations")

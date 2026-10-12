@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
 from app.api.dependencies import get_db
+from app.core.time import utc_now
 from app.db.models.incident import Incident
 from app.db.models.payment import Payment
 from app.schemas.incident import (
@@ -78,7 +79,7 @@ def generate_incident_report(incident_id: str, db: Session = Depends(get_db)):
             f"Summary: {inc.ai_summary or inc.root_cause}"
         ),
         detailed_findings=findings,
-        timeline_analysis=f"First breach recorded at {inc.started_at.isoformat()}. Last evaluation at {datetime.utcnow().isoformat()}.",
+        timeline_analysis=f"First breach recorded at {inc.started_at.isoformat()}. Last evaluation at {utc_now().isoformat()}.",
         recommended_mitigations=mitigations,
-        generated_at=datetime.utcnow(),
+        generated_at=utc_now(),
     )

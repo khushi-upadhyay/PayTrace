@@ -5,6 +5,7 @@ from sqlalchemy import String, Numeric, DateTime, Index
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, List
 from app.db.base import Base
+from app.core.time import utc_now
 
 class Payment(Base):
     __tablename__ = "payments"
@@ -21,8 +22,8 @@ class Payment(Base):
     failure_reason: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     actor: Mapped[str] = mapped_column(String(32), default="human") # human, agent, demo
     source_mode: Mapped[str] = mapped_column(String(32), default="PAYPAL_SANDBOX") # PAYPAL_SANDBOX, SIMULATED
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, index=True)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, index=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)
 
     # Relationships
     events: Mapped[List["PaymentEvent"]] = relationship("PaymentEvent", back_populates="payment", cascade="all, delete-orphan", order_by="PaymentEvent.occurred_at")

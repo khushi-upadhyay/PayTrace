@@ -8,6 +8,7 @@ from app.db.models.payment import Payment
 from app.services.lifecycle.engine import lifecycle_engine
 from app.core.security import redact_sensitive_data
 from app.services.paypal.client import paypal_client
+from app.core.time import utc_now
 
 logger = logging.getLogger(__name__)
 
@@ -77,8 +78,8 @@ class WebhookProcessor:
             resource_type=resource_type,
             payment_id=payment_id,
             payload_redacted=redact_sensitive_data(payload),
-            received_at=datetime.utcnow(),
-            processed_at=datetime.utcnow(),
+            received_at=utc_now(),
+            processed_at=utc_now(),
             processing_status="PROCESSED" if payment else "UNMATCHED",
             signature_verified=is_verified,
         )

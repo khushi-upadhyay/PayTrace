@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.models.payment import Payment
 from app.db.models.payment_event import PaymentEvent
 from app.core.security import redact_sensitive_data
+from app.core.time import utc_now
 
 # Valid state hierarchy / precedence
 STATE_PRECEDENCE = {
@@ -37,7 +38,7 @@ class LifecycleEngine:
         metadata: Optional[Dict[str, Any]] = None,
         is_simulated: bool = False,
     ) -> PaymentEvent:
-        now = datetime.utcnow()
+        now = utc_now()
         occ = occurred_at or now
 
         # Inherit IDs if not specified
@@ -86,7 +87,7 @@ class LifecycleEngine:
             payment.failure_code = failure_code
         if failure_reason:
             payment.failure_reason = failure_reason
-        payment.updated_at = datetime.utcnow()
+        payment.updated_at = utc_now()
         return True
 
     @staticmethod

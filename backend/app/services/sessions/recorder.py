@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 from app.db.models.session import Session as BrowserSession, SessionEvent
 from app.core.security import redact_sensitive_data
+from app.core.time import utc_now
 
 MAX_EVENTS_PER_BATCH = 500
 MAX_EVENT_PAYLOAD_SIZE = 100_000 # 100 KB limit per event
@@ -24,7 +25,7 @@ class SessionRecorder:
             visitor_ref=visitor_ref,
             user_agent=user_agent[:256] if user_agent else None,
             metadata_redacted=redact_sensitive_data(metadata or {}),
-            started_at=datetime.utcnow(),
+            started_at=utc_now(),
             recording_enabled=True,
         )
         db.add(session)
@@ -43,7 +44,7 @@ class SessionRecorder:
             # Auto-create if not exists
             session = BrowserSession(
                 id=session_id,
-                started_at=datetime.utcnow(),
+                started_at=utc_now(),
                 recording_enabled=True,
             )
             db.add(session)
@@ -57,9 +58,9 @@ class SessionRecorder:
                 try:
                     occ_at = datetime.fromisoformat(occ_at.replace("Z", "+00:00"))
                 except Exception:
-                    occ_at = datetime.utcnow()
+                    occ_at = utc_now()
             elif not isinstance(occ_at, datetime):
-                occ_at = datetime.utcnow()
+                occ_at = utc_now()
 
             payload = ev.get("payload", {})
             # Redact client sensitive data

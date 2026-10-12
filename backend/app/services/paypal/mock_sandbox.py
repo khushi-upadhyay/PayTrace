@@ -2,6 +2,7 @@ import uuid
 from decimal import Decimal
 from typing import Dict, Any, Optional
 from datetime import datetime
+from app.core.time import utc_now
 
 class MockPayPalSandbox:
     """High-fidelity PayPal Sandbox Simulator for credential-less local testing and demo scenarios."""
@@ -26,7 +27,7 @@ class MockPayPalSandbox:
                     },
                 }
             ],
-            "create_time": datetime.utcnow().isoformat() + "Z",
+            "create_time": utc_now().isoformat() + "Z",
             "links": [
                 {
                     "href": f"http://localhost:3000/checkout?orderId={order_id}&status=approved",
@@ -86,7 +87,7 @@ class MockPayPalSandbox:
                                 "id": capture_id,
                                 "status": "COMPLETED",
                                 "amount": {"currency_code": "USD", "value": "49.99"},
-                                "create_time": datetime.utcnow().isoformat() + "Z",
+                                "create_time": utc_now().isoformat() + "Z",
                             }
                         ]
                     }
@@ -109,7 +110,7 @@ class MockPayPalSandbox:
     ) -> Dict[str, Any]:
         """Generates realistic PayPal webhook structure."""
         event_id = f"WH-{uuid.uuid4().hex[:16].upper()}"
-        now_str = datetime.utcnow().isoformat() + "Z"
+        now_str = utc_now().isoformat() + "Z"
         
         resource: Dict[str, Any] = {
             "id": capture_id or order_id or f"RES-{uuid.uuid4().hex[:8].upper()}",

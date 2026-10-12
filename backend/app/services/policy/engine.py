@@ -4,6 +4,7 @@ from decimal import Decimal
 from datetime import datetime
 from typing import Optional, Dict, Any, Tuple
 from sqlalchemy.orm import Session
+from app.core.time import utc_now
 from app.db.models.approval_ticket import ApprovalTicket
 from app.db.models.payment import Payment
 from app.services.lifecycle.engine import lifecycle_engine
@@ -79,7 +80,7 @@ class PolicyEngine:
             raise ValueError(f"Ticket {ticket_id} is already in state {ticket.status}.")
 
         ticket.decided_by = decided_by
-        ticket.decided_at = datetime.utcnow()
+        ticket.decided_at = utc_now()
 
         payment = db.query(Payment).filter(Payment.id == ticket.payment_id).first()
 

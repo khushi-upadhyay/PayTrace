@@ -44,6 +44,7 @@ export function Header() {
     }
   };
 
+  return (
     <header className="h-16 border-b border-slate-800 bg-slate-950/70 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-30">
       {/* Left: Status notice or context */}
       <div className="flex items-center gap-3">

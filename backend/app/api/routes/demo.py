@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
+from app.core.time import utc_now
 from app.db.models.payment import Payment
 from app.db.models.payment_event import PaymentEvent
 from app.db.models.webhook import PayPalWebhook

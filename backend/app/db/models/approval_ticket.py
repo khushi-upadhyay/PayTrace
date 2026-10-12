@@ -5,6 +5,7 @@ from sqlalchemy import String, Numeric, DateTime, ForeignKey, Index, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional, Dict, Any
 from app.db.base import Base
+from app.core.time import utc_now
 
 class ApprovalTicket(Base):
     __tablename__ = "approval_tickets"
@@ -20,8 +21,8 @@ class ApprovalTicket(Base):
     decided_by: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     decided_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     paypal_result_redacted: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)
 
     payment: Mapped["Payment"] = relationship("Payment", back_populates="approvals")
 
