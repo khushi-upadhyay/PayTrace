@@ -17,6 +17,7 @@ from app.api.routes.analytics import router as analytics_router
 from app.api.routes.approvals import router as approvals_router
 from app.api.routes.demo import router as demo_router
 from app.api.routes.settings import router as settings_router
+from app.api.routes.shelfswipe import router as shelfswipe_router
 
 setup_logging()
 logger = logging.getLogger("paytrace")
@@ -60,6 +61,7 @@ app.include_router(analytics_router, prefix=api_v1_prefix)
 app.include_router(approvals_router, prefix=api_v1_prefix)
 app.include_router(demo_router, prefix=api_v1_prefix)
 app.include_router(settings_router, prefix=api_v1_prefix)
+app.include_router(shelfswipe_router, prefix=api_v1_prefix)
 
 # PayPal Webhook route (both root /api/webhooks/paypal and /api/v1/webhooks/paypal)
 app.include_router(webhooks_router)
