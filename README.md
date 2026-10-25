@@ -234,19 +234,85 @@ npm run build
 
 ---
 
-## 🎬 Reproducing the Critical Demo Scenario
+## 💳 PayPal Developer Sandbox Integration & Setup
 
-To demonstrate how PayTrace identifies uncertain capture states and prevents duplicate charges:
+PayTrace integrates directly with the official PayPal Sandbox REST v2 APIs and Webhooks while preserving zero-setup mock fallback when credentials are not supplied.
 
-1. Open the **PayTrace Dashboard** at [http://localhost:3000](http://localhost:3000).
-2. Click **Simulate Timeout** in the top-right header toolbar (or run `python backend/scripts/simulate_scenario.py --scenario timeout_before_response`).
-3. You will be automatically redirected to the payment's detail page.
-4. Observe the lifecycle state: **`CAPTURE_UNCERTAIN`**.
-5. Click **Investigate with AI**:
-   - Notice the root cause: *Merchant backend timed out while awaiting PayPal capture response; final capture outcome is unconfirmed locally.*
-   - Review the strict separation of concrete **Facts** vs. probabilistic **Inferences**.
-   - Note the explicit safety recommendation: **DO NOT RETRY CAPTURE BLINDLY. Reconcile provider state first.**
-6. Click **Reconcile with PayPal** to safely resolve the transaction state without risking duplicate charges.
+### 1. PayPal Developer Sandbox Configuration
+
+1. Log in to the [PayPal Developer Dashboard](https://developer.paypal.com/dashboard).
+2. Go to **Apps & Credentials** and select the **Sandbox** toggle.
+3. Click **Create App**:
+   - **App Name**: `PayTrace-Sandbox`
+   - **App Type**: `Merchant`
+4. Copy the **Client ID** and **Secret**.
+5. Check your default Sandbox accounts under **Testing Tools > Sandbox Accounts**:
+   - **Personal Account** (Buyer): e.g. `sb-buyer@personal.example.com` (note password for checkout approval).
+   - **Business Account** (Merchant): e.g. `sb-facilitator@business.example.com`.
+
+### 2. Environment Variables Configuration
+
+In `backend/.env` (or root `.env`):
+
+```bash
+PAYPAL_MODE=sandbox
+PAYPAL_CLIENT_ID=your_sandbox_client_id_here
+PAYPAL_CLIENT_SECRET=your_sandbox_client_secret_here
+PAYPAL_WEBHOOK_ID=your_registered_webhook_id_here
+```
+
+> **Security Note:** Secrets are strictly server-side. Never set secrets in `frontend/.env.local` or expose them to `NEXT_PUBLIC_*` variables.
+
+### 3. Exposing Webhooks via HTTPS Tunnel (ngrok / localtunnel)
+
+PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver events.
+
+1. Start your backend on port 8000:
+   ```bash
+   uvicorn app.main:app --port 8000
+   ```
+2. Start an HTTPS tunnel:
+   ```bash
+   ngrok http 8000
+   ```
+   *(Copy the forwarding HTTPS URL, e.g., `https://abcdef123456.ngrok-free.app`)*
+3. In PayPal Developer Dashboard:
+   - Navigate to your Sandbox App.
+   - Click **Add Webhook**.
+   - **Webhook URL**: `https://abcdef123456.ngrok-free.app/api/v1/webhooks/paypal`
+   - **Event Types to subscribe**:
+     - `CHECKOUT.ORDER.APPROVED`
+     - `PAYMENT.CAPTURE.PENDING`
+     - `PAYMENT.CAPTURE.COMPLETED`
+     - `PAYMENT.CAPTURE.DENIED`
+     - `PAYMENT.CAPTURE.REFUNDED`
+4. Save the webhook and copy the generated **Webhook ID**.
+5. Set `PAYPAL_WEBHOOK_ID=<your-webhook-id>` in your backend `.env` file.
+
+---
+
+## 🎬 Step-by-Step Verification Procedure
+
+### A. End-to-End Sandbox Checkout
+1. Open the **PayTrace Demo Store** at [http://localhost:3000/checkout](http://localhost:3000/checkout).
+2. Select a demo item (e.g. `$49.99 Developer Cloud License`).
+3. Select **Standard Successful Payment** and click **Pay with PayPal Sandbox**.
+4. A PayPal Sandbox approval window opens. Log in with your Sandbox Personal buyer credentials and click **Complete Purchase / Pay Now**.
+5. Click **Confirm & Complete Capture** in PayTrace.
+6. The backend captures the payment with PayPal, records the timeline event, and displays the **`CAPTURED`** status.
+7. Click **Inspect Lifecycle in PayTrace** to view the real-time event trace:
+   - `CHECKOUT_ORDER_CREATED`
+   - `CHECKOUT_ORDER_APPROVED`
+   - `CAPTURE_COMPLETED`
+   - `WEBHOOK_PAYMENT_CAPTURE_COMPLETED` (verified via official PayPal webhook signature verification)
+
+### B. Investigating Failure & Timeout Scenarios
+1. On the `/checkout` page, select **Merchant Backend Timeout / Ambiguous Capture State** or click **Simulate Timeout** in the header.
+2. Complete checkout: the payment enters **`CAPTURE_UNCERTAIN`**.
+3. Click **Investigate with AI**:
+   - The AI investigator builds a chronological timeline from real database records.
+   - Shows **Facts** (order created, capture sent, timeout before 200 OK) vs **Inferences** (PayPal may have captured funds; blind retry prohibited).
+   - Recommends **Reconciliation before retry** to avoid duplicate charges.
 
 ---
 

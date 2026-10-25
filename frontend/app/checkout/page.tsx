@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import {
@@ -15,6 +15,8 @@ import {
   Zap,
   CreditCard,
   Video,
+  XCircle,
+  ExternalLink,
 } from "lucide-react";
 
 const PRODUCTS = [
@@ -23,20 +25,73 @@ const PRODUCTS = [
   { id: "p3", name: "Telemetry Starter Pack", price: 25.00, desc: "Single application checkout tracer" },
 ];
 
-export default function CheckoutDemoPage() {
+function CheckoutContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [selectedProduct, setSelectedProduct] = useState(PRODUCTS[0]);
   const [scenario, setScenario] = useState("normal"); // "normal", "timeout_before_response", "capture_denied"
   const [buyerEmail, setBuyerEmail] = useState("sandbox-buyer@paytrace.dev");
 
   const [processing, setProcessing] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [waitingApproval, setWaitingApproval] = useState(false);
+  const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
+  const [approvalUrl, setApprovalUrl] = useState<string | null>(null);
   const [result, setResult] = useState<any | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cancelledMessage, setCancelledMessage] = useState<string | null>(null);
+  const [unapprovedWarning, setUnapprovedWarning] = useState<string | null>(null);
+
+  const capturedOrders = useRef<Set<string>>(new Set());
+
+  // Restore pending active order from localStorage if available
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem("paytrace_pending_order");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.orderId) {
+          setActiveOrderId(parsed.orderId);
+          if (parsed.approvalUrl) setApprovalUrl(parsed.approvalUrl);
+        }
+      }
+    } catch {
+      // Ignore sessionStorage error
+    }
+  }, []);
+
+  // Handle PayPal return flow (e.g. ?status=approved&token=ORDER_ID or ?status=cancelled)
+  useEffect(() => {
+    const statusParam = searchParams.get("status");
+    const tokenParam = searchParams.get("token") || searchParams.get("orderId");
+
+    if (statusParam === "cancelled" || statusParam === "cancel") {
+      setCancelledMessage("Payment was cancelled by buyer on PayPal Sandbox. No funds were debited.");
+      setWaitingApproval(false);
+      setProcessing(false);
+      sessionStorage.removeItem("paytrace_pending_order");
+      return;
+    }
+
+    if (statusParam === "approved" || statusParam === "success" || tokenParam) {
+      const orderToCapture = tokenParam || activeOrderId;
+      if (orderToCapture && !capturedOrders.current.has(orderToCapture)) {
+        verifyAndCapture(orderToCapture);
+      }
+    }
+  }, [searchParams, activeOrderId]);
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (processing || waitingApproval) return;
+
     try {
       setProcessing(true);
       setResult(null);
+      setErrorMessage(null);
+      setCancelledMessage(null);
+      setUnapprovedWarning(null);
 
       // 1. Create Order via FastAPI
       const orderRes = await api.createOrder({
@@ -45,9 +100,91 @@ export default function CheckoutDemoPage() {
         simulate_scenario: scenario === "normal" ? undefined : scenario,
       });
 
-      // 2. Perform Capture (simulating buyer approval step)
+      setActiveOrderId(orderRes.paypal_order_id);
+
+      // 2. Real Sandbox Order Flow: Must be approved by buyer first
+      if (!orderRes.is_mock && orderRes.approval_url) {
+        setApprovalUrl(orderRes.approval_url);
+        setWaitingApproval(true);
+        setProcessing(false);
+
+        // Store pending order in sessionStorage for return verification
+        try {
+          sessionStorage.setItem(
+            "paytrace_pending_order",
+            JSON.stringify({
+              orderId: orderRes.paypal_order_id,
+              paymentId: orderRes.payment_id,
+              approvalUrl: orderRes.approval_url,
+            })
+          );
+        } catch {}
+
+        // Redirect directly to PayPal Sandbox buyer approval flow
+        window.location.href = orderRes.approval_url;
+        return;
+      }
+
+      // 3. Simulated Demo Order Flow (Local mock or simulated timeout/declined scenarios)
+      await executeCaptureDirect(orderRes.paypal_order_id);
+    } catch (err: any) {
+      setErrorMessage(`Checkout initiation failed: ${err.message}`);
+      setProcessing(false);
+    }
+  };
+
+  /**
+   * For Sandbox transactions, verify provider status is APPROVED before capturing.
+   */
+  const verifyAndCapture = async (orderId: string) => {
+    if (capturedOrders.current.has(orderId)) return;
+
+    try {
+      setVerifying(true);
+      setProcessing(true);
+      setErrorMessage(null);
+      setUnapprovedWarning(null);
+
+      // Fetch order details directly from PayPal via backend
+      const providerOrder = await api.getPayPalOrder(orderId);
+      const providerStatus = (providerOrder.status as string) || "UNKNOWN";
+
+      if (providerStatus !== "APPROVED" && providerStatus !== "COMPLETED") {
+        setVerifying(false);
+        setProcessing(false);
+        setWaitingApproval(true);
+        setUnapprovedWarning(
+          `PayPal reports order status as "${providerStatus}". Buyer approval has not been completed. Please approve the order on PayPal before capturing.`
+        );
+        return;
+      }
+
+      // Order is confirmed APPROVED by PayPal -> Proceed to capture
+      await executeCaptureDirect(orderId);
+    } catch (err: any) {
+      setErrorMessage(`Verification before capture failed: ${err.message}`);
+      setVerifying(false);
+      setProcessing(false);
+    }
+  };
+
+  const executeCaptureDirect = async (orderId: string) => {
+    if (capturedOrders.current.has(orderId)) {
+      return;
+    }
+    capturedOrders.current.add(orderId);
+
+    try {
+      setProcessing(true);
+      setWaitingApproval(false);
+      setVerifying(false);
+      setErrorMessage(null);
+      setCancelledMessage(null);
+      setUnapprovedWarning(null);
+      sessionStorage.removeItem("paytrace_pending_order");
+
       const capRes = await api.captureOrder(
-        orderRes.paypal_order_id,
+        orderId,
         scenario === "timeout_before_response"
       );
 
@@ -61,9 +198,11 @@ export default function CheckoutDemoPage() {
         reconciliation_required: capRes.reconciliation_required,
       });
     } catch (err: any) {
-      alert(`Checkout failed: ${err.message}`);
+      capturedOrders.current.delete(orderId); // Allow retry on failure
+      setErrorMessage(`Capture failed: ${err.message}`);
     } finally {
       setProcessing(false);
+      setVerifying(false);
     }
   };
 
@@ -203,10 +342,74 @@ export default function CheckoutDemoPage() {
               </div>
             </div>
 
+            {waitingApproval && (
+              <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/40 text-amber-200 text-xs space-y-2.5 animate-fadeIn">
+                <div className="flex items-center gap-2 font-bold">
+                  <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                  <span>Awaiting PayPal Buyer Approval</span>
+                </div>
+                <p className="text-[11px] text-amber-300/80">
+                  Redirecting to PayPal Sandbox. If not redirected automatically, click below to open PayPal checkout and approve the payment with your Sandbox account.
+                </p>
+                {approvalUrl && (
+                  <a
+                    href={approvalUrl}
+                    className="inline-flex items-center gap-1.5 text-xs text-cyan-300 bg-cyan-950/60 px-3 py-1.5 rounded-lg border border-cyan-800 hover:bg-cyan-900/60 transition-colors"
+                  >
+                    Open PayPal Approval Page
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+                {activeOrderId && (
+                  <button
+                    type="button"
+                    onClick={() => verifyAndCapture(activeOrderId)}
+                    disabled={processing || verifying}
+                    className="w-full mt-2 py-2.5 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {verifying || processing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                    Confirm Buyer Approval & Capture
+                  </button>
+                )}
+              </div>
+            )}
+
+            {unapprovedWarning && (
+              <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/40 text-amber-200 text-xs space-y-2 animate-fadeIn">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                  <span>{unapprovedWarning}</span>
+                </div>
+                {approvalUrl && (
+                  <a
+                    href={approvalUrl}
+                    className="inline-flex items-center gap-1.5 text-xs text-amber-300 underline hover:text-amber-200"
+                  >
+                    Resume Buyer Approval on PayPal
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+              </div>
+            )}
+
+            {cancelledMessage && (
+              <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-300 text-xs flex items-start gap-2 animate-fadeIn">
+                <XCircle className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                <span>{cancelledMessage}</span>
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="p-3.5 rounded-xl bg-rose-950/30 border border-rose-500/40 text-rose-200 text-xs flex items-start gap-2 animate-fadeIn">
+                <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
             <form onSubmit={handleCheckout} className="pt-2">
               <button
                 type="submit"
-                disabled={processing}
+                disabled={processing || waitingApproval}
                 className="w-full py-3.5 px-4 rounded-xl font-extrabold text-xs text-slate-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {processing ? (
@@ -277,5 +480,20 @@ export default function CheckoutDemoPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutDemoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="py-20 text-center text-slate-400 text-xs flex items-center justify-center gap-2">
+          <Loader2 className="w-4 h-4 animate-spin text-cyan-400" />
+          Loading PayTrace Checkout...
+        </div>
+      }
+    >
+      <CheckoutContent />
+    </Suspense>
   );
 }

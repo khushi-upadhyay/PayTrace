@@ -143,7 +143,31 @@ class AIInvestigator:
                 comparison_notes=comparison.get("key_divergence") if comparison else None,
             )
 
-        # SCENARIO 3: Delayed Webhook
+        # SCENARIO 3: Capture Remains Pending
+        if status == "PENDING" or failure_code == "CAPTURE_PENDING":
+            return AIInvestigationResponse(
+                root_cause=f"Payment capture is in PENDING state awaiting provider review or settlement ({failure_reason or 'Payment review in progress'}).",
+                confidence=0.92,
+                severity="MEDIUM",
+                facts=[
+                    f"PayPal order {order_id} was submitted for capture.",
+                    f"Capture ID: {facts.get('paypal_capture_id', 'UNKNOWN')}.",
+                    f"PayPal returned status PENDING with reason: {failure_reason or 'Pending review'}.",
+                ],
+                inferences=[
+                    "Funds have not yet settled; transaction may require risk review or clearing delay.",
+                    "Do not release goods or services until webhook confirms PAYMENT.CAPTURE.COMPLETED.",
+                ],
+                customer_impact="Customer payment is held in pending status.",
+                business_impact=f"Pending transaction value: ${amount:.2f} {currency}.",
+                recommendation="Wait for asynchronous PAYMENT.CAPTURE.COMPLETED or PAYMENT.CAPTURE.DENIED webhook. Periodically reconcile via GET /paypal/orders/{order_id}.",
+                is_incident_likely=False,
+                insufficient_evidence=False,
+                model_name="deterministic-rule-engine-v1",
+                comparison_notes=comparison.get("key_divergence") if comparison else None,
+            )
+
+        # SCENARIO 4: Delayed or Missing Webhook
         if status == "CAPTURED" and webhooks_count == 0:
             return AIInvestigationResponse(
                 root_cause="Payment was captured synchronously via API, but PayPal webhook delivery is delayed or missing.",
@@ -165,7 +189,28 @@ class AIInvestigator:
                 model_name="deterministic-rule-engine-v1",
             )
 
-        # SCENARIO 4: Successful Payment
+        # SCENARIO 5: Payment State Mismatch
+        if (status in ("CREATED", "INITIATED") and webhooks_count > 0) or (status == "APPROVED" and facts.get("paypal_capture_id")):
+            return AIInvestigationResponse(
+                root_cause="Payment state mismatch detected: asynchronous webhooks or external records diverge from local payment status.",
+                confidence=0.88,
+                severity="HIGH",
+                facts=[
+                    f"Internal payment status is {status}.",
+                    f"Webhook events exist ({webhooks_count}) or external capture ID is present ({facts.get('paypal_capture_id')}).",
+                ],
+                inferences=[
+                    "Local transaction record fell out of sync with provider ledger due to dropped state machine transition or race condition.",
+                ],
+                customer_impact="Customer may see an incomplete order while funds were actually reserved or captured.",
+                business_impact=f"Potential reconciliation dispute on ${amount:.2f} {currency}.",
+                recommendation="Run provider reconciliation via GET /paypal/orders/{order_id} to re-align internal payment state with PayPal.",
+                is_incident_likely=True,
+                insufficient_evidence=False,
+                model_name="deterministic-rule-engine-v1",
+            )
+
+        # SCENARIO 6: Successful Payment
         if status == "CAPTURED":
             return AIInvestigationResponse(
                 root_cause="Payment lifecycle completed normally with full API and webhook verification.",

@@ -52,3 +52,54 @@ def test_investigation_timeout_scenario(client):
     assert chat_res.status_code == 200
     chat_data = chat_res.json()
     assert "not" in chat_data["response"].lower() or "warning" in chat_data["response"].lower()
+
+def test_investigation_denied_scenario(client):
+    scen_res = client.post("/api/v1/demo/scenarios", json={"scenario": "capture_denied"})
+    assert scen_res.status_code == 200
+    p_id = scen_res.json()["payment_id"]
+
+    inv_res = client.post("/api/v1/ai/investigate", json={"payment_id": p_id})
+    assert inv_res.status_code == 200
+    inv = inv_res.json()
+    assert inv["severity"] == "MEDIUM"
+    assert "declined" in inv["root_cause"].lower() or "denied" in inv["root_cause"].lower()
+    assert len(inv["facts"]) >= 2
+    assert "instrument" in inv["recommendation"].lower() or "alternative" in inv["recommendation"].lower()
+
+def test_investigation_capture_pending_scenario(client):
+    # Create order and force PENDING via webhook
+    create_res = client.post("/api/v1/paypal/orders", json={"amount": 80.00, "customer_ref": "pending_shopper"})
+    p_id = create_res.json()["payment_id"]
+    order_id = create_res.json()["paypal_order_id"]
+
+    pending_wh = {
+        "id": f"WH-PENDING-{p_id[:8]}",
+        "event_type": "PAYMENT.CAPTURE.PENDING",
+        "resource_type": "capture",
+        "resource": {
+            "id": f"CAP-PENDING-{p_id[:6]}",
+            "status": "PENDING",
+            "status_details": {"reason": "PENDING_REVIEW"},
+            "supplementary_data": {"related_ids": {"order_id": order_id}}
+        }
+    }
+    client.post("/api/v1/webhooks/paypal", json=pending_wh, headers={"x-mock-webhook": "true"})
+
+    inv_res = client.post("/api/v1/ai/investigate", json={"payment_id": p_id})
+    assert inv_res.status_code == 200
+    inv = inv_res.json()
+    assert "pending" in inv["root_cause"].lower()
+    assert inv["severity"] == "MEDIUM"
+
+def test_investigation_delayed_webhook_scenario(client):
+    # Create and capture order without receiving any webhook
+    create_res = client.post("/api/v1/paypal/orders", json={"amount": 49.99, "customer_ref": "fast_shopper"})
+    p_id = create_res.json()["payment_id"]
+    order_id = create_res.json()["paypal_order_id"]
+    client.post(f"/api/v1/paypal/orders/{order_id}/capture")
+
+    inv_res = client.post("/api/v1/ai/investigate", json={"payment_id": p_id})
+    assert inv_res.status_code == 200
+    inv = inv_res.json()
+    assert "webhook" in inv["root_cause"].lower() or "delayed" in inv["root_cause"].lower()
+
