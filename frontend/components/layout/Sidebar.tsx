@@ -22,7 +22,7 @@ const NAV_ITEMS = [
   { href: "/investigate", label: "AI Investigator", icon: Brain },
   { href: "/approvals", label: "Approval Inbox", icon: ShieldCheck },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/checkout", label: "Checkout Demo", icon: ShoppingCart },
+  { href: "/checkout", label: "ShelfSwipe AI Store", icon: ShoppingCart },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

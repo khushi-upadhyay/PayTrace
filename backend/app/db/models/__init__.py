@@ -6,6 +6,7 @@ from app.db.models.session import Session, SessionEvent
 from app.db.models.incident import Incident
 from app.db.models.ai_investigation import AIInvestigation
 from app.db.models.approval_ticket import ApprovalTicket
+from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction
 
 __all__ = [
     "Base",
@@ -17,4 +18,7 @@ __all__ = [
     "Incident",
     "AIInvestigation",
     "ApprovalTicket",
+    "Seller",
+    "ShelfProduct",
+    "SwipeAction",
 ]

@@ -5,6 +5,7 @@ from typing import Dict, Any, Optional, Tuple
 from sqlalchemy.orm import Session
 from app.db.models.webhook import PayPalWebhook
 from app.db.models.payment import Payment
+from app.db.models.shelfswipe import ShelfProduct
 from app.services.lifecycle.engine import lifecycle_engine
 from app.core.security import redact_sensitive_data
 from app.services.paypal.client import paypal_client
@@ -140,6 +141,17 @@ class WebhookProcessor:
             if event_type == "PAYMENT.CAPTURE.COMPLETED":
                 if current_status != "REFUNDED":
                     lifecycle_engine.transition_status(payment, "CAPTURED")
+                # ShelfSwipe verified-webhook inventory update
+                # Find product associated with payment event
+                for ev in payment.events:
+                    metadata = ev.metadata_redacted or {}
+                    p_name = metadata.get("product_name")
+                    if p_name:
+                        matched_prod = db.query(ShelfProduct).filter(ShelfProduct.name == p_name).first()
+                        if matched_prod and matched_prod.stock > 0:
+                            qty = metadata.get("quantity", 1)
+                            matched_prod.stock = max(0, matched_prod.stock - qty)
+                            break
             elif event_type == "PAYMENT.CAPTURE.DENIED":
                 if current_status not in ("CAPTURED", "REFUNDED"):
                     reason = resource.get("status_details", {}).get("reason", "Capture Denied by PayPal")
