@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { useCallback, useEffect, useState } from "react";
+import { api, getApiBaseUrl } from "@/lib/api";
 import {
   Settings,
   ShieldCheck,
@@ -20,27 +20,47 @@ export default function SettingsPage() {
   const [settingsData, setSettingsData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  useEffect(() => {
-    api.getSettings().then((data) => {
+  const loadSettings = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const data = await api.getSettings();
       setSettingsData(data);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Unable to load settings.");
+    } finally {
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }
   }, []);
 
-  const webhookUrl = "http://localhost:8000/api/webhooks/paypal";
+  useEffect(() => { void loadSettings(); }, [loadSettings]);
+
+  const webhookUrl = `${getApiBaseUrl()}/api/webhooks/paypal`;
 
   const handleCopyWebhookUrl = () => {
-    navigator.clipboard.writeText(webhookUrl);
-    setCopiedUrl(true);
-    setTimeout(() => setCopiedUrl(false), 2000);
+    void navigator.clipboard.writeText(webhookUrl).then(() => {
+      setCopiedUrl(true);
+      setTimeout(() => setCopiedUrl(false), 2000);
+    }).catch(() => setCopiedUrl(false));
   };
 
-  if (loading) {
+  if (loading && !settingsData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
         <p className="text-sm text-slate-400">Loading platform settings & security status...</p>
+      </div>
+    );
+  }
+
+  if (!settingsData) {
+    return (
+      <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
+        <p className="text-sm font-semibold text-rose-200">Settings are unavailable</p>
+        <p className="mt-2 text-xs text-slate-400">{loadError || "No settings response was returned."}</p>
+        <button onClick={() => void loadSettings()} className="mt-4 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white hover:bg-slate-700">Retry</button>
       </div>
     );
   }
@@ -136,10 +156,10 @@ export default function SettingsPage() {
               <span className="font-mono text-slate-200">{settingsData?.ai?.model || "gpt-4o-mini / Fallback v1"}</span>
             </div>
             <div className="flex justify-between py-1">
-              <span className="text-slate-400">Fallback Availability</span>
+              <span className="text-slate-400">Fallback Path</span>
               <span className="font-mono text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                100% Deterministic Fallback Ready
+                Deterministic fallback available
               </span>
             </div>
           </div>

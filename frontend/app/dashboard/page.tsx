@@ -103,7 +103,7 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400">
-            DEMO SEED DATA ACTIVE
+            BACKEND DATA
           </span>
           <button
             onClick={loadData}
@@ -237,8 +237,8 @@ export default function DashboardPage() {
                 <Tooltip
                   contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: "8px", fontSize: "12px" }}
                 />
-                <Area type="monotone" dataKey="total" stroke="#06b6d4" fillOpacity={1} fill="urlColorTotal" name="Total Volume" />
-                <Area type="monotone" dataKey="successful" stroke="#10b981" fillOpacity={1} fill="urlColorSuccess" name="Successful" />
+                <Area type="monotone" dataKey="total" stroke="#06b6d4" fillOpacity={1} fill="url(#colorTotal)" name="Total Volume" />
+                <Area type="monotone" dataKey="successful" stroke="#10b981" fillOpacity={1} fill="url(#colorSuccess)" name="Successful" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

@@ -18,14 +18,16 @@ import {
 export default function IncidentsPage() {
   const [incidents, setIncidents] = useState<IncidentItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchIncidents = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const res = await api.getIncidents();
       setIncidents(res.items);
     } catch (err: any) {
-      console.error("Failed to load incidents:", err);
+      setLoadError(err.message || "Unable to load incidents from the backend.");
     } finally {
       setLoading(false);
     }
@@ -57,6 +59,12 @@ export default function IncidentsPage() {
         <div className="flex flex-col items-center justify-center py-20 space-y-3">
           <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
           <span className="text-xs text-slate-400">Evaluating incident detection rules...</span>
+        </div>
+      ) : loadError ? (
+        <div role="alert" className="rounded-xl border border-rose-500/30 bg-rose-950/20 p-6 text-center">
+          <p className="text-sm font-semibold text-rose-200">Incident data is unavailable</p>
+          <p className="mt-2 text-xs text-slate-400">{loadError}</p>
+          <button onClick={fetchIncidents} className="mt-3 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white hover:bg-slate-700">Retry</button>
         </div>
       ) : incidents.length === 0 ? (
         <div className="glass-panel p-12 rounded-xl text-center space-y-3 border border-slate-800">

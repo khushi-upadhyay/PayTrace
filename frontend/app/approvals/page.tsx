@@ -19,14 +19,16 @@ export default function ApprovalsPage() {
   const [tickets, setTickets] = useState<ApprovalTicketItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [decidingId, setDecidingId] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchTickets = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const data = await api.getApprovals();
       setTickets(data);
     } catch (err: any) {
-      console.error("Failed to fetch approvals:", err);
+      setLoadError(err.message || "Unable to load approval tickets.");
     } finally {
       setLoading(false);
     }
@@ -72,6 +74,8 @@ export default function ApprovalsPage() {
           </span>
         </div>
       </div>
+
+      {loadError && <div role="alert" className="rounded-xl border border-rose-500/30 bg-rose-950/20 p-4 text-xs text-rose-200">{loadError} <button onClick={() => void fetchTickets()} className="ml-2 underline">Retry</button></div>}
 
       {/* Pending Approvals Section */}
       <div className="space-y-4">

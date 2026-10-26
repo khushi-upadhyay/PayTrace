@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { api } from "@/lib/api";
+import { useSessionRecording } from "@/components/session/SessionRecordingProvider";
 import {
   beginOrderRequest,
   captureOutcomeMayBeUnknown,
@@ -35,6 +36,7 @@ const CHECKOUT_CURRENCY = "USD";
 
 function CheckoutContent() {
   const searchParams = useSearchParams();
+  const { sessionId, addSessionMarker } = useSessionRecording();
 
   const [selectedProduct, setSelectedProduct] = useState(PRODUCTS[0]);
   const [scenario, setScenario] = useState("normal"); // "normal", "timeout_before_response", "capture_denied"
@@ -88,6 +90,7 @@ function CheckoutContent() {
     }
 
     if (statusParam === "cancelled" || statusParam === "cancel") {
+      addSessionMarker("checkout_cancelled");
       setCancelledMessage("Payment was cancelled by buyer on PayPal Sandbox. No funds were debited.");
       clearCheckoutOnCancellation({
         setProcessing,
@@ -106,7 +109,7 @@ function CheckoutContent() {
         void verifyAndCapture(orderToCapture);
       }
     }
-  }, [searchParams, activeOrderId]);
+  }, [searchParams, activeOrderId, addSessionMarker]);
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,7 +127,13 @@ function CheckoutContent() {
         amount: selectedProduct.price,
         currency: CHECKOUT_CURRENCY,
         customer_ref: buyerEmail,
+        session_id: sessionId || undefined,
         simulate_scenario: scenario === "normal" ? undefined : scenario,
+      });
+      addSessionMarker("checkout_order_created", {
+        payment_id: orderRes.payment_id,
+        amount: selectedProduct.price,
+        currency: CHECKOUT_CURRENCY,
       });
 
       setActiveOrderId(orderRes.paypal_order_id);
@@ -210,6 +219,10 @@ function CheckoutContent() {
         orderId,
         scenario === "timeout_before_response"
       );
+      addSessionMarker("checkout_capture_response", {
+        payment_id: capRes.payment_id,
+        status: capRes.status,
+      });
       if (capRes.reconciliation_required || capRes.status === "PENDING") {
         capturedOrders.current.delete(orderId);
         setWaitingApproval(true);
