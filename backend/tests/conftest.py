@@ -10,8 +10,14 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.db.base import Base
 from app.db.session import get_db
+from app.core.config import settings
 from app.main import app
 
+# Ensure tests default to clean mock mode unless explicitly overridden in specific tests
+settings.PAYPAL_CLIENT_ID = ""
+settings.PAYPAL_CLIENT_SECRET = ""
+settings.PAYPAL_WEBHOOK_ID = ""
+settings.AI_API_KEY = ""
 
 TEST_DB_URL = "sqlite:///:memory:"
 

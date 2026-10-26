@@ -9,6 +9,7 @@ from app.db.models.shelfswipe import ShelfProduct
 from app.services.lifecycle.engine import lifecycle_engine
 from app.core.security import redact_sensitive_data
 from app.services.paypal.client import paypal_client
+from app.core.config import settings
 from app.core.time import utc_now
 
 logger = logging.getLogger(__name__)
@@ -42,16 +43,41 @@ class WebhookProcessor:
         is_verified = False
         if skip_verification_for_test or headers.get("x-mock-webhook") == "true":
             is_verified = True
-        else:
+        elif settings.is_paypal_configured and settings.PAYPAL_WEBHOOK_ID:
             try:
                 is_verified = await paypal_client.verify_webhook_signature(headers, raw_body)
             except Exception as e:
-                logger.warning(f"Webhook signature verification failed or skipped: {e}")
+                logger.warning(f"Webhook signature verification failed with error: {e}")
                 is_verified = False
+        else:
+            # When webhook ID or credentials are not configured, log warning
+            logger.warning("PayPal Webhook ID or credentials not configured; verification skipped for unconfigured environment.")
+            is_verified = False
 
         event_type = payload.get("event_type", "UNKNOWN")
         resource_type = payload.get("resource_type", "capture")
         resource = payload.get("resource", {})
+
+        # If live PayPal credentials and webhook ID are configured and verification failed, reject changing payment state
+        if settings.is_paypal_configured and settings.PAYPAL_WEBHOOK_ID and not is_verified and not skip_verification_for_test:
+            logger.warning(f"Rejecting unverified webhook event {event_id} of type {event_type}")
+            # Persist the unverified webhook for audit trail
+            wh_record = PayPalWebhook(
+                id=str(uuid.uuid4()),
+                webhook_event_id=event_id,
+                event_type=event_type,
+                resource_type=resource_type,
+                payment_id=None,
+                payload_redacted=redact_sensitive_data(payload),
+                received_at=utc_now(),
+                processed_at=utc_now(),
+                processing_status="VERIFICATION_FAILED",
+                processing_error="PayPal signature verification returned FAILURE or invalid headers",
+                signature_verified=False,
+            )
+            db.add(wh_record)
+            db.commit()
+            return "VERIFICATION_FAILED", f"Webhook signature verification failed for event {event_id}", None
 
         # 3. Correlation: Find Payment by order_id, capture_id, or custom_id
         order_id = resource.get("supplementary_data", {}).get("related_ids", {}).get("order_id")
@@ -109,31 +135,41 @@ class WebhookProcessor:
                 is_simulated=payment.source_mode == "SIMULATED",
             )
 
-            # Update status
+            # Concurrency and valid state transitions (do not regress terminal states)
+            current_status = payment.status
+
             if event_type == "PAYMENT.CAPTURE.COMPLETED":
-                lifecycle_engine.transition_status(payment, "CAPTURED")
+                if current_status != "REFUNDED":
+                    lifecycle_engine.transition_status(payment, "CAPTURED")
                 # ShelfSwipe verified-webhook inventory update
                 # Find product associated with payment event
                 for ev in payment.events:
-                    p_name = ev.metadata_redacted.get("product_name")
+                    metadata = ev.metadata_redacted or {}
+                    p_name = metadata.get("product_name")
                     if p_name:
                         matched_prod = db.query(ShelfProduct).filter(ShelfProduct.name == p_name).first()
                         if matched_prod and matched_prod.stock > 0:
-                            qty = ev.metadata_redacted.get("quantity", 1)
+                            qty = metadata.get("quantity", 1)
                             matched_prod.stock = max(0, matched_prod.stock - qty)
                             break
             elif event_type == "PAYMENT.CAPTURE.DENIED":
-                reason = resource.get("status_details", {}).get("reason", "Capture Denied by PayPal")
-                lifecycle_engine.transition_status(payment, "DENIED", failure_code="CAPTURE_DENIED", failure_reason=reason)
+                if current_status not in ("CAPTURED", "REFUNDED"):
+                    reason = resource.get("status_details", {}).get("reason", "Capture Denied by PayPal")
+                    lifecycle_engine.transition_status(payment, "DENIED", failure_code="CAPTURE_DENIED", failure_reason=reason)
+            elif event_type == "PAYMENT.CAPTURE.PENDING":
+                if current_status not in ("CAPTURED", "DENIED", "REFUNDED"):
+                    pending_reason = resource.get("status_details", {}).get("reason", "Capture Pending Review")
+                    lifecycle_engine.transition_status(payment, "PENDING", failure_code="CAPTURE_PENDING", failure_reason=pending_reason)
             elif event_type == "CHECKOUT.ORDER.APPROVED":
-                lifecycle_engine.transition_status(payment, "APPROVED")
-            elif event_type == "PAYMENT.CAPTURE.REFUNDED":
+                if current_status in ("CREATED", "INITIATED"):
+                    lifecycle_engine.transition_status(payment, "APPROVED")
+            elif event_type in ("PAYMENT.CAPTURE.REFUNDED", "PAYMENT.REFUND.COMPLETED"):
                 lifecycle_engine.transition_status(payment, "REFUNDED")
 
         db.commit()
 
         if payment:
             return "PROCESSED", f"Webhook {event_id} processed and correlated to payment {payment.id}", payment.id
-        return "UNMATCHED", f"Webhook {event_id} stored but no matching payment found for correlation", None
+        return "UNMATCHED", f"Webhook {event_id} stored for reconciliation (no correlated payment yet)", None
 
 webhook_processor = WebhookProcessor()

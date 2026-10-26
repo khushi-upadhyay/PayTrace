@@ -14,8 +14,15 @@ class Settings(BaseSettings):
 
     PAYPAL_CLIENT_ID: Optional[str] = ""
     PAYPAL_CLIENT_SECRET: Optional[str] = ""
+    PAYPAL_MODE: Optional[str] = None # 'sandbox' or 'live'
     PAYPAL_ENVIRONMENT: str = "sandbox"
     PAYPAL_WEBHOOK_ID: Optional[str] = ""
+
+    @property
+    def paypal_mode(self) -> str:
+        """Returns normalized PayPal mode: 'sandbox' or 'live'."""
+        mode = (self.PAYPAL_MODE or self.PAYPAL_ENVIRONMENT or "sandbox").strip().lower()
+        return "live" if mode in ("live", "production") else "sandbox"
 
     AI_PROVIDER: str = "openai"
     AI_API_KEY: Optional[str] = ""
