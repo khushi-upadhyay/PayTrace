@@ -37,4 +37,5 @@ class ShelfSwipeCheckoutRequest(BaseModel):
     product_id: str
     buyer_ref: str
     quantity: int = 1
+    session_id: Optional[str] = None
     simulate_scenario: Optional[str] = None # e.g. "timeout_before_response"

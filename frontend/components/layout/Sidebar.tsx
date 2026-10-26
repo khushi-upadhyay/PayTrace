@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { api, type SettingsData } from "@/lib/api";
 import {
   LayoutDashboard,
   CreditCard,
@@ -13,12 +15,13 @@ import {
   Store,
   Settings,
   Activity,
-  Layers,
+  History,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/payments", label: "Payments", icon: CreditCard },
+  { href: "/sessions", label: "Session Replay", icon: History },
   { href: "/incidents", label: "Incidents", icon: AlertTriangle },
   { href: "/investigate", label: "AI Investigator", icon: Brain },
   { href: "/approvals", label: "Approval Inbox", icon: ShieldCheck },
@@ -30,6 +33,13 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [settings, setSettings] = useState<SettingsData | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    api.getSettings().then((value) => { if (active) setSettings(value); }).catch(() => undefined);
+    return () => { active = false; };
+  }, []);
 
   return (
     <aside className="w-64 border-r border-slate-800 bg-slate-950/80 backdrop-blur-xl flex flex-col h-screen fixed left-0 top-0 z-40">
@@ -77,14 +87,14 @@ export function Sidebar() {
           <div className="flex items-center justify-between">
             <span className="text-xs text-slate-400 font-medium">Environment</span>
             <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800/60">
-              Sandbox
+              {settings?.paypal.environment || "Unknown"}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-xs text-slate-400 font-medium">Demo Mode</span>
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800/60 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Active
+            <span className="text-xs text-slate-400 font-medium">PayPal Connection</span>
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border flex items-center gap-1 ${settings?.paypal.is_configured ? "bg-emerald-950 text-emerald-300 border-emerald-800/60" : "bg-slate-800 text-slate-300 border-slate-700"}`}>
+              <span className={`h-1.5 w-1.5 rounded-full ${settings?.paypal.is_configured ? "bg-emerald-400" : "bg-slate-500"}`} />
+              {settings ? (settings.paypal.is_configured ? "Configured" : "Simulated") : "Unknown"}
             </span>
           </div>
         </div>

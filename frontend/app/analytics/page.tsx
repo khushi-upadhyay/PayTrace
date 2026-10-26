@@ -32,14 +32,16 @@ const COLORS = ["#06b6d4", "#f59e0b", "#f43f5e", "#8b5cf6", "#10b981"];
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const data = await api.getAnalytics();
       setAnalytics(data);
     } catch (err: any) {
-      console.error("Failed to load analytics:", err);
+      setLoadError(err.message || "Unable to load analytics from the backend.");
     } finally {
       setLoading(false);
     }
@@ -58,7 +60,15 @@ export default function AnalyticsPage() {
     );
   }
 
-  if (!analytics) return null;
+  if (!analytics) {
+    return (
+      <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
+        <p className="text-sm font-semibold text-rose-200">Analytics are unavailable</p>
+        <p className="mt-2 text-xs text-slate-400">{loadError || "No analytics response was returned."}</p>
+        <button onClick={fetchAnalytics} className="mt-4 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white hover:bg-slate-700">Retry</button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto animate-fadeIn pb-16">

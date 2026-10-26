@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { api, ShelfProduct } from "@/lib/api";
+import { useSessionRecording } from "@/components/session/SessionRecordingProvider";
 import {
   Sparkles,
   Search,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 export default function ShelfSwipePage() {
+  const { sessionId, addSessionMarker } = useSessionRecording();
   // Search & Deck State
   const [query, setQuery] = useState("birthday gift under $40 nearby");
   const [buyerRef] = useState("buyer_demo_01");
@@ -91,6 +93,10 @@ export default function ShelfSwipePage() {
       }
       capturedOrders.current.add(orderId);
       const cap = await api.captureOrder(orderId, pending.scenario === "timeout_before_response");
+      addSessionMarker("shelfswipe_capture_response", {
+        payment_id: cap.payment_id,
+        status: cap.status,
+      });
       setCheckoutResult({
         payment_id: cap.payment_id,
         order_id: cap.paypal_order_id,
@@ -166,8 +172,14 @@ export default function ShelfSwipePage() {
       const res = await api.checkoutShelfItem(
         item.id,
         buyerRef,
-        scenario === "timeout_before_response" ? "timeout_before_response" : undefined
+        scenario === "timeout_before_response" ? "timeout_before_response" : undefined,
+        sessionId || undefined
       );
+      addSessionMarker("shelfswipe_order_created", {
+        payment_id: res.payment_id,
+        amount: res.amount,
+        currency: res.currency,
+      });
       if (!res.approval_url) throw new Error("PayPal did not return an approval URL.");
       sessionStorage.setItem("paytrace_shelfswipe_pending_order", JSON.stringify({
         orderId: res.paypal_order_id,

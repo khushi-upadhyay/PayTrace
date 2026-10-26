@@ -15,6 +15,17 @@ lib/
 !frontend/lib/
 frontend/lib/*
 !frontend/lib/api.ts
+!frontend/lib/session-identity.mjs
+!frontend/lib/session-identity.test.mjs
+!frontend/lib/session-instrumentation.mjs
+!frontend/lib/session-instrumentation.test.mjs
+!frontend/lib/session-playback.mjs
+!frontend/lib/session-playback.test.mjs
+!frontend/lib/session-buffer-policy.mjs
+!frontend/lib/session-buffer-policy.test.mjs
+!frontend/lib/session-outbox.ts
+!frontend/lib/session-recording-policy.mjs
+!frontend/lib/session-recording-policy.test.mjs
 lib64/
 parts/
 sdist/

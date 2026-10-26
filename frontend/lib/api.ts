@@ -11,7 +11,7 @@ import { classifyFetchFailure } from "@/lib/checkout-state.mjs";
 
 const API_PREFIX = "/api/v1";
 
-function getApiBaseUrl(): string {
+export function getApiBaseUrl(): string {
   const configured = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
   return (configured && configured.length > 0 ? configured : "http://localhost:8000").replace(
     /\/$/,
@@ -177,6 +177,59 @@ export interface PaymentSessionInfo {
   started_at?: string | null;
   events_count?: number;
   recording_enabled?: boolean;
+}
+
+export interface BrowserSessionItem {
+  id: string;
+  visitor_ref: string;
+  payment_id: string | null;
+  payment_ids?: string[];
+  started_at: string;
+  ended_at: string | null;
+  recording_enabled: boolean;
+  events_count: number;
+  user_agent?: string | null;
+  metadata_redacted?: Record<string, unknown>;
+}
+
+export interface BrowserSessionEvent {
+  id?: string;
+  event_type: string;
+  category?: string;
+  source?: "browser" | "sdk" | "backend" | "provider";
+  session_id?: string;
+  tab_id?: string | null;
+  segment_id?: string | null;
+  occurred_at?: string;
+  received_at?: string;
+  session_offset_ms?: number | null;
+  route?: string | null;
+  payment_id?: string | null;
+  order_id?: string | null;
+  severity?: "debug" | "info" | "warn" | "error" | null;
+  trace_id?: string | null;
+  attributes?: Record<string, unknown>;
+  payload: Record<string, unknown>;
+}
+
+export interface BrowserSessionReplay {
+  session_id: string;
+  payment_id: string | null;
+  payment_ids?: string[];
+  visitor_ref: string;
+  started_at?: string;
+  ended_at?: string | null;
+  user_agent?: string | null;
+  metadata_redacted?: Record<string, unknown>;
+  events: Array<BrowserSessionEvent & { id: string; occurred_at: string }>;
+  total_events: number;
+  returned_events?: number;
+  rrweb_events?: number;
+  investigation_events?: number;
+  offset?: number;
+  limit?: number;
+  has_more?: boolean;
+  payment_events?: Array<Record<string, unknown>>;
 }
 
 export interface OrderCreateRequest {
@@ -431,6 +484,32 @@ export interface PaymentListParams {
 }
 
 export const api = {
+  createSession(body: { session_id?: string; visitor_ref?: string; user_agent?: string; metadata?: Record<string, unknown> }) {
+    return request<{ id: string; visitor_ref: string; payment_id: string | null; started_at: string; recording_enabled: boolean }>(
+      "/sessions",
+      { method: "POST", body: JSON.stringify(body), signal: AbortSignal.timeout(5000) }
+    );
+  },
+
+  ingestSessionEvents(sessionId: string, events: BrowserSessionEvent[]) {
+    return request<{ status: string; session_id: string; events_ingested: number }>(
+      `/sessions/${encodeURIComponent(sessionId)}/events`,
+      { method: "POST", body: JSON.stringify({ events }), signal: AbortSignal.timeout(10000) }
+    );
+  },
+
+  stopSession(sessionId: string) {
+    return request<void>(`/sessions/${encodeURIComponent(sessionId)}/stop`, { method: "POST" });
+  },
+
+  getSessions(limit = 100): Promise<BrowserSessionItem[]> {
+    return request<BrowserSessionItem[]>(`/sessions${toQuery({ limit })}`);
+  },
+
+  getSessionReplay(sessionId: string, limit = 500, offset = 0, tabId?: string): Promise<BrowserSessionReplay> {
+    return request<BrowserSessionReplay>(`/sessions/${encodeURIComponent(sessionId)}/replay${toQuery({ limit, offset, tab_id: tabId })}`);
+  },
+
   getShelfDeck(query: string, buyerRef: string) {
     return request<ShelfDeckResponse>(
       `/shelfswipe/deck${toQuery({ query, buyer_ref: buyerRef })}`
@@ -451,12 +530,13 @@ export const api = {
     });
   },
 
-  checkoutShelfItem(productId: string, buyerRef: string, simulateScenario?: string) {
+  checkoutShelfItem(productId: string, buyerRef: string, simulateScenario?: string, sessionId?: string) {
     return request<ShelfCheckoutResponse>("/shelfswipe/checkout", {
       method: "POST",
       body: JSON.stringify({
         product_id: productId,
         buyer_ref: buyerRef,
+        session_id: sessionId,
         simulate_scenario: simulateScenario,
       }),
     });

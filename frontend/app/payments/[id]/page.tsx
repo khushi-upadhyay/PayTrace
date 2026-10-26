@@ -459,13 +459,16 @@ export default function PaymentDetailPage() {
                   <h3 className="text-sm font-bold text-white">Linked Customer Checkout Session</h3>
                 </div>
                 <span className="text-xs font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
-                  {sessionInfo.events_count} RRWEB EVENTS
+                  {sessionInfo.events_count} SESSION EVENTS
                 </span>
               </div>
               <p className="text-xs text-slate-400">
                 Session ID <span className="font-mono text-slate-200">{sessionInfo.session_id}</span> recorded
-                with privacy masking on input elements. Replay is correlated with the timeline events above.
+                with privacy masking on input elements. PayPal-hosted pages are not recorded.
               </p>
+              <Link href={`/sessions/${sessionInfo.session_id}`} className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-950/30 px-3 py-2 text-xs font-semibold text-cyan-200 hover:bg-cyan-950/60">
+                Replay customer session <Video className="h-3.5 w-3.5" />
+              </Link>
             </div>
           )}
         </div>

@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     FRONTEND_ORIGIN: str = "http://localhost:3000"
     OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
     APIMATIC_API_KEY: Optional[str] = None
+    SESSION_IDLE_TIMEOUT_SECONDS: int = 1800
 
     model_config = SettingsConfigDict(
         env_file=(".env", "../.env"),

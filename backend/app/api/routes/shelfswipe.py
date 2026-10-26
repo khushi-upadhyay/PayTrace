@@ -322,6 +322,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         id=payment_id,
         paypal_order_id=paypal_order_id,
         customer_ref=req.buyer_ref,
+        session_id=req.session_id,
         amount=total_amount,
         currency=prod.currency,
         status="CREATED",
