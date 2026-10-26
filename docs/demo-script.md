@@ -5,7 +5,7 @@ This script walks through the three-minute hackathon presentation of PayTrace ac
 ---
 
 ### Segment 1: The Problem & Product Overview (0:00 – 0:25)
-- **Visual**: Start on PayTrace Landing Page (`http://localhost:3000`) or Overview Dashboard (`http://localhost:3000/dashboard`).
+- **Visual**: Start on Overview Dashboard (`http://localhost:3000`) or product overview (`http://localhost:3000/about`).
 - **Narrative**:
   > "When an online payment fails or hangs, merchant engineering and support teams often have to scramble across isolated silos: looking at PayPal transaction logs, application backend error logs, and customer support tickets.
   >
@@ -24,7 +24,7 @@ This script walks through the three-minute hackathon presentation of PayTrace ac
   > 2. Order created in PayPal Sandbox.
   > 3. Buyer approved the transaction.
   > 4. Merchant backend captured the funds.
-  > 5. A verified PayPal webhook arrived, matched the order ID, and settled the lifecycle state.
+  > 5. If the Sandbox webhook tunnel is configured, a signature-verified PayPal webhook can be matched to the order. Without that external Sandbox delivery, inspect only the synchronous capture lifecycle and do not claim webhook confirmation.
   >
   > Real Sandbox events and simulated events are clearly delineated—we never pretend simulated demo data came from PayPal."
 

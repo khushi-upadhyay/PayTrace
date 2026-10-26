@@ -18,6 +18,7 @@ settings.PAYPAL_CLIENT_ID = ""
 settings.PAYPAL_CLIENT_SECRET = ""
 settings.PAYPAL_WEBHOOK_ID = ""
 settings.AI_API_KEY = ""
+settings.APP_ENV = "test"
 
 TEST_DB_URL = "sqlite:///:memory:"
 

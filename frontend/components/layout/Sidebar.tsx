@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   BarChart3,
   ShoppingCart,
+  Store,
   Settings,
   Activity,
   Layers,
@@ -22,7 +23,8 @@ const NAV_ITEMS = [
   { href: "/investigate", label: "AI Investigator", icon: Brain },
   { href: "/approvals", label: "Approval Inbox", icon: ShieldCheck },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
-  { href: "/checkout", label: "ShelfSwipe AI Store", icon: ShoppingCart },
+  { href: "/checkout", label: "PayPal Checkout", icon: ShoppingCart },
+  { href: "/shelfswipe", label: "ShelfSwipe AI Store", icon: Store },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -51,7 +53,7 @@ export function Sidebar() {
         </div>
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}

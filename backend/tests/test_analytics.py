@@ -8,6 +8,7 @@ def test_analytics_metrics(client):
         "/api/v1/paypal/orders",
         json={"amount": 100.0, "currency": "USD", "customer_ref": "analytics_user_1"}
     ).json()
+    client.post(f"/api/v1/paypal/orders/{p1['paypal_order_id']}/approve")
     client.post(
         f"/api/v1/paypal/orders/{p1['paypal_order_id']}/capture",
         json={"simulate_timeout": False}
@@ -17,6 +18,7 @@ def test_analytics_metrics(client):
         "/api/v1/paypal/orders",
         json={"amount": 250.0, "currency": "USD", "customer_ref": "analytics_user_2"}
     ).json()
+    client.post(f"/api/v1/paypal/orders/{p2['paypal_order_id']}/approve")
     client.post(
         f"/api/v1/paypal/orders/{p2['paypal_order_id']}/capture",
         json={"simulate_timeout": True}

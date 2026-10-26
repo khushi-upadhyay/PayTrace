@@ -1,13 +1,12 @@
 import uuid
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app.core.time import utc_now
 from app.db.models.payment import Payment
 from app.db.models.payment_event import PaymentEvent
-from app.db.models.webhook import PayPalWebhook
 from app.db.models.session import Session as BrowserSession, SessionEvent
 from app.db.models.incident import Incident
 from app.schemas.demo import (
@@ -17,6 +16,7 @@ from app.schemas.demo import (
 )
 from app.services.lifecycle.engine import lifecycle_engine
 from app.services.incidents.detector import incident_detector
+from app.core.config import settings
 
 router = APIRouter(prefix="/demo", tags=["Demo Controls"])
 
@@ -30,21 +30,6 @@ AVAILABLE_SCENARIOS = [
         "id": "capture_denied",
         "title": "Capture Denied / Instrument Declined",
         "description": "Buyer payment instrument declined by issuing bank (INSTRUMENT_DECLINED). Root cause recommends prompting buyer for alternate card.",
-    },
-    {
-        "id": "delayed_webhook",
-        "title": "Delayed Webhook Notification",
-        "description": "Simulates multi-hour lag in PayPal webhook delivery while synchronous API capture succeeded.",
-    },
-    {
-        "id": "duplicate_webhook_replay",
-        "title": "Duplicate Webhook Replay (Idempotency)",
-        "description": "Re-delivers an identical webhook event ID to prove idempotent deduplication without state corruption.",
-    },
-    {
-        "id": "high_latency",
-        "title": "High Latency Capture Spike",
-        "description": "API capture response latency spikes to 4,850ms, triggering latency SLA breach alerts.",
     },
 ]
 
@@ -160,24 +145,14 @@ def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db)):
             details={"payment_id": p_id, "order_id": order_id, "amount": 79.00},
         )
 
-    elif scenario_id == "duplicate_webhook_replay":
-        # Find any existing webhook to replay
-        existing_wh = db.query(PayPalWebhook).first()
-        wh_id = existing_wh.webhook_event_id if existing_wh else f"WH-SAMPLE-{uuid.uuid4().hex[:8].upper()}"
-        return DemoScenarioResponse(
-            scenario=scenario_id,
-            title="Duplicate Webhook Replay",
-            description=f"Webhook ID {wh_id} submitted. Webhook processor detects existing event and returns IGNORED_DUPLICATE without state mutation.",
-            status="SUCCESS",
-            details={"webhook_event_id": wh_id, "expected_result": "IGNORED_DUPLICATE"},
-        )
-
     else:
         raise HTTPException(status_code=400, detail=f"Scenario '{scenario_id}' not supported")
 
 @router.post("/reset", response_model=DemoResetResponse)
 def reset_demo_data(db: Session = Depends(get_db)):
-    """Resets and reseeds demo payments, timeline events, and incidents cleanly."""
+    """Explicitly resets development demo data; unavailable in deployed environments."""
+    if settings.APP_ENV.strip().lower() not in {"development", "test"}:
+        raise HTTPException(status_code=403, detail="Demo data reset is disabled outside development and tests")
     from scripts.seed_demo import run_seed
     counts = run_seed(db)
     return DemoResetResponse(

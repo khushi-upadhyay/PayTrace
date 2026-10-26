@@ -83,13 +83,12 @@
       "name": "Webhooks",
       "item": [
         {
-          "name": "Ingest Webhook (Capture Completed)",
+          "name": "Unverified Webhook Is Rejected (Signed Delivery Required)",
           "request": {
             "method": "POST",
             "url": "{{baseUrl}}/api/webhooks/paypal",
             "header": [
-              {"key": "Content-Type", "value": "application/json"},
-              {"key": "x-mock-webhook", "value": "true"}
+              {"key": "Content-Type", "value": "application/json"}
             ],
             "body": {
               "mode": "raw",

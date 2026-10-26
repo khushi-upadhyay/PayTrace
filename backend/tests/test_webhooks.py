@@ -102,6 +102,39 @@ def test_webhook_unverified_signature_rejected(client):
         data = res.json()
         assert data["status"] == "VERIFICATION_FAILED"
 
+
+def test_mock_webhook_header_is_not_trusted_outside_test_mode(client):
+    from unittest.mock import patch
+
+    create_res = client.post("/api/v1/paypal/orders", json={"amount": 25.00})
+    assert create_res.status_code == 200
+    payment_id = create_res.json()["payment_id"]
+    order_id = create_res.json()["paypal_order_id"]
+    event = {
+        "id": f"WH-SPOOF-{uuid.uuid4().hex[:8]}",
+        "event_type": "PAYMENT.CAPTURE.COMPLETED",
+        "resource_type": "capture",
+        "resource": {
+            "id": "CAP-SPOOF-1",
+            "custom_id": payment_id,
+            "supplementary_data": {"related_ids": {"order_id": order_id}},
+        },
+    }
+    with patch("app.core.config.settings.APP_ENV", "development"):
+        response = client.post(
+            "/api/v1/webhooks/paypal",
+            json=event,
+            headers={"x-mock-webhook": "true"},
+        )
+    assert response.status_code == 200
+    assert response.json()["status"] == "VERIFICATION_FAILED"
+    assert client.get(f"/api/v1/payments/{payment_id}").json()["status"] == "CREATED"
+
+
+def test_webhook_rejects_malformed_json(client):
+    response = client.post("/api/webhooks/paypal", content=b"not json")
+    assert response.status_code == 400
+
 def test_webhook_capture_denied_and_pending(client):
     # 1. Test Capture Denied
     create_res1 = client.post(
@@ -151,3 +184,41 @@ def test_webhook_capture_denied_and_pending(client):
     p2 = client.get(f"/api/v1/payments/{p_id2}").json()
     assert p2["status"] == "PENDING"
 
+
+
+def test_order_approved_webhook_does_not_mark_payment_captured(client):
+    created = client.post("/api/v1/paypal/orders", json={"amount": 25.00, "currency": "USD"})
+    payment_id = created.json()["payment_id"]
+    order_id = created.json()["paypal_order_id"]
+    payload = {
+        "id": f"WH-APPROVED-{uuid.uuid4().hex[:8]}",
+        "event_type": "CHECKOUT.ORDER.APPROVED",
+        "resource_type": "checkout-order",
+        "resource": {"id": order_id, "status": "APPROVED"},
+    }
+    response = client.post("/api/v1/webhooks/paypal", json=payload, headers={"x-mock-webhook": "true"})
+    assert response.json()["status"] == "PROCESSED"
+    payment = client.get(f"/api/v1/payments/{payment_id}").json()
+    assert payment["status"] == "APPROVED"
+    assert payment["paypal_capture_id"] is None
+
+
+def test_capture_completed_webhook_rejects_amount_mismatch(client):
+    created = client.post("/api/v1/paypal/orders", json={"amount": 25.00, "currency": "USD"})
+    payment_id = created.json()["payment_id"]
+    order_id = created.json()["paypal_order_id"]
+    payload = {
+        "id": f"WH-MISMATCH-{uuid.uuid4().hex[:8]}",
+        "event_type": "PAYMENT.CAPTURE.COMPLETED",
+        "resource_type": "capture",
+        "resource": {
+            "id": "CAP-MISMATCH", "custom_id": payment_id, "status": "COMPLETED",
+            "amount": {"value": "24.00", "currency_code": "USD"},
+            "supplementary_data": {"related_ids": {"order_id": order_id}},
+        },
+    }
+    response = client.post("/api/v1/webhooks/paypal", json=payload, headers={"x-mock-webhook": "true"})
+    assert response.json()["status"] == "INVALID_CAPTURE"
+    payment = client.get(f"/api/v1/payments/{payment_id}").json()
+    assert payment["status"] == "CREATED"
+    assert payment["paypal_capture_id"] is None

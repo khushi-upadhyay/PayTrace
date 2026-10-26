@@ -21,7 +21,7 @@ class Payment(Base):
     failure_code: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
     failure_reason: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
     actor: Mapped[str] = mapped_column(String(32), default="human") # human, agent, demo
-    source_mode: Mapped[str] = mapped_column(String(32), default="PAYPAL_SANDBOX") # PAYPAL_SANDBOX, SIMULATED
+    source_mode: Mapped[str] = mapped_column(String(32), default="PAYPAL_SANDBOX") # PAYPAL_SANDBOX, PAYPAL_LIVE, SIMULATED
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, index=True)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now, onupdate=utc_now)
 

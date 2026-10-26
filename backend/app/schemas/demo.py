@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from typing import Optional, Dict, Any, List
 
 class DemoScenarioRequest(BaseModel):
-    scenario: str # "timeout_before_response", "capture_denied", "delayed_webhook", "duplicate_webhook_replay", "high_latency"
+    scenario: str # "timeout_before_response" or "capture_denied"
     parameters: Dict[str, Any] = {}
 
 class DemoScenarioResponse(BaseModel):

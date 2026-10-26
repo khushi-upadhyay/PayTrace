@@ -1,7 +1,6 @@
-import os
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Optional
+from typing import Literal, Optional
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DB_PATH = (BASE_DIR / "paytrace.db").as_posix()
@@ -14,24 +13,19 @@ class Settings(BaseSettings):
 
     PAYPAL_CLIENT_ID: Optional[str] = ""
     PAYPAL_CLIENT_SECRET: Optional[str] = ""
-    PAYPAL_MODE: Optional[str] = None # 'sandbox' or 'live'
-    PAYPAL_ENVIRONMENT: str = "sandbox"
+    PAYPAL_MODE: Literal["sandbox", "live"] = "sandbox"
     PAYPAL_WEBHOOK_ID: Optional[str] = ""
 
     @property
     def paypal_mode(self) -> str:
-        """Returns normalized PayPal mode: 'sandbox' or 'live'."""
-        mode = (self.PAYPAL_MODE or self.PAYPAL_ENVIRONMENT or "sandbox").strip().lower()
-        return "live" if mode in ("live", "production") else "sandbox"
+        """Returns the explicitly configured PayPal environment."""
+        return self.PAYPAL_MODE
 
     AI_PROVIDER: str = "openai"
     AI_API_KEY: Optional[str] = ""
     AI_MODEL: str = "gpt-4o-mini"
 
-    DEMO_OPERATOR_TOKEN: str = "demo-operator-secret-token"
     FRONTEND_ORIGIN: str = "http://localhost:3000"
-    PUBLIC_API_BASE_URL: str = "http://localhost:8000"
-
     OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
     APIMATIC_API_KEY: Optional[str] = None
 
