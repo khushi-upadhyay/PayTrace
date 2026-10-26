@@ -106,7 +106,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       `${failure.message} (${getApiBaseUrl()}${API_PREFIX}${path}; ${reason})`,
       0,
       undefined,
-      failure.kind
+      failure.kind as "timeout" | "network" | "aborted" | "network_or_cors" | "http" | undefined
     );
   }
 

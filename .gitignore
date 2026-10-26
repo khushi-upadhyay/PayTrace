@@ -15,6 +15,7 @@ lib/
 !frontend/lib/
 frontend/lib/*
 !frontend/lib/api.ts
+!frontend/lib/checkout-state.mjs
 lib64/
 parts/
 sdist/
