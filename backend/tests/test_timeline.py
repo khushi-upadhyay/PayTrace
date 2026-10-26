@@ -8,6 +8,7 @@ def test_payment_timeline_flow(client):
     order_id = create_res.json()["paypal_order_id"]
 
     # 2. Capture Order
+    client.post(f"/api/v1/paypal/orders/{order_id}/approve")
     cap_res = client.post(f"/api/v1/paypal/orders/{order_id}/capture")
     assert cap_res.status_code == 200
 

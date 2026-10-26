@@ -316,7 +316,7 @@ export default function PaymentDetailPage() {
                 payment.source_mode === "SIMULATED" ? "text-amber-400" : "text-cyan-400"
               }`}
             >
-              {payment.source_mode === "SIMULATED" ? "SIMULATED DEMO EVENT" : "PAYPAL_SANDBOX"}
+              {payment.source_mode === "SIMULATED" ? "SIMULATED DEMO EVENT" : payment.source_mode}
             </span>
           </div>
 

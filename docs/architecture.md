@@ -29,7 +29,7 @@ flowchart TD
 ### 1. Frontend (Next.js 14 App Router)
 - **Framework**: Next.js, React 18, TypeScript, Tailwind CSS, Lucide icons, Recharts.
 - **Pages**:
-  - `/` Landing page highlighting cross-signal payment observability.
+  - `/` Redirects to the operator dashboard. `/about` retains the product overview.
   - `/dashboard` Real-time payment metrics, success/failure rates, potential revenue at risk, latency graphs, and open incidents.
   - `/payments` Filterable and searchable ledger of payments with real/simulated markers.
   - `/payments/[id]` Deep payment detail view with chronological unified timeline, AI investigator analysis, session replay, and refund trigger.
@@ -37,13 +37,14 @@ flowchart TD
   - `/investigate` Dedicated AI investigation console with multi-turn query capabilities.
   - `/approvals` Human-in-the-Loop inbox for reviewing and approving high-risk financial actions (refunds).
   - `/analytics` Performance breakdown, payment volume, latency SLA tracking, and failure distributions.
-  - `/checkout` Interactive demo store with product catalog and PayPal checkout simulator.
+  - `/checkout` PayPal checkout, approval return, and capture verification. `/shelfswipe` is the separate labelled sample catalog.
+  - `/demo/approval` Explicit simulated buyer approval for credential-free local demo orders.
   - `/settings` Configuration and integration status dashboard without exposing secrets.
 
 ### 2. Backend (FastAPI Python 3.11+)
 - **API Engine**: Versioned REST API under `/api/v1` with centralized error handling, structured logging, and CORS middleware.
 - **Database Layer**: SQLAlchemy 2.x ORM with versioned Alembic migrations. Supports both PostgreSQL (production/Docker) and SQLite (zero-config local dev).
-- **PayPal Client & Mock Sandbox**: Dual-mode engine supporting live PayPal Sandbox credentials with seamless fallback to an in-memory high-fidelity mock sandbox.
+- **PayPal Client & Mock Sandbox**: Explicitly configured PayPal Sandbox/live client mode, or a clearly labelled in-memory simulator when credentials are absent. API failures do not silently switch real orders to simulated orders.
 - **Webhook Ingestion**: Signature verification, idempotency deduplication by `webhook_event_id`, and out-of-order correlation.
 - **Policy Engine**: Human-in-the-loop enforcement preventing unapproved money actions.
 - **AI Investigator**: Bounded evidence-gathering tools calling LLMs (OpenAI-compatible) with strict deterministic rule-based fallbacks.

@@ -1,8 +1,10 @@
 import uuid
+import logging
+import re
+import httpx
 from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import List, Optional
 
 from app.api.dependencies import get_db
 from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction
@@ -16,10 +18,15 @@ from app.schemas.shelfswipe import (
 )
 from app.services.lifecycle.engine import lifecycle_engine
 from app.services.paypal.mock_sandbox import mock_paypal
-from app.services.paypal.client import paypal_client
+from app.services.paypal.client import (
+    paypal_client,
+    safe_paypal_error_diagnostics,
+    validate_created_order_amount,
+)
 from app.core.config import settings
 
 router = APIRouter(prefix="/shelfswipe", tags=["ShelfSwipe"])
+logger = logging.getLogger(__name__)
 
 # Curated seed catalog for instant onboarding demo
 DEMO_CATALOG = [
@@ -70,9 +77,46 @@ DEMO_CATALOG = [
     }
 ]
 
+DEMO_SELLER_ID = "00000000-0000-4000-8000-000000000001"
+DEMO_SELLER_URL = "paytrace://demo-catalog"
+
+
+def seed_demo_catalog(db: Session) -> None:
+    """Seed the explicitly labelled, local demo catalog without external services."""
+    seller = db.query(Seller).filter(Seller.source_url == DEMO_SELLER_URL).first()
+    if not seller:
+        seller = Seller(
+            id=DEMO_SELLER_ID,
+            name="PayTrace Demo Catalog",
+            contact_email="demo@example.invalid",
+            source_url=DEMO_SELLER_URL,
+        )
+        db.add(seller)
+        db.flush()
+
+    for item in DEMO_CATALOG:
+        product_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"paytrace-demo:{item['name']}"))
+        exists = db.query(ShelfProduct).filter(ShelfProduct.id == product_id).first()
+        if not exists:
+            db.add(ShelfProduct(
+                id=product_id,
+                seller_id=seller.id,
+                name=item["name"],
+                price=Decimal(str(item["price"])),
+                currency="USD",
+                image_url=item["image_url"],
+                description=item["description"],
+                category=item["category"],
+                stock=item["stock"],
+                status="live",
+                source="demo",
+                why_matches=item["why_matches"],
+            ))
+    db.commit()
+
 @router.post("/onboard")
 def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db)):
-    """Simulates AI website extraction of a local shop's product shelf with consent."""
+    """Loads the curated demo catalog without accessing an external merchant site."""
     seller = db.query(Seller).filter(Seller.source_url == req.shop_url).first()
     if not seller:
         seller = Seller(
@@ -96,7 +140,7 @@ def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db)):
                 category=item["category"],
                 stock=item["stock"],
                 status="live",
-                source="scraped",
+                source="demo",
                 why_matches=item["why_matches"],
             )
             db.add(prod)
@@ -104,7 +148,8 @@ def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db)):
 
     products = db.query(ShelfProduct).filter(ShelfProduct.seller_id == seller.id).all()
     return {
-        "status": "extracted",
+        "status": "demo_loaded",
+        "is_demo": True,
         "seller_id": seller.id,
         "seller_name": seller.name,
         "products_count": len(products),
@@ -129,13 +174,13 @@ def get_swipe_deck(
     db: Session = Depends(get_db)
 ):
     """
-    Returns AI-ranked swipe deck.
-    Swiping right on categories pushes similar items to the top (Learning Loop).
+    Returns a deterministic, search-filtered demo deck.
+    Swiping right on categories pushes similar items to the top.
     """
     # Check if any products exist, if not, auto-seed
     count = db.query(ShelfProduct).count()
     if count == 0:
-        onboard_seller(SellerOnboardRequest(shop_url="https://artisan-local.demo", shop_name="Artisan Local Co."), db)
+        seed_demo_catalog(db)
 
     # Fetch buyer's swipe history to adapt deck ranking
     liked_swipes = db.query(SwipeAction).filter(
@@ -151,15 +196,28 @@ def get_swipe_deck(
         liked_categories = {c[0] for c in liked_prods}
 
     products = db.query(ShelfProduct).filter(ShelfProduct.status == "live", ShelfProduct.stock > 0).all()
+    stop_words = {"the", "and", "for", "with", "under", "nearby", "from"}
+    query_terms = {
+        term for term in re.findall(r"[a-z0-9]+", query.lower())
+        if len(term) > 2 and term not in stop_words
+    }
+
+    def searchable_text(product: ShelfProduct) -> str:
+        return " ".join((product.name, product.category, product.description, product.why_matches or "")).lower()
+
+    if query_terms:
+        products = [
+            product for product in products
+            if query_terms.intersection(re.findall(r"[a-z0-9]+", searchable_text(product)))
+        ]
 
     # Dynamic Ranking: Boost items in liked categories or matching query keywords
     def rank_score(p: ShelfProduct):
         score = 0
         if p.category in liked_categories:
             score += 50 # Boost based on prior swipe learning
-        q = query.lower()
-        if q in p.name.lower() or q in p.category.lower() or q in p.description.lower():
-            score += 30
+        product_terms = set(re.findall(r"[a-z0-9]+", searchable_text(p)))
+        score += 30 * len(query_terms.intersection(product_terms))
         return score
 
     ranked = sorted(products, key=rank_score, reverse=True)
@@ -176,6 +234,7 @@ def get_swipe_deck(
             category=p.category,
             stock=p.stock,
             status=p.status,
+            source=p.source,
             why_matches=f"AI Pick: {p.why_matches} (Learned preference match)" if p.category in liked_categories else p.why_matches,
         )
         for p in ranked
@@ -229,13 +288,25 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
                 amount=total_amount,
                 currency=prod.currency,
                 custom_id=payment_id,
+                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
+                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
             )
+            if prod.currency != "USD":
+                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
+            validate_created_order_amount(order_data, total_amount, prod.currency)
             paypal_order_id = order_data["id"]
             for link in order_data.get("links", []):
                 if link.get("rel") == "approve":
                     approval_url = link.get("href")
-        except Exception:
-            is_mock = True
+        except Exception as exc:
+            diagnostics = (
+                safe_paypal_error_diagnostics(exc)
+                if isinstance(exc, httpx.HTTPStatusError)
+                else {"http_status": None, "error_type": type(exc).__name__}
+            )
+            diagnostics.update({"requested_amount": f"{total_amount:.2f}", "requested_currency": prod.currency})
+            logger.error("ShelfSwipe PayPal order creation failed", extra={"paypal_diagnostics": diagnostics})
+            raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
 
     if is_mock:
         order_data = mock_paypal.create_order(
@@ -244,7 +315,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
             custom_id=payment_id,
         )
         paypal_order_id = order_data["id"]
-        approval_url = order_data["links"][0]["href"]
+        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
 
     # Register in PayTrace unified payment ledger
     payment = Payment(
@@ -255,7 +326,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         currency=prod.currency,
         status="CREATED",
         actor="human",
-        source_mode="SIMULATED" if is_mock else "PAYPAL_SANDBOX",
+        source_mode="SIMULATED" if is_mock else f"PAYPAL_{settings.paypal_mode.upper()}",
         failure_code=req.simulate_scenario,
     )
     db.add(payment)
@@ -279,4 +350,5 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         "amount": float(total_amount),
         "currency": prod.currency,
         "product_name": prod.name,
+        "is_mock": is_mock,
     }

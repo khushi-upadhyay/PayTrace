@@ -26,10 +26,12 @@ export default function PaymentsPage() {
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [sourceFilter, setSourceFilter] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const fetchPayments = async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const res = await api.getPayments({
         page,
         page_size: pageSize,
@@ -41,6 +43,7 @@ export default function PaymentsPage() {
       setTotal(res.total);
     } catch (err: any) {
       console.error("Failed to fetch payments:", err);
+      setLoadError(err.message || "Unable to load payment records.");
     } finally {
       setLoading(false);
     }
@@ -123,6 +126,7 @@ export default function PaymentsPage() {
           >
             <option value="">All Sources</option>
             <option value="PAYPAL_SANDBOX">PayPal Sandbox</option>
+            <option value="PAYPAL_LIVE">PayPal Live</option>
             <option value="SIMULATED">Simulated Demo</option>
           </select>
         </div>
@@ -134,6 +138,15 @@ export default function PaymentsPage() {
           <div className="flex flex-col items-center justify-center py-20 space-y-3">
             <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
             <span className="text-xs text-slate-400">Loading ledger data...</span>
+          </div>
+        ) : loadError ? (
+          <div className="text-center py-20 space-y-3">
+            <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
+            <p className="text-sm font-semibold text-slate-200">Payment records could not be loaded</p>
+            <p className="text-xs text-slate-400">{loadError}</p>
+            <button onClick={fetchPayments} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold">
+              Retry
+            </button>
           </div>
         ) : payments.length === 0 ? (
           <div className="text-center py-20 space-y-3">

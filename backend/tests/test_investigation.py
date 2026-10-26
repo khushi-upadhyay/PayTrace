@@ -96,6 +96,7 @@ def test_investigation_delayed_webhook_scenario(client):
     create_res = client.post("/api/v1/paypal/orders", json={"amount": 49.99, "customer_ref": "fast_shopper"})
     p_id = create_res.json()["payment_id"]
     order_id = create_res.json()["paypal_order_id"]
+    client.post(f"/api/v1/paypal/orders/{order_id}/approve")
     client.post(f"/api/v1/paypal/orders/{order_id}/capture")
 
     inv_res = client.post("/api/v1/ai/investigate", json={"payment_id": p_id})

@@ -13,7 +13,7 @@ def main():
     parser.add_argument(
         "--scenario",
         default="timeout_before_response",
-        choices=["timeout_before_response", "capture_denied", "duplicate_webhook_replay"],
+        choices=["timeout_before_response", "capture_denied"],
         help="Scenario to simulate"
     )
     args = parser.parse_args()

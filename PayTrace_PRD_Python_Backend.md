@@ -1067,16 +1067,14 @@ DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/paytrace
 
 PAYPAL_CLIENT_ID=
 PAYPAL_CLIENT_SECRET=
-PAYPAL_ENVIRONMENT=sandbox
+PAYPAL_MODE=sandbox
 PAYPAL_WEBHOOK_ID=
 
 AI_PROVIDER=openai
 AI_API_KEY=
 AI_MODEL=
 
-DEMO_OPERATOR_TOKEN=
 FRONTEND_ORIGIN=http://localhost:3000
-PUBLIC_API_BASE_URL=http://localhost:8000
 
 # Optional
 OTEL_EXPORTER_OTLP_ENDPOINT=
@@ -1086,8 +1084,6 @@ APIMATIC_API_KEY=
 ### Frontend `.env.example`
 
 ``` dotenv
-NEXT_PUBLIC_PAYPAL_CLIENT_ID=
-NEXT_PUBLIC_PAYPAL_ENVIRONMENT=sandbox
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ```
 

@@ -19,6 +19,7 @@ class ShelfProductSchema(BaseModel):
     category: str
     stock: int
     status: str
+    source: str = "demo"
     why_matches: Optional[str] = None
 
 class ShelfProductDeckResponse(BaseModel):

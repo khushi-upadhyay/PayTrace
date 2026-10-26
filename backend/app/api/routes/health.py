@@ -19,7 +19,8 @@ def get_health(db: Session = Depends(get_db)):
         "status": "healthy" if db_status == "healthy" else "degraded",
         "app_env": settings.APP_ENV,
         "database": db_status,
-        "paypal_sandbox": "configured" if settings.is_paypal_configured else "mock_mode",
+        "paypal_environment": settings.paypal_mode,
+        "paypal_configured": settings.is_paypal_configured,
         "ai_investigator": "live" if settings.is_ai_configured else "deterministic_fallback",
         "version": "1.0.0",
     }

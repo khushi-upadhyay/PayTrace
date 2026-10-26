@@ -19,14 +19,12 @@ This guide describes how to configure PayTrace to connect to live PayPal Develop
 ```dotenv
 PAYPAL_CLIENT_ID=your_sandbox_client_id_here
 PAYPAL_CLIENT_SECRET=your_sandbox_client_secret_here
-PAYPAL_ENVIRONMENT=sandbox
+PAYPAL_MODE=sandbox
 PAYPAL_WEBHOOK_ID=your_webhook_id_here
 ```
 
 ### Frontend (`frontend/.env.local`)
 ```dotenv
-NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_sandbox_client_id_here
-NEXT_PUBLIC_PAYPAL_ENVIRONMENT=sandbox
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ```
 
@@ -58,6 +56,8 @@ In PayPal Developer Portal under **Testing Tools** > **Sandbox Accounts**:
 
 ## 5. Offline / Zero-Credential Mode
 
-PayTrace is designed to run completely offline without PayPal credentials:
-- When `PAYPAL_CLIENT_ID` or `PAYPAL_CLIENT_SECRET` are not set, PayTrace automatically activates its internal `MockPayPalSandbox`.
-- Orders and captures are generated cleanly, and simulated webhooks can be replayed from the Demo Scenarios toolbar.
+PayTrace is designed to run without PayPal credentials:
+- When PayPal credentials are absent, checkout uses the internal `MockPayPalSandbox` and labels orders as simulated.
+- A dedicated local page requires an explicit simulated buyer-approval action before a mock capture can proceed. No real PayPal API call or money movement occurs.
+- The webhook endpoint only accepts verified PayPal signatures at runtime. The test suite uses an isolated test-only bypass; the public `x-mock-webhook` header is not trusted.
+- Verify real webhook delivery by completing a Sandbox transaction through the configured HTTPS tunnel and checking the persisted event. Unit tests validate verification and deduplication behavior but do not prove external delivery.

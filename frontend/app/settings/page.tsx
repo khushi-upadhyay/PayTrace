@@ -55,7 +55,7 @@ export default function SettingsPage() {
             Integrations & Safety Policy
           </h1>
           <p className="text-xs text-slate-400 mt-1">
-            Verification status of external PayPal Sandbox credentials, AI engines, and security boundaries.
+            Verification status of the explicitly configured PayPal environment, AI engine, and security boundaries.
           </p>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function SettingsPage() {
                 PP
               </div>
               <div>
-                <h2 className="text-sm font-bold text-white">PayPal Sandbox API</h2>
+                <h2 className="text-sm font-bold text-white">PayPal {settingsData?.paypal?.environment || "Sandbox"} API</h2>
                 <span className="text-[10px] text-slate-400 font-mono">REST v2/checkout</span>
               </div>
             </div>
@@ -80,7 +80,7 @@ export default function SettingsPage() {
                   : "bg-cyan-950 text-cyan-300 border-cyan-800"
               }`}
             >
-              {settingsData?.paypal?.status_label || "MOCK SANDBOX ACTIVE"}
+              {settingsData?.paypal?.status_label || "SIMULATED DEMO"}
             </span>
           </div>
 
@@ -91,13 +91,13 @@ export default function SettingsPage() {
             </div>
             <div className="flex justify-between py-1 border-b border-slate-800/60">
               <span className="text-slate-400">Client ID</span>
-              <span className="font-mono text-slate-200">{settingsData?.paypal?.client_id_masked || "demo-client-masked"}</span>
+              <span className="font-mono text-slate-200">{settingsData?.paypal?.client_id_masked || "Not configured"}</span>
             </div>
             <div className="flex justify-between py-1">
               <span className="text-slate-400">Webhook Signature Verification</span>
-              <span className="font-mono text-emerald-400 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                Enabled
+              <span className={`font-mono flex items-center gap-1 ${settingsData?.paypal?.webhook_id_configured ? "text-emerald-400" : "text-amber-400"}`}>
+                {settingsData?.paypal?.webhook_id_configured ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
+                {settingsData?.paypal?.webhook_id_configured ? "Configured" : "Not configured"}
               </span>
             </div>
           </div>

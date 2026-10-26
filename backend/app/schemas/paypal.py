@@ -3,8 +3,8 @@ from typing import Optional, Dict, Any
 from decimal import Decimal
 
 class OrderCreateRequest(BaseModel):
-    amount: Decimal = Field(default=Decimal("49.99"), ge=0.01)
-    currency: str = "USD"
+    amount: Decimal = Field(default=Decimal("49.99"), ge=0.01, decimal_places=2)
+    currency: str = Field(default="USD", pattern="^USD$")
     session_id: Optional[str] = None
     customer_ref: str = "demo_shopper"
     simulate_scenario: Optional[str] = None # None, "timeout_before_response", "capture_denied"

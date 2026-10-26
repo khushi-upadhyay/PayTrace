@@ -30,7 +30,7 @@ class MockPayPalSandbox:
             "create_time": utc_now().isoformat() + "Z",
             "links": [
                 {
-                    "href": f"http://localhost:3000/checkout?orderId={order_id}&status=approved",
+                    "href": f"http://localhost:3000/demo/approval?token={order_id}&return_to=checkout",
                     "rel": "approve",
                     "method": "GET"
                 }
@@ -42,17 +42,23 @@ class MockPayPalSandbox:
     def get_order(self, order_id: str) -> Dict[str, Any]:
         if order_id in self.orders:
             return self.orders[order_id]
-        # Return default synthesized order
-        return {
-            "id": order_id,
-            "status": "APPROVED",
-            "intent": "CAPTURE",
-            "purchase_units": [{"amount": {"currency_code": "USD", "value": "49.99"}}],
-        }
+        raise KeyError(order_id)
+
+    def approve_order(self, order_id: str) -> Dict[str, Any]:
+        order = self.orders.get(order_id)
+        if not order:
+            raise KeyError(order_id)
+        if order.get("status") == "CREATED":
+            order["status"] = "APPROVED"
+        return order
 
     def capture_order(self, order_id: str, simulate_scenario: Optional[str] = None) -> Dict[str, Any]:
         capture_id = f"MOCK-CAP-{uuid.uuid4().hex[:12].upper()}"
-        
+        order = self.orders.get(order_id)
+        if not order:
+            raise KeyError(order_id)
+        order_amount = order["purchase_units"][0]["amount"]
+
         if simulate_scenario == "capture_denied":
             return {
                 "id": order_id,
@@ -65,6 +71,7 @@ class MockPayPalSandbox:
                                 {
                                     "id": capture_id,
                                     "status": "DECLINED",
+                                    "amount": dict(order_amount),
                                     "status_details": {
                                         "reason": "INSTRUMENT_DECLINED"
                                     }
@@ -86,7 +93,7 @@ class MockPayPalSandbox:
                             {
                                 "id": capture_id,
                                 "status": "COMPLETED",
-                                "amount": {"currency_code": "USD", "value": "49.99"},
+                                "amount": dict(order_amount),
                                 "create_time": utc_now().isoformat() + "Z",
                             }
                         ]
@@ -98,47 +105,5 @@ class MockPayPalSandbox:
         if order_id in self.orders:
             self.orders[order_id]["status"] = "COMPLETED"
         return capture_payload
-
-    def create_mock_webhook(
-        self,
-        event_type: str,
-        order_id: Optional[str] = None,
-        capture_id: Optional[str] = None,
-        amount: Decimal = Decimal("49.99"),
-        currency: str = "USD",
-        custom_id: Optional[str] = None
-    ) -> Dict[str, Any]:
-        """Generates realistic PayPal webhook structure."""
-        event_id = f"WH-{uuid.uuid4().hex[:16].upper()}"
-        now_str = utc_now().isoformat() + "Z"
-        
-        resource: Dict[str, Any] = {
-            "id": capture_id or order_id or f"RES-{uuid.uuid4().hex[:8].upper()}",
-            "create_time": now_str,
-            "update_time": now_str,
-            "amount": {
-                "currency_code": currency,
-                "value": f"{amount:.2f}"
-            }
-        }
-        if custom_id:
-            resource["custom_id"] = custom_id
-
-        if "CAPTURE" in event_type:
-            resource_type = "capture"
-            resource["status"] = "COMPLETED" if "COMPLETED" in event_type else "DENIED"
-        else:
-            resource_type = "checkout-order"
-            resource["status"] = "APPROVED"
-
-        return {
-            "id": event_id,
-            "event_version": "1.0",
-            "create_time": now_str,
-            "resource_type": resource_type,
-            "event_type": event_type,
-            "summary": f"PayPal Webhook Notification: {event_type}",
-            "resource": resource
-        }
 
 mock_paypal = MockPayPalSandbox()

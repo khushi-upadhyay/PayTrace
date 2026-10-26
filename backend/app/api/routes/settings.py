@@ -14,10 +14,14 @@ def get_system_settings():
     return {
         "paypal": {
             "is_configured": settings.is_paypal_configured,
-            "environment": settings.PAYPAL_ENVIRONMENT,
+            "environment": settings.paypal_mode,
             "client_id_masked": masked_client_id,
             "webhook_id_configured": bool(settings.PAYPAL_WEBHOOK_ID),
-            "status_label": "Live PayPal Sandbox" if settings.is_paypal_configured else "Mock Sandbox (Credential-Free Demo)",
+            "status_label": (
+                f"PayPal {settings.paypal_mode.title()}"
+                if settings.is_paypal_configured
+                else "Simulated Demo (No PayPal API calls)"
+            ),
         },
         "ai": {
             "is_configured": settings.is_ai_configured,

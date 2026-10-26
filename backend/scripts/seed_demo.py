@@ -76,22 +76,7 @@ def run_seed(db: Session):
             received_at=created_time + timedelta(seconds=16), latency_ms=380, paypal_order_id=order_id,
             paypal_capture_id=capture_id, metadata_redacted={"status": "COMPLETED"}, is_simulated=True
         )
-        e4 = PaymentEvent(
-            id=str(uuid.uuid4()), payment_id=p_id, event_type="WEBHOOK_PAYMENT_CAPTURE_COMPLETED",
-            source="PAYPAL_WEBHOOK", status="SUCCESS", occurred_at=created_time + timedelta(seconds=18),
-            received_at=created_time + timedelta(seconds=18), paypal_order_id=order_id,
-            paypal_capture_id=capture_id, metadata_redacted={"signature_verified": True}, is_simulated=True
-        )
-        db.add_all([e1, e2, e3, e4])
-
-        wh = PayPalWebhook(
-            id=str(uuid.uuid4()), webhook_event_id=f"WH-EVT-SUCCESS-{i:03d}",
-            event_type="PAYMENT.CAPTURE.COMPLETED", resource_type="capture",
-            payment_id=p_id, payload_redacted={"amount": {"value": str(amount), "currency_code": "USD"}},
-            received_at=created_time + timedelta(seconds=18), processed_at=created_time + timedelta(seconds=18),
-            processing_status="PROCESSED", signature_verified=True
-        )
-        db.add(wh)
+        db.add_all([e1, e2, e3])
         payments_count += 1
 
     # 2. CRITICAL SCENARIO: Backend Timeout Before Receiving Capture Response (CAPTURE_UNCERTAIN)
@@ -210,13 +195,7 @@ def run_seed(db: Session):
         paypal_order_id=denied_order_id, paypal_capture_id=denied_capture_id,
         metadata_redacted={"decline_code": "INSTRUMENT_DECLINED"}, is_simulated=True
     )
-    d_e4 = PaymentEvent(
-        id=str(uuid.uuid4()), payment_id=denied_pid, event_type="WEBHOOK_PAYMENT_CAPTURE_DENIED",
-        source="PAYPAL_WEBHOOK", status="SUCCESS", occurred_at=denied_time + timedelta(seconds=12),
-        received_at=denied_time + timedelta(seconds=12), paypal_order_id=denied_order_id,
-        paypal_capture_id=denied_capture_id, is_simulated=True
-    )
-    db.add_all([d_e1, d_e2, d_e3, d_e4])
+    db.add_all([d_e1, d_e2, d_e3])
     payments_count += 1
 
     # 4. Refunded Payment with Approval Ticket
@@ -326,10 +305,31 @@ def run_seed(db: Session):
     db.commit()
     return {"payments": payments_count, "incidents": 2}
 
+
+def seed_if_empty(db: Session):
+    """Seed the demo once on a new database without replacing existing records."""
+    models = (
+        Payment,
+        PaymentEvent,
+        PayPalWebhook,
+        BrowserSession,
+        SessionEvent,
+        Incident,
+        ApprovalTicket,
+        AIInvestigation,
+    )
+    if any(db.query(model).first() is not None for model in models):
+        return {"seeded": False, "payments": 0, "incidents": 0}
+    counts = run_seed(db)
+    return {"seeded": True, **counts}
+
 if __name__ == "__main__":
     db = SessionLocal()
     try:
-        counts = run_seed(db)
-        print(f"Successfully seeded demo database: {counts['payments']} payments, {counts['incidents']} incidents.")
+        counts = seed_if_empty(db)
+        if counts["seeded"]:
+            print(f"Seeded empty database with {counts['payments']} simulated payments and {counts['incidents']} incidents.")
+        else:
+            print("Database contains existing records; demo seed skipped.")
     finally:
         db.close()

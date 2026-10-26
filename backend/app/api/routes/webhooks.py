@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, Depends, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app.schemas.webhook import WebhookIngestResponse
@@ -20,12 +21,10 @@ async def handle_paypal_webhook(request: Request, db: Session = Depends(get_db))
     try:
         payload = json.loads(raw_body.decode("utf-8"))
     except Exception:
-        return WebhookIngestResponse(
-            status="INVALID_JSON",
-            webhook_event_id="N/A",
-            event_type="UNKNOWN",
-            message="Malformed JSON body",
-        )
+        return JSONResponse(status_code=400, content={"detail": "Malformed JSON body"})
+
+    if not isinstance(payload, dict):
+        return JSONResponse(status_code=400, content={"detail": "Webhook body must be a JSON object"})
 
     res_status, message, payment_id = await webhook_processor.process_webhook(
         db=db,

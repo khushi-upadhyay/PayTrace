@@ -32,8 +32,8 @@ An evidence-grounded AI investigator explains root causes, cites supporting fact
    - Sensitive financial actions (refunds) require explicit operator review.
    - Neither AI agents nor simulators can execute irreversible transactions without human sign-off.
 
-6. **Interactive Demo Store & Scenario Simulator**
-   - Includes a full mock checkout store (`/checkout`), instant demo scenario triggers (`Simulate Timeout`, `Simulate Decline`), and a one-click demo data reset.
+6. **PayPal Checkout & ShelfSwipe Demo Catalog**
+   - `/checkout` runs the PayPal approval and capture flow. `/shelfswipe` provides a clearly labelled sample product catalog for local checkout testing.
 
 ---
 
@@ -72,7 +72,7 @@ flowchart TD
 ```text
 paytrace/
 ├── frontend/                     # Next.js 14 TypeScript Frontend
-│   ├── app/                      # App router pages (dashboard, payments, incidents, checkout, etc.)
+│   ├── app/                      # App router pages (dashboard, payments, incidents, checkout, ShelfSwipe, etc.)
 │   ├── components/               # Layout, headers, navigation, and visual panels
 │   ├── lib/                      # Type-safe API client and data contracts
 │   └── .env.example              # Frontend environment template
@@ -163,7 +163,7 @@ You can run PayTrace using **Docker Compose** or directly on your **local machin
    alembic upgrade head
    ```
 
-5. Seed demo records (12 realistic payments, 2 incidents, session replays):
+5. Seed the demo records on a fresh database (the command skips if existing payment, event, webhook, session, incident, or approval data is present):
    ```bash
    python scripts/seed_demo.py
    ```
@@ -172,7 +172,7 @@ You can run PayTrace using **Docker Compose** or directly on your **local machin
    ```bash
    uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
-   The backend API is available at [http://localhost:8000](http://localhost:8000) (Interactive Swagger Docs at [http://localhost:8000/docs](http://localhost:8000/docs)).
+   The backend API is available at [http://localhost:8000](http://localhost:8000) (Interactive Swagger Docs at [http://localhost:8000/docs](http://localhost:8000/docs)). The frontend root redirects to `/dashboard`; see [the route inventory](docs/routes.md).
 
 ---
 
@@ -294,17 +294,17 @@ PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver 
 ## 🎬 Step-by-Step Verification Procedure
 
 ### A. End-to-End Sandbox Checkout
-1. Open the **PayTrace Demo Store** at [http://localhost:3000/checkout](http://localhost:3000/checkout).
+1. Open **PayPal Checkout** at [http://localhost:3000/checkout](http://localhost:3000/checkout). The separate sample catalog is at [http://localhost:3000/shelfswipe](http://localhost:3000/shelfswipe).
 2. Select a demo item (e.g. `$49.99 Developer Cloud License`).
 3. Select **Standard Successful Payment** and click **Pay with PayPal Sandbox**.
-4. A PayPal Sandbox approval window opens. Log in with your Sandbox Personal buyer credentials and click **Complete Purchase / Pay Now**.
-5. Click **Confirm & Complete Capture** in PayTrace.
+4. With Sandbox credentials, approve the order in PayPal and return to PayTrace. In credential-free demo mode, the local approval screen asks you to explicitly simulate buyer approval; it does not contact PayPal or move money.
+5. PayTrace verifies the provider order status before requesting capture.
 6. The backend captures the payment with PayPal, records the timeline event, and displays the **`CAPTURED`** status.
-7. Click **Inspect Lifecycle in PayTrace** to view the real-time event trace:
+7. Click **Inspect Lifecycle in PayTrace** to view the event trace. A webhook entry appears only after an actual signature-verified Sandbox webhook delivery:
    - `CHECKOUT_ORDER_CREATED`
    - `CHECKOUT_ORDER_APPROVED`
    - `CAPTURE_COMPLETED`
-   - `WEBHOOK_PAYMENT_CAPTURE_COMPLETED` (verified via official PayPal webhook signature verification)
+   - A webhook event only when an actual, signature-verified PayPal delivery is received.
 
 ### B. Investigating Failure & Timeout Scenarios
 1. On the `/checkout` page, select **Merchant Backend Timeout / Ambiguous Capture State** or click **Simulate Timeout** in the header.

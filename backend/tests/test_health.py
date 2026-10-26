@@ -3,5 +3,6 @@ def test_health_check(client):
     assert response.status_code == 200
     data = response.json()
     assert data["status"] in ("healthy", "degraded")
-    assert "paypal_sandbox" in data
+    assert data["paypal_environment"] == "sandbox"
+    assert data["paypal_configured"] is False
     assert "ai_investigator" in data
