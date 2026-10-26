@@ -26,6 +26,7 @@ frontend/lib/*
 !frontend/lib/session-outbox.ts
 !frontend/lib/session-recording-policy.mjs
 !frontend/lib/session-recording-policy.test.mjs
+!frontend/lib/checkout-state.mjs
 lib64/
 parts/
 sdist/
