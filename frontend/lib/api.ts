@@ -88,10 +88,55 @@ function toQuery(params: Record<string, string | number | undefined>): string {
   return qs ? `?${qs}` : "";
 }
 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export interface AuthTokenResponse {
+  access_token: string;
+  token_type: string;
+  user: AuthUser;
+}
+
+const AUTH_TOKEN_KEY = "paytrace.auth.token";
+let unauthorizedHandler: (() => void) | null = null;
+
+export function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY) ?? sessionStorage.getItem(AUTH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** Persists the token (localStorage when `remember`, else this tab only); null clears it. */
+export function setAuthToken(token: string | null, remember = true): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    if (token) (remember ? localStorage : sessionStorage).setItem(AUTH_TOKEN_KEY, token);
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+export function onUnauthorized(handler: (() => void) | null): void {
+  unauthorizedHandler = handler;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${getApiBaseUrl()}${API_PREFIX}${path}`;
   const headers = new Headers(init?.headers);
   headers.set("Accept", "application/json");
+  const authToken = getAuthToken();
+  if (authToken && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${authToken}`);
+  }
   if (init?.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
@@ -112,6 +157,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const { message, detail } = await extractErrorMessage(res);
+    if (res.status === 401 && authToken && !path.startsWith("/auth/")) {
+      unauthorizedHandler?.();
+    }
     throw new ApiError(message, res.status, detail);
   }
 
@@ -484,6 +532,24 @@ export interface PaymentListParams {
 }
 
 export const api = {
+  me(): Promise<AuthUser> {
+    return request<AuthUser>("/auth/me");
+  },
+
+  login(email: string, password: string): Promise<AuthTokenResponse> {
+    return request<AuthTokenResponse>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+  },
+
+  register(name: string, email: string, password: string): Promise<AuthTokenResponse> {
+    return request<AuthTokenResponse>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
+  },
+
   createSession(body: { session_id?: string; visitor_ref?: string; user_agent?: string; metadata?: Record<string, unknown> }) {
     return request<{ id: string; visitor_ref: string; payment_id: string | null; started_at: string; recording_enabled: boolean }>(
       "/sessions",

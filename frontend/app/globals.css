@@ -1,56 +1,120 @@
+@import "./palette.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 240, 246, 252;
-  --background-start-rgb: 10, 14, 23;
-  --background-end-rgb: 15, 23, 42;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --ink: 0 20 53; /* PayPal navy-black */
+  --page-glow: 0 112 186;
+  --shadow-card: none;
+  --chart-grid: #e4e8ee;
+  --chart-axis: #6c7a89;
+  --chart-tooltip-bg: #ffffff;
+  --chart-tooltip-border: #cfd6df;
+  color-scheme: light;
 }
+
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: radial-gradient(circle at 50% 0%, rgb(18, 28, 48) 0%, rgb(10, 14, 23) 100%);
+  background: rgb(var(--slate-950));
+  color: rgb(var(--slate-100));
   min-height: 100vh;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  font-family: var(--font-sans), "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-/* Custom modern scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(56, 189, 248, 0.25);
-  border-radius: 3px;
+  background: rgb(var(--slate-700));
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(56, 189, 248, 0.45);
+  background: rgb(var(--slate-600));
 }
 
+/* Surfaces. Kept under their old names so existing pages pick up the PayPal look. */
 .glass-panel {
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgb(var(--slate-900) / 0.9);
+  border: 1px solid rgb(var(--slate-800));
+  box-shadow: var(--shadow-card);
 }
 
 .glass-card {
-  background: rgba(18, 26, 46, 0.6);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgb(var(--slate-900) / 0.7);
+  border: 1px solid rgb(var(--slate-800));
+  box-shadow: var(--shadow-card);
 }
 
-.glow-blue {
-  box-shadow: 0 0 25px -5px rgba(56, 189, 248, 0.15);
-}
-
-.glow-amber {
-  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.2);
-}
-
+.glow-blue,
+.glow-amber,
 .glow-red {
-  box-shadow: 0 0 25px -5px rgba(239, 68, 68, 0.2);
+  box-shadow: var(--shadow-card);
+}
+
+/* PayPal-style pill buttons */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.btn-pill:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.btn-pill-primary {
+  background: #2c4fae;
+  color: #fff;
+}
+.btn-pill-primary:hover:not(:disabled) {
+  background: #1e2d8a;
+}
+.btn-pill-outline {
+  border: 1px solid #2c4fae;
+  color: #2c4fae;
+  background: transparent;
+}
+.btn-pill-outline:hover:not(:disabled) {
+  background: rgb(44 79 174 / 0.08);
+  border-color: #1e2d8a;
+  color: #1e2d8a;
+}
+
+/* PayPal-style black / grey pills used on the public pages */
+.btn-pill-black {
+  background: #000;
+  color: #fff;
+}
+.btn-pill-black:hover:not(:disabled) {
+  background: #2a2a2a;
+}
+.btn-pill-grey {
+  background: #eaeef3;
+  color: #000;
+}
+.btn-pill-grey:hover:not(:disabled) {
+  background: #dde3ea;
+}
+.btn-pill-white {
+  background: #fff;
+  color: #000;
+}
+.btn-pill-white:hover:not(:disabled) {
+  background: #eef2f7;
+}
+
+.font-display {
+  font-family: var(--font-display), "Helvetica Neue", Helvetica, Arial, sans-serif;
 }

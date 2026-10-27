@@ -64,17 +64,16 @@ export default function PaymentsPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto animate-fadeIn">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <CreditCard className="w-6 h-6 text-cyan-400" />
+          <h1 className="font-display text-4xl font-bold tracking-tight text-black">
             Payment Ledger
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-base text-black/70 mt-2">
             Searchable log of PayPal transactions, correlated event timelines, and failure statuses.
           </p>
         </div>
-        <div className="text-xs font-mono text-slate-400 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
+        <div className="text-xs text-slate-400 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
           Total Records: <span className="text-cyan-400 font-bold">{total}</span>
         </div>
       </div>
@@ -89,7 +88,7 @@ export default function PaymentsPage() {
             placeholder="Search by Payment ID, Order ID, Customer, or Failure Reason..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-slate-900/80 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+            className="w-full pl-10 pr-4 py-2 bg-slate-900/80 border border-slate-800 rounded-lg text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
           />
         </form>
 
@@ -157,7 +156,7 @@ export default function PaymentsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900/60 border-b border-slate-800 text-slate-400 font-mono uppercase text-[10px]">
+              <thead className="bg-slate-900/60 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
                 <tr>
                   <th className="px-5 py-3">PayTrace ID</th>
                   <th className="px-5 py-3">PayPal Order ID</th>
@@ -173,16 +172,16 @@ export default function PaymentsPage() {
               <tbody className="divide-y divide-slate-800/80">
                 {payments.map((p) => (
                   <tr key={p.id} className="hover:bg-slate-900/40 transition-colors">
-                    <td className="px-5 py-3.5 font-mono text-cyan-400 font-medium">
+                    <td className="px-5 py-3.5 text-cyan-400 font-medium">
                       {p.id.slice(0, 10)}...
                     </td>
-                    <td className="px-5 py-3.5 font-mono text-slate-300">
+                    <td className="px-5 py-3.5 text-slate-300">
                       {p.paypal_order_id || "—"}
                     </td>
-                    <td className="px-5 py-3.5 text-slate-300 font-mono text-[11px]">
+                    <td className="px-5 py-3.5 text-slate-300 text-[11px]">
                       {p.customer_ref}
                     </td>
-                    <td className="px-5 py-3.5 font-semibold text-white">
+                    <td className="px-5 py-3.5 font-semibold text-ink">
                       ${Number(p.amount).toFixed(2)} {p.currency}
                     </td>
                     <td className="px-5 py-3.5">
@@ -207,7 +206,7 @@ export default function PaymentsPage() {
                     </td>
                     <td className="px-5 py-3.5">
                       <span
-                        className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                        className={`text-[10px] px-2 py-0.5 rounded border ${
                           p.source_mode === "SIMULATED"
                             ? "bg-slate-900 text-slate-400 border-slate-800"
                             : "bg-cyan-950 text-cyan-300 border-cyan-800/60"
@@ -238,8 +237,8 @@ export default function PaymentsPage() {
         {/* Pagination Bar */}
         <div className="p-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
           <div>
-            Showing Page <span className="text-white font-bold">{page}</span> of{" "}
-            <span className="text-white font-bold">{totalPages}</span>
+            Showing Page <span className="text-ink font-bold">{page}</span> of{" "}
+            <span className="text-ink font-bold">{totalPages}</span>
           </div>
           <div className="flex items-center gap-2">
             <button

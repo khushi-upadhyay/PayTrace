@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     AI_API_KEY: Optional[str] = ""
     AI_MODEL: str = "gpt-4o-mini"
 
+    DEMO_OPERATOR_TOKEN: str = "demo-operator-secret-token"
+    AUTH_SECRET_KEY: str = "dev-only-change-me-paytrace-auth-secret"
+    AUTH_TOKEN_TTL_MINUTES: int = 720
     FRONTEND_ORIGIN: str = "http://localhost:3000"
     OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
     APIMATIC_API_KEY: Optional[str] = None
