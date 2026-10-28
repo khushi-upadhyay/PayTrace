@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
+from app.db.models.user import User
 from app.core.time import utc_now
 from app.db.models.incident import Incident
 from app.db.models.payment import Payment
@@ -17,7 +18,7 @@ from app.services.incidents.detector import incident_detector
 router = APIRouter(prefix="/incidents", tags=["Incidents"])
 
 @router.get("", response_model=IncidentListResponse)
-def list_incidents(db: Session = Depends(get_db)):
+def list_incidents(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Lists detected payment incidents, evaluating rules on the fly."""
     incident_detector.evaluate_system_health(db)
     incidents = db.query(Incident).order_by(Incident.started_at.desc()).all()
@@ -27,7 +28,7 @@ def list_incidents(db: Session = Depends(get_db)):
     )
 
 @router.get("/{incident_id}", response_model=IncidentDetailResponse)
-def get_incident(incident_id: str, db: Session = Depends(get_db)):
+def get_incident(incident_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Retrieves detailed incident diagnosis with linked affected payments."""
     inc = db.query(Incident).filter(Incident.id == incident_id).first()
     if not inc:
@@ -47,7 +48,7 @@ def get_incident(incident_id: str, db: Session = Depends(get_db)):
     return resp
 
 @router.post("/{incident_id}/report", response_model=IncidentReportResponse)
-def generate_incident_report(incident_id: str, db: Session = Depends(get_db)):
+def generate_incident_report(incident_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Generates an executive diagnostic incident report."""
     inc = db.query(Incident).filter(Incident.id == incident_id).first()
     if not inc:

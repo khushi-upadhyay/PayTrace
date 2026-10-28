@@ -71,7 +71,7 @@ export default function IncidentDetailPage() {
       <div className="glass-panel p-8 rounded-xl border border-rose-500/30 text-center space-y-4 max-w-xl mx-auto my-12">
         <AlertTriangle className="w-10 h-10 text-rose-400 mx-auto" />
         <h2 className="text-lg font-bold text-ink">Incident Not Found</h2>
-        <Link href="/incidents" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg inline-block">
+        <Link href="/incidents" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg inline-block transition-colors duration-150">
           Back to Incidents
         </Link>
       </div>
@@ -220,7 +220,7 @@ export default function IncidentDetailPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/80">
-              {incident.affected_payments?.map((p) => (
+              {incident.affected_payments?.map((p: any) => (
                 <tr key={p.id} className="hover:bg-slate-900/40 transition-colors">
                   <td className="px-5 py-3.5 text-cyan-400 font-medium">
                     {p.id.slice(0, 14)}...

@@ -65,7 +65,7 @@ export default function AnalyticsPage() {
       <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
         <p className="text-sm font-semibold text-rose-200">Analytics are unavailable</p>
         <p className="mt-2 text-xs text-slate-400">{loadError || "No analytics response was returned."}</p>
-        <button onClick={fetchAnalytics} className="mt-4 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white hover:bg-slate-700">Retry</button>
+        <button onClick={fetchAnalytics} className="mt-4 rounded-lg bg-paypal-navy px-3 py-2 text-xs text-onsolid transition-colors duration-150 hover:bg-paypal-blue">Retry</button>
       </div>
     );
   }

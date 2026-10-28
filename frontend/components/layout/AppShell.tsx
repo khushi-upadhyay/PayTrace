@@ -60,8 +60,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <TopNav />
-      <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>
-      <footer className="mt-8 border-t border-slate-800 bg-white">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-8">{children}</main>
+      <footer className="mt-8 shrink-0 border-t border-slate-800 bg-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-3 px-6 py-8">
           <Logo href="/dashboard" />
           <Link href="/settings" className="text-base text-black hover:underline">Help</Link>

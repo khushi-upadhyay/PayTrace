@@ -11,6 +11,7 @@ import { useAuth } from "@/components/providers/AuthProvider";
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Summary" },
   { href: "/payments", label: "Payments" },
+  { href: "/sessions", label: "Session Replay" },
   { href: "/incidents", label: "Incidents" },
   { href: "/investigate", label: "AI Investigator" },
   { href: "/approvals", label: "Approvals" },
@@ -50,13 +51,13 @@ export function TopNav() {
       <div className="mx-auto flex h-[68px] max-w-7xl items-center gap-6 px-6">
         <Logo href="/dashboard" tone="light" />
 
-        <nav aria-label="Main" className="hidden flex-1 items-stretch self-stretch lg:flex">
+        <nav aria-label="Main" className="hidden flex-1 items-stretch gap-0.5 self-stretch lg:flex">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
-              className={`my-3 flex items-center rounded-full px-4 text-[15px] font-medium transition-colors ${
+              className={`my-3 flex shrink-0 items-center whitespace-nowrap rounded-full px-3 text-sm font-medium transition-colors duration-150 ${
                 isActive(item.href) ? "bg-white/15 text-white" : "text-white/85 hover:bg-white/10 hover:text-white"
               }`}
             >
@@ -74,7 +75,7 @@ export function TopNav() {
                 onClick={() => setMenuOpen((v) => !v)}
                 aria-label="Account menu"
                 aria-expanded={menuOpen}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-bold text-paypal-navy hover:bg-paypal-sky"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-bold text-paypal-navy transition-colors duration-150 hover:bg-paypal-sky"
               >
                 {initials(user.name)}
               </button>
@@ -107,8 +108,8 @@ export function TopNav() {
             key={item.href}
             href={item.href}
             aria-current={isActive(item.href) ? "page" : undefined}
-            className={`my-2 shrink-0 rounded-full px-3.5 py-1.5 text-sm font-medium ${
-              isActive(item.href) ? "bg-white/15 text-white" : "text-white/85"
+            className={`my-2 shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-150 ${
+              isActive(item.href) ? "bg-white/15 text-white" : "text-white/85 hover:bg-white/10 hover:text-white"
             }`}
           >
             {item.label}

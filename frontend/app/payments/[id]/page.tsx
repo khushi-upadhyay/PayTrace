@@ -169,7 +169,7 @@ export default function PaymentDetailPage() {
         <AlertTriangle className="w-10 h-10 text-rose-400 mx-auto" />
         <h2 className="text-lg font-bold text-ink">Payment Record Not Found</h2>
         <p className="text-xs text-slate-400">{error || "Payment record could not be loaded."}</p>
-        <Link href="/payments" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg inline-block">
+        <Link href="/payments" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg inline-block transition-colors duration-150">
           Return to Ledger
         </Link>
       </div>
@@ -284,7 +284,7 @@ export default function PaymentDetailPage() {
               {payment.paypal_order_id && (
                 <button
                   onClick={() => handleCopy(payment.paypal_order_id!, "oid")}
-                  className="text-slate-500 hover:text-cyan-400"
+                  className="text-slate-500 transition-colors duration-150 hover:text-cyan-400"
                 >
                   <Copy className="w-3 h-3" />
                 </button>
@@ -301,7 +301,7 @@ export default function PaymentDetailPage() {
               {payment.paypal_capture_id && (
                 <button
                   onClick={() => handleCopy(payment.paypal_capture_id!, "cid")}
-                  className="text-slate-500 hover:text-cyan-400"
+                  className="text-slate-500 transition-colors duration-150 hover:text-cyan-400"
                 >
                   <Copy className="w-3 h-3" />
                 </button>
@@ -375,7 +375,7 @@ export default function PaymentDetailPage() {
 
             {/* Timeline Events Stack */}
             <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-800">
-              {timeline?.events.map((ev, idx) => (
+              {timeline?.events.map((ev: any, idx: number) => (
                 <div key={ev.id} className="relative group">
                   {/* Event Marker Dot */}
                   <div
@@ -466,7 +466,7 @@ export default function PaymentDetailPage() {
                 Session ID <span className="text-slate-200">{sessionInfo.session_id}</span> recorded
                 with privacy masking on input elements. PayPal-hosted pages are not recorded.
               </p>
-              <Link href={`/sessions/${sessionInfo.session_id}`} className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-950/30 px-3 py-2 text-xs font-semibold text-cyan-200 hover:bg-cyan-950/60">
+              <Link href={`/sessions/${sessionInfo.session_id}`} className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-950/30 px-3 py-2 text-xs font-semibold text-cyan-200 transition-colors duration-150 hover:bg-cyan-950/60">
                 Replay customer session <Video className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -549,7 +549,7 @@ export default function PaymentDetailPage() {
                       Verified Provider Facts
                     </span>
                     <ul className="space-y-1.5">
-                      {investigation.facts.map((fact, idx) => (
+                      {investigation.facts.map((fact: any, idx: number) => (
                         <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2 rounded border border-slate-800/60">
                           <span className="text-emerald-400 font-bold">•</span>
                           <span>{fact}</span>
@@ -565,7 +565,7 @@ export default function PaymentDetailPage() {
                       Investigative Inferences
                     </span>
                     <ul className="space-y-1.5">
-                      {investigation.inferences.map((inf, idx) => (
+                      {investigation.inferences.map((inf: any, idx: number) => (
                         <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2 rounded border border-slate-800/60">
                           <span className="text-sky-400 font-bold">↳</span>
                           <span>{inf}</span>
@@ -708,7 +708,7 @@ export default function PaymentDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowRefundModal(false)}
-                className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-ink"
+                className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 transition-colors duration-150 hover:text-ink"
               >
                 Cancel
               </button>

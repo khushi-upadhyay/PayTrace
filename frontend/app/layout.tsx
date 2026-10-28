@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${display.variable} min-h-screen bg-slate-950 text-slate-100 antialiased`}>
+      <body className={`${display.variable} flex min-h-screen flex-col bg-slate-950 text-slate-100 antialiased`}>
         <AuthProvider>
           <SessionRecordingProvider>
             <AppShell>{children}</AppShell>

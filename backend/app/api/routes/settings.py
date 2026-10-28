@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
 from app.core.config import settings
+from app.db.models.user import User
 
 router = APIRouter(prefix="/settings", tags=["Settings"])
 
 @router.get("")
-def get_system_settings(db: Session = Depends(get_db)):
+def get_system_settings(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Returns safe integration configuration status without exposing credentials."""
     masked_client_id = ""
     if settings.PAYPAL_CLIENT_ID:

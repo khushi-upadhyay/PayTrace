@@ -143,7 +143,7 @@ export default function PaymentsPage() {
             <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
             <p className="text-sm font-semibold text-slate-200">Payment records could not be loaded</p>
             <p className="text-xs text-slate-400">{loadError}</p>
-            <button onClick={fetchPayments} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold">
+            <button onClick={fetchPayments} className="px-4 py-2 bg-paypal-navy hover:bg-paypal-blue text-onsolid rounded-lg text-xs font-semibold transition-colors duration-150">
               Retry
             </button>
           </div>
@@ -154,37 +154,37 @@ export default function PaymentsPage() {
             <p className="text-xs text-slate-500">Try adjusting your search criteria or resetting demo data.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div>
+            <table className="w-full table-fixed text-left text-xs">
               <thead className="bg-slate-900/60 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
                 <tr>
-                  <th className="px-5 py-3">PayTrace ID</th>
-                  <th className="px-5 py-3">PayPal Order ID</th>
-                  <th className="px-5 py-3">Customer</th>
-                  <th className="px-5 py-3">Amount</th>
-                  <th className="px-5 py-3">Status</th>
-                  <th className="px-5 py-3">Failure Reason</th>
-                  <th className="px-5 py-3">Source</th>
-                  <th className="px-5 py-3">Created</th>
-                  <th className="px-5 py-3 text-right">Action</th>
+                  <th className="px-3 py-3 w-[11%]">PayTrace ID</th>
+                  <th className="px-3 py-3 w-[11%]">PayPal Order ID</th>
+                  <th className="px-3 py-3 w-[12%]">Customer</th>
+                  <th className="px-3 py-3 w-[10%]">Amount</th>
+                  <th className="px-3 py-3 w-[11%]">Status</th>
+                  <th className="px-3 py-3 w-[18%]">Failure Reason</th>
+                  <th className="px-3 py-3 w-[9%]">Source</th>
+                  <th className="px-3 py-3 w-[10%]">Created</th>
+                  <th className="px-3 py-3 w-[8%] text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/80">
                 {payments.map((p) => (
                   <tr key={p.id} className="hover:bg-slate-900/40 transition-colors">
-                    <td className="px-5 py-3.5 text-cyan-400 font-medium">
+                    <td className="px-3 py-3.5 text-cyan-400 font-medium">
                       {p.id.slice(0, 10)}...
                     </td>
-                    <td className="px-5 py-3.5 text-slate-300">
+                    <td className="px-3 py-3.5 text-slate-300">
                       {p.paypal_order_id || "—"}
                     </td>
-                    <td className="px-5 py-3.5 text-slate-300 text-[11px]">
+                    <td className="px-3 py-3.5 text-slate-300 text-[11px]">
                       {p.customer_ref}
                     </td>
-                    <td className="px-5 py-3.5 font-semibold text-ink">
+                    <td className="px-3 py-3.5 font-semibold text-ink">
                       ${Number(p.amount).toFixed(2)} {p.currency}
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 py-3.5">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide ${
                           p.status === "CAPTURED"
@@ -201,10 +201,10 @@ export default function PaymentsPage() {
                         {p.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-slate-400 max-w-xs truncate">
+                    <td className="px-3 py-3.5 text-slate-400 truncate">
                       {p.failure_reason || (p.status === "CAPTURED" ? "Normal settlement" : "—")}
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-3 py-3.5">
                       <span
                         className={`text-[10px] px-2 py-0.5 rounded border ${
                           p.source_mode === "SIMULATED"
@@ -215,10 +215,10 @@ export default function PaymentsPage() {
                         {p.source_mode === "SIMULATED" ? "DEMO SIM" : "SANDBOX"}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-slate-500 text-[11px]">
+                    <td className="px-3 py-3.5 text-slate-500 text-[11px]">
                       {new Date(p.created_at).toLocaleDateString()} {new Date(p.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="px-5 py-3.5 text-right">
+                    <td className="px-3 py-3.5 text-right">
                       <Link
                         href={`/payments/${p.id}`}
                         className="px-2.5 py-1 rounded bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-800/80 text-cyan-300 text-[11px] font-medium transition-colors inline-flex items-center gap-1"

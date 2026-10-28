@@ -63,7 +63,7 @@ export default function IncidentsPage() {
         <div role="alert" className="rounded-xl border border-rose-500/30 bg-rose-950/20 p-6 text-center">
           <p className="text-sm font-semibold text-rose-200">Incident data is unavailable</p>
           <p className="mt-2 text-xs text-slate-400">{loadError}</p>
-          <button onClick={fetchIncidents} className="mt-3 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white hover:bg-slate-700">Retry</button>
+          <button onClick={fetchIncidents} className="mt-3 rounded-lg bg-paypal-navy px-3 py-2 text-xs text-onsolid transition-colors duration-150 hover:bg-paypal-blue">Retry</button>
         </div>
       ) : incidents.length === 0 ? (
         <div className="glass-panel p-12 rounded-xl text-center space-y-3 border border-slate-800">
@@ -80,8 +80,8 @@ export default function IncidentsPage() {
               key={inc.id}
               className={`glass-panel rounded-2xl p-6 border transition-all duration-200 ${
                 inc.severity === "HIGH" || inc.severity === "CRITICAL"
-                  ? "border-amber-500/30 hover:border-amber-500/50 glow-amber"
-                  : "border-slate-800 hover:border-slate-700"
+                  ? "border-amber-500/30 hover:border-amber-500/50 glow-amber transition-colors duration-150"
+                  : "border-slate-800 hover:border-slate-700 transition-colors duration-150"
               }`}
             >
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">

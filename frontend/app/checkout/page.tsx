@@ -18,6 +18,7 @@ import {
   AlertTriangle,
   Loader2,
   Lock,
+  ArrowLeft,
   ArrowRight,
   ShieldAlert,
   Zap,
@@ -35,6 +36,7 @@ const PRODUCTS = [
 const CHECKOUT_CURRENCY = "USD";
 
 function CheckoutContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { sessionId, addSessionMarker } = useSessionRecording();
 
@@ -272,6 +274,14 @@ function CheckoutContent() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-fadeIn pb-16">
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 transition-colors duration-150 hover:text-ink"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Go back
+      </button>
       {/* Header */}
       <div className="text-center space-y-2 pb-4 border-b border-slate-800">
         <h1 className="text-2xl font-bold tracking-tight text-ink flex items-center justify-center gap-2.5">

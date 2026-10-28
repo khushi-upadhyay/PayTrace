@@ -103,7 +103,7 @@ export default function DashboardPage() {
         <p className="text-xs text-slate-400">{error || "Could not retrieve analytics data from backend."}</p>
         <button
           onClick={loadData}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg"
+          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg transition-colors duration-150"
         >
           Retry Connection
         </button>
@@ -130,7 +130,7 @@ export default function DashboardPage() {
       {openIncident && (
         <Link
           href={reviewHref}
-          className="relative left-1/2 -mt-8 mb-0 flex w-screen -translate-x-1/2 items-center bg-[#c3281c] text-white hover:bg-[#b02217]"
+          className="relative left-1/2 -mt-8 mb-0 flex w-screen -translate-x-1/2 items-center bg-[#c3281c] text-white transition-colors duration-150 hover:bg-[#b02217]"
         >
           <div className="mx-auto flex w-full max-w-7xl items-center gap-4 px-6 py-5">
             <AlertTriangle className="h-5 w-5 shrink-0" />
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                   ? `${openIncident.affected_payment_count} payment(s) need a look, $${Number(openIncident.revenue_at_risk).toFixed(2)} at risk.`
                   : "No open incidents. Check past detections and diagnostic reports."}
               </p>
-              <Link href={reviewHref} className="mt-auto rounded-full border-2 border-white bg-white py-3 text-center text-lg font-bold text-paypal-navy hover:bg-white/90">
+              <Link href={reviewHref} className="mt-auto rounded-full border-2 border-white bg-white py-3 text-center text-lg font-bold text-paypal-navy transition-colors duration-150 hover:bg-white/90">
                 {openIncident ? "Review incident" : "View incidents"}
               </Link>
             </div>
@@ -197,7 +197,7 @@ export default function DashboardPage() {
               <p className="mt-3 text-lg leading-snug text-white/90">
                 Find the root cause of any payment from verified PayPal events, logs and browser activity.
               </p>
-              <Link href="/investigate" className="mt-auto rounded-full border-2 border-white bg-white py-3 text-center text-lg font-bold text-paypal-navy hover:bg-white/90">
+              <Link href="/investigate" className="mt-auto rounded-full border-2 border-white bg-white py-3 text-center text-lg font-bold text-paypal-navy transition-colors duration-150 hover:bg-white/90">
                 Open investigator
               </Link>
             </div>
@@ -306,10 +306,10 @@ export default function DashboardPage() {
             </button>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <Link href="/payments" className="rounded-full bg-paypal-navy py-3.5 text-center text-lg font-bold text-white hover:bg-paypal-blue">
+            <Link href="/payments" className="rounded-full bg-paypal-navy py-3.5 text-center text-lg font-bold text-white transition-colors duration-150 hover:bg-paypal-blue">
               Payments
             </Link>
-            <Link href="/approvals" className="rounded-full bg-paypal-navy py-3.5 text-center text-lg font-bold text-white hover:bg-paypal-blue">
+            <Link href="/approvals" className="rounded-full bg-paypal-navy py-3.5 text-center text-lg font-bold text-white transition-colors duration-150 hover:bg-paypal-blue">
               Approvals
             </Link>
           </div>
@@ -321,7 +321,7 @@ export default function DashboardPage() {
               { href: "/checkout", icon: ShoppingCart, label: "Try the demo store" },
             ].map(({ href, icon: Icon, label }) => (
               <Link key={href} href={href} className="group flex flex-col items-center gap-2">
-                <span className="flex h-[74px] w-[74px] items-center justify-center rounded-full bg-[#f4f1ea] text-paypal-navy group-hover:bg-[#e9e5db]">
+                <span className="flex h-[74px] w-[74px] items-center justify-center rounded-full bg-[#f4f1ea] text-paypal-navy transition-colors duration-150 group-hover:bg-[#e9e5db]">
                   <Icon className="h-7 w-7" />
                 </span>
                 <span className="text-base leading-tight text-black">{label}</span>

@@ -3,7 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import Optional
 from datetime import timezone
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
+from app.db.models.user import User
 from app.db.models.session import Session as BrowserSession
 from app.db.models.payment import Payment
 from app.schemas.session import (
@@ -23,6 +24,7 @@ router = APIRouter(prefix="/sessions", tags=["Sessions"])
 def list_sessions(
     limit: int = Query(100, ge=1, le=200),
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
     """Returns recent browser sessions with event counts for the replay inbox."""
     rows = (
@@ -99,6 +101,7 @@ def get_session_replay(
     offset: int = Query(0, ge=0),
     tab_id: Optional[str] = Query(default=None, max_length=64),
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
     """Returns one bounded page of replay and investigation events with accurate counts."""
     session = db.query(BrowserSession).filter(BrowserSession.id == session_id).first()
@@ -163,7 +166,7 @@ def get_session_replay(
 payment_session_router = APIRouter(prefix="/payments", tags=["Sessions"])
 
 @payment_session_router.get("/{payment_id}/session")
-def get_payment_session(payment_id: str, db: Session = Depends(get_db)):
+def get_payment_session(payment_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Retrieves session metadata linked to a payment."""
     payment = db.query(Payment).filter(Payment.id == payment_id).first()
     if not payment:

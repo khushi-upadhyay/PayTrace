@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
+from app.db.models.user import User
 from app.schemas.ai import (
     AIInvestigationRequest,
     AIInvestigationResponse,
@@ -12,7 +13,7 @@ from app.agents.investigator import ai_investigator
 router = APIRouter(prefix="/ai", tags=["AI Investigator"])
 
 @router.post("/investigate", response_model=AIInvestigationResponse)
-async def investigate_payment(req: AIInvestigationRequest, db: Session = Depends(get_db)):
+async def investigate_payment(req: AIInvestigationRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """
     Executes cross-signal AI investigation over payment and session facts,
     returning structured findings, confidence score, facts vs inferences,
@@ -30,7 +31,7 @@ async def investigate_payment(req: AIInvestigationRequest, db: Session = Depends
     return response
 
 @router.post("/chat", response_model=AIChatResponse)
-async def chat_with_investigator(req: AIChatRequest, db: Session = Depends(get_db)):
+async def chat_with_investigator(req: AIChatRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Provides evidence-grounded follow-up answers to operator inquiries."""
     messages_dict = [m.model_dump() for m in req.messages]
     result = await ai_investigator.chat(

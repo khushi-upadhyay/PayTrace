@@ -16,6 +16,12 @@ test("rrweb URL attributes and text are redacted before persistence", () => {
   assert.equal(event.data.image.src, "[REDACTED_URL]");
 });
 
+test("inlined stylesheet text is preserved untruncated for replay fidelity", () => {
+  const longCssText = `:root { --slate-400: 71 85 105; --slate-500: 100 116 139; }${"\n.util { color: red; }".repeat(50)}`;
+  const event = sanitizeRrwebEvent({ type: 2, attributes: { _cssText: longCssText } }, "https://app.test/checkout");
+  assert.equal(event.attributes._cssText, longCssText);
+});
+
 test("fetch instrumentation records real request details once and omits upload traffic", async () => {
   const events = [];
   const target = {

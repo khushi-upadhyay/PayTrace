@@ -37,6 +37,7 @@ export function sanitizeRrwebEvent(event, baseUrl) {
   const sensitiveField = /authorization|token|secret|password|credential|cookie|card|cvv|cvc|email|phone|buyer/i;
   const visit = (value, key = "") => {
     if (typeof value === "string") {
+      if (key === "_cssText") return value;
       if (sensitiveField.test(key)) return "[REDACTED]";
       if (urlFields.has(key.toLowerCase())) {
         if (/^(data|blob|javascript):/i.test(value)) return "[REDACTED_URL]";

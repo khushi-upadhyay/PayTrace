@@ -60,7 +60,7 @@ export default function SettingsPage() {
       <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
         <p className="text-sm font-semibold text-rose-200">Settings are unavailable</p>
         <p className="mt-2 text-xs text-slate-400">{loadError || "No settings response was returned."}</p>
-        <button onClick={() => void loadSettings()} className="mt-4 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white hover:bg-slate-700">Retry</button>
+        <button onClick={() => void loadSettings()} className="mt-4 rounded-lg bg-paypal-navy px-3 py-2 text-xs text-onsolid transition-colors duration-150 hover:bg-paypal-blue">Retry</button>
       </div>
     );
   }
@@ -179,7 +179,7 @@ export default function SettingsPage() {
           <code className="text-xs text-cyan-300 flex-1 truncate">{webhookUrl}</code>
           <button
             onClick={handleCopyWebhookUrl}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-ink rounded text-xs font-semibold flex items-center gap-1"
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-ink rounded text-xs font-semibold flex items-center gap-1 transition-colors duration-150"
           >
             <Copy className="w-3.5 h-3.5" />
             {copiedUrl ? "Copied" : "Copy"}

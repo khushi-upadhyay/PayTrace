@@ -33,7 +33,7 @@ export default function InvestigateHubPage() {
       if (res.items.length > 0) {
         // Default to uncertain or failed payment if available
         const preferred = res.items.find(
-          (p) => p.status === "CAPTURE_UNCERTAIN" || p.status === "DENIED"
+          (p: any) => p.status === "CAPTURE_UNCERTAIN" || p.status === "DENIED"
         ) || res.items[0];
         setSelectedPaymentId(preferred.id);
       }
@@ -223,7 +223,7 @@ export default function InvestigateHubPage() {
                     Verified Facts (From Payment & Provider Logs)
                   </span>
                   <ul className="space-y-1.5">
-                    {investigation.facts.map((fact, idx) => (
+                    {investigation.facts.map((fact: any, idx: number) => (
                       <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2.5 rounded border border-slate-800">
                         <span className="text-emerald-400 font-bold">•</span>
                         <span>{fact}</span>
@@ -238,7 +238,7 @@ export default function InvestigateHubPage() {
                     Logical Inferences
                   </span>
                   <ul className="space-y-1.5">
-                    {investigation.inferences.map((inf, idx) => (
+                    {investigation.inferences.map((inf: any, idx: number) => (
                       <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2.5 rounded border border-slate-800">
                         <span className="text-sky-400 font-bold">↳</span>
                         <span>{inf}</span>
