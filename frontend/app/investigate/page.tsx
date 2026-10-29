@@ -33,7 +33,7 @@ export default function InvestigateHubPage() {
       if (res.items.length > 0) {
         // Default to uncertain or failed payment if available
         const preferred = res.items.find(
-          (p) => p.status === "CAPTURE_UNCERTAIN" || p.status === "DENIED"
+          (p: any) => p.status === "CAPTURE_UNCERTAIN" || p.status === "DENIED"
         ) || res.items[0];
         setSelectedPaymentId(preferred.id);
       }
@@ -84,13 +84,12 @@ export default function InvestigateHubPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto animate-fadeIn pb-16">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Brain className="w-6 h-6 text-cyan-400" />
+          <h1 className="font-display text-4xl font-bold tracking-tight text-black">
             AI Investigation Hub
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-base text-black/70 mt-2">
             Autonomous root-cause investigator grounded in PayPal APIs, webhooks, and customer telemetry.
           </p>
         </div>
@@ -101,11 +100,11 @@ export default function InvestigateHubPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Payment Selector */}
           <div className="md:col-span-5 space-y-1.5">
-            <label className="text-xs font-mono text-slate-400">Select Target Payment</label>
+            <label className="text-xs text-slate-400">Select Target Payment</label>
             <select
               value={selectedPaymentId}
               onChange={(e) => setSelectedPaymentId(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono"
+              className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-ink focus:outline-none focus:border-cyan-500"
             >
               {payments.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -117,20 +116,20 @@ export default function InvestigateHubPage() {
 
           {/* Investigation Query */}
           <div className="md:col-span-7 space-y-1.5">
-            <label className="text-xs font-mono text-slate-400">Investigation Prompt / Question</label>
+            <label className="text-xs text-slate-400">Investigation Prompt / Question</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Ask investigator to explain root cause..."
-                className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3.5 py-2 text-xs text-ink focus:outline-none focus:border-cyan-500"
               />
               <button
                 type="button"
                 onClick={() => handleRunInvestigation()}
                 disabled={loading || !selectedPaymentId}
-                className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs rounded-lg transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-1.5 shrink-0 disabled:opacity-50"
+                className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-onsolid font-bold text-xs rounded-lg transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-1.5 shrink-0 disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
                 Investigate
@@ -142,10 +141,10 @@ export default function InvestigateHubPage() {
         {/* Selected Payment Snapshot chip */}
         {selectedPayment && (
           <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-slate-800/80 text-xs">
-            <span className="text-slate-400 font-mono text-[11px]">Snapshot:</span>
-            <span className="font-mono text-slate-200">{selectedPayment.paypal_order_id || "No Provider Order ID"}</span>
+            <span className="text-slate-400 text-[11px]">Snapshot:</span>
+            <span className="text-slate-200">{selectedPayment.paypal_order_id || "No Provider Order ID"}</span>
             <span className="text-slate-500">•</span>
-            <span className="font-bold text-white">${Number(selectedPayment.amount).toFixed(2)} {selectedPayment.currency}</span>
+            <span className="font-bold text-ink">${Number(selectedPayment.amount).toFixed(2)} {selectedPayment.currency}</span>
             <span className="text-slate-500">•</span>
             <span
               className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -159,7 +158,7 @@ export default function InvestigateHubPage() {
               {selectedPayment.status}
             </span>
             <span className="text-slate-500">•</span>
-            <span className="text-slate-400 font-mono text-[11px]">{selectedPayment.customer_ref}</span>
+            <span className="text-slate-400 text-[11px]">{selectedPayment.customer_ref}</span>
           </div>
         )}
       </div>
@@ -169,7 +168,7 @@ export default function InvestigateHubPage() {
         <div className="glass-panel rounded-2xl p-8 border border-cyan-500/30 text-center space-y-4">
           <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mx-auto" />
           <div className="space-y-1">
-            <h3 className="text-sm font-bold text-white">Running Cross-Signal Evidence Tools...</h3>
+            <h3 className="text-sm font-bold text-ink">Running Cross-Signal Evidence Tools...</h3>
             <p className="text-xs text-slate-400">
               [1] Querying PayPal API facts → [2] Correlating webhooks → [3] Analyzing customer checkout session → [4] Benchmarking divergences
             </p>
@@ -186,7 +185,7 @@ export default function InvestigateHubPage() {
               {/* Header */}
               <div className="flex items-center justify-between pb-4 border-b border-slate-800">
                 <div>
-                  <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <h2 className="text-base font-bold text-ink flex items-center gap-2">
                     <Brain className="w-5 h-5 text-cyan-400" />
                     Structured Diagnostic Findings
                   </h2>
@@ -194,7 +193,7 @@ export default function InvestigateHubPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span
-                    className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-full uppercase ${
+                    className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase ${
                       investigation.severity === "HIGH"
                         ? "bg-rose-950 text-rose-300 border border-rose-800"
                         : "bg-amber-950 text-amber-300 border border-amber-800"
@@ -202,7 +201,7 @@ export default function InvestigateHubPage() {
                   >
                     {investigation.severity}
                   </span>
-                  <span className="text-xs font-mono text-cyan-400 font-bold">
+                  <span className="text-xs text-cyan-400 font-bold">
                     {(investigation.confidence * 100).toFixed(0)}% Confidence
                   </span>
                 </div>
@@ -210,8 +209,8 @@ export default function InvestigateHubPage() {
 
               {/* Root cause */}
               <div className="space-y-1.5">
-                <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Identified Root Cause</span>
-                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-semibold text-white leading-relaxed">
+                <span className="text-[10px] uppercase text-slate-400 tracking-wider">Identified Root Cause</span>
+                <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-semibold text-ink leading-relaxed">
                   {investigation.root_cause}
                 </div>
               </div>
@@ -219,12 +218,12 @@ export default function InvestigateHubPage() {
               {/* Facts vs Inferences */}
               <div className="grid grid-cols-1 gap-4">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-mono uppercase text-emerald-400 tracking-wider flex items-center gap-1">
+                  <span className="text-[10px] uppercase text-emerald-400 tracking-wider flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     Verified Facts (From Payment & Provider Logs)
                   </span>
                   <ul className="space-y-1.5">
-                    {investigation.facts.map((fact, idx) => (
+                    {investigation.facts.map((fact: any, idx: number) => (
                       <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2.5 rounded border border-slate-800">
                         <span className="text-emerald-400 font-bold">•</span>
                         <span>{fact}</span>
@@ -234,12 +233,12 @@ export default function InvestigateHubPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <span className="text-[10px] font-mono uppercase text-sky-400 tracking-wider flex items-center gap-1">
+                  <span className="text-[10px] uppercase text-sky-400 tracking-wider flex items-center gap-1">
                     <Brain className="w-3.5 h-3.5" />
                     Logical Inferences
                   </span>
                   <ul className="space-y-1.5">
-                    {investigation.inferences.map((inf, idx) => (
+                    {investigation.inferences.map((inf: any, idx: number) => (
                       <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2.5 rounded border border-slate-800">
                         <span className="text-sky-400 font-bold">↳</span>
                         <span>{inf}</span>
@@ -251,7 +250,7 @@ export default function InvestigateHubPage() {
 
               {/* Recommendation */}
               <div className="p-4 rounded-xl bg-cyan-950/40 border border-cyan-800/80 space-y-1.5">
-                <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold block">
+                <span className="text-[10px] uppercase text-cyan-400 font-bold block">
                   Recommended Next Action
                 </span>
                 <p className="text-xs text-cyan-200 font-medium leading-relaxed">
@@ -262,7 +261,7 @@ export default function InvestigateHubPage() {
               {/* Comparison Divergence if available */}
               {investigation.comparison_notes && (
                 <div className="p-4 rounded-xl bg-indigo-950/30 border border-indigo-800/50 space-y-1">
-                  <span className="text-[10px] font-mono uppercase text-indigo-400 font-bold block">
+                  <span className="text-[10px] uppercase text-indigo-400 font-bold block">
                     Benchmark Comparison vs Successful Payments
                   </span>
                   <p className="text-xs text-indigo-200 leading-relaxed">
@@ -277,11 +276,11 @@ export default function InvestigateHubPage() {
           <div className="lg:col-span-5 space-y-6">
             <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <h3 className="text-sm font-bold text-ink flex items-center gap-2">
                   <Brain className="w-4 h-4 text-cyan-400" />
                   Interactive Investigation Chat
                 </h3>
-                <span className="text-[10px] font-mono text-slate-500">EVIDENCE-GROUNDED</span>
+                <span className="text-[10px] text-slate-500">EVIDENCE-GROUNDED</span>
               </div>
 
               <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
@@ -297,11 +296,11 @@ export default function InvestigateHubPage() {
                       key={i}
                       className={`p-3 rounded-lg text-xs leading-relaxed ${
                         msg.role === "user"
-                          ? "bg-slate-800 text-white ml-6"
+                          ? "bg-slate-800 text-ink ml-6"
                           : "bg-cyan-950/60 border border-cyan-800/60 text-cyan-100 mr-6"
                       }`}
                     >
-                      <span className="text-[9px] font-mono text-slate-400 block mb-1">
+                      <span className="text-[9px] text-slate-400 block mb-1">
                         {msg.role === "user" ? "OPERATOR" : "INVESTIGATOR"}
                       </span>
                       {msg.content}
@@ -322,12 +321,12 @@ export default function InvestigateHubPage() {
                   placeholder="Ask a question..."
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500"
                 />
                 <button
                   type="submit"
                   disabled={chatLoading || !chatInput.trim()}
-                  className="px-3 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                  className="px-3 py-2 bg-cyan-500 hover:bg-cyan-400 text-onsolid rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>

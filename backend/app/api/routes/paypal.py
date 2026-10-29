@@ -4,8 +4,9 @@ import httpx
 from decimal import Decimal, InvalidOperation
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
 from app.db.models.payment import Payment
+from app.db.models.user import User
 from app.schemas.paypal import (
     OrderCreateRequest,
     OrderCreateResponse,
@@ -536,7 +537,7 @@ async def capture_order(
     )
 
 @router.post("/payments/{payment_id}/refund", response_model=RefundResponse)
-def request_refund(payment_id: str, req: RefundRequest, db: Session = Depends(get_db)):
+def request_refund(payment_id: str, req: RefundRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Submits a refund proposal to the Human Approval Inbox."""
     try:
         ticket = policy_engine.propose_refund(

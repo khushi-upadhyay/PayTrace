@@ -70,8 +70,8 @@ export default function IncidentDetailPage() {
     return (
       <div className="glass-panel p-8 rounded-xl border border-rose-500/30 text-center space-y-4 max-w-xl mx-auto my-12">
         <AlertTriangle className="w-10 h-10 text-rose-400 mx-auto" />
-        <h2 className="text-lg font-bold text-white">Incident Not Found</h2>
-        <Link href="/incidents" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg inline-block">
+        <h2 className="text-lg font-bold text-ink">Incident Not Found</h2>
+        <Link href="/incidents" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg inline-block transition-colors duration-150">
           Back to Incidents
         </Link>
       </div>
@@ -93,7 +93,7 @@ export default function IncidentDetailPage() {
         <button
           onClick={handleGenerateReport}
           disabled={generatingReport}
-          className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-2 disabled:opacity-50"
+          className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-onsolid text-xs font-bold transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-2 disabled:opacity-50"
         >
           {generatingReport ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -110,7 +110,7 @@ export default function IncidentDetailPage() {
           <div>
             <div className="flex items-center gap-3">
               <span
-                className={`text-[10px] font-bold font-mono px-2.5 py-1 rounded-full uppercase tracking-wider ${
+                className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
                   incident.severity === "HIGH"
                     ? "bg-amber-950 text-amber-300 border border-amber-800"
                     : "bg-sky-950 text-sky-300 border border-sky-800"
@@ -118,28 +118,28 @@ export default function IncidentDetailPage() {
               >
                 {incident.severity} SEVERITY
               </span>
-              <span className="text-xs font-mono text-slate-400">
-                Status: <span className="text-white font-bold">{incident.status}</span>
+              <span className="text-xs text-slate-400">
+                Status: <span className="text-ink font-bold">{incident.status}</span>
               </span>
             </div>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight mt-2">
+            <h1 className="text-2xl font-extrabold text-ink tracking-tight mt-2">
               {incident.title}
             </h1>
             <p className="text-xs text-slate-400 mt-1">
-              Triggered by deterministic detection rule: <span className="font-mono text-cyan-300">{incident.detection_rule || "THRESHOLD_BREACH"}</span>
+              Triggered by deterministic detection rule: <span className="text-cyan-300">{incident.detection_rule || "THRESHOLD_BREACH"}</span>
             </p>
           </div>
 
           <div className="flex items-center gap-6">
             <div className="text-right">
-              <span className="text-[10px] text-slate-500 uppercase font-mono block">Potential Revenue at Risk</span>
+              <span className="text-[10px] text-slate-500 uppercase block">Potential Revenue at Risk</span>
               <span className="text-2xl font-black text-amber-400">
                 ${Number(incident.revenue_at_risk).toFixed(2)} {incident.currency}
               </span>
             </div>
             <div className="text-right pl-6 border-l border-slate-800">
-              <span className="text-[10px] text-slate-500 uppercase font-mono block">Impacted Payments</span>
-              <span className="text-2xl font-black text-white">
+              <span className="text-[10px] text-slate-500 uppercase block">Impacted Payments</span>
+              <span className="text-2xl font-black text-ink">
                 {incident.affected_payment_count}
               </span>
             </div>
@@ -148,7 +148,7 @@ export default function IncidentDetailPage() {
 
         {/* Root Cause Card */}
         <div className="space-y-2">
-          <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Diagnostic Root Cause</span>
+          <span className="text-[10px] uppercase text-slate-400 tracking-wider">Diagnostic Root Cause</span>
           <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-200 leading-relaxed">
             {incident.root_cause || incident.ai_summary}
           </div>
@@ -161,9 +161,9 @@ export default function IncidentDetailPage() {
           <div className="flex items-center justify-between pb-4 border-b border-slate-800">
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-cyan-400" />
-              <h2 className="text-base font-bold text-white">Executive Diagnostic Incident Report</h2>
+              <h2 className="text-base font-bold text-ink">Executive Diagnostic Incident Report</h2>
             </div>
-            <span className="text-xs font-mono text-slate-400">
+            <span className="text-xs text-slate-400">
               Generated: {new Date(report.generated_at).toLocaleString()}
             </span>
           </div>
@@ -174,7 +174,7 @@ export default function IncidentDetailPage() {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-bold text-white uppercase font-mono tracking-wider">Detailed Findings:</h4>
+              <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Detailed Findings:</h4>
               <ul className="space-y-1.5">
                 {report.detailed_findings.map((finding: string, i: number) => (
                   <li key={i} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-900/40 p-2.5 rounded border border-slate-800">
@@ -186,7 +186,7 @@ export default function IncidentDetailPage() {
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-bold text-white uppercase font-mono tracking-wider">Recommended Mitigations:</h4>
+              <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Recommended Mitigations:</h4>
               <ul className="space-y-1.5">
                 {report.recommended_mitigations.map((mitigation: string, i: number) => (
                   <li key={i} className="text-xs text-emerald-300 flex items-start gap-2 bg-emerald-950/30 p-2.5 rounded border border-emerald-800/50">
@@ -203,13 +203,13 @@ export default function IncidentDetailPage() {
       {/* Affected Payments Ledger Table */}
       <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden space-y-0">
         <div className="p-5 border-b border-slate-800">
-          <h3 className="text-sm font-bold text-white">Affected Payment Journeys</h3>
+          <h3 className="text-sm font-bold text-ink">Affected Payment Journeys</h3>
           <p className="text-xs text-slate-400 mt-0.5">Transactions correlated directly to this incident threshold breach</p>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-900/60 border-b border-slate-800 text-slate-400 font-mono uppercase text-[10px]">
+            <thead className="bg-slate-900/60 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
               <tr>
                 <th className="px-5 py-3">PayTrace ID</th>
                 <th className="px-5 py-3">Order ID</th>
@@ -220,15 +220,15 @@ export default function IncidentDetailPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/80">
-              {incident.affected_payments?.map((p) => (
+              {incident.affected_payments?.map((p: any) => (
                 <tr key={p.id} className="hover:bg-slate-900/40 transition-colors">
-                  <td className="px-5 py-3.5 font-mono text-cyan-400 font-medium">
+                  <td className="px-5 py-3.5 text-cyan-400 font-medium">
                     {p.id.slice(0, 14)}...
                   </td>
-                  <td className="px-5 py-3.5 font-mono text-slate-300">
+                  <td className="px-5 py-3.5 text-slate-300">
                     {p.paypal_order_id || "N/A"}
                   </td>
-                  <td className="px-5 py-3.5 font-bold text-white">
+                  <td className="px-5 py-3.5 font-bold text-ink">
                     ${Number(p.amount).toFixed(2)} {p.currency}
                   </td>
                   <td className="px-5 py-3.5">

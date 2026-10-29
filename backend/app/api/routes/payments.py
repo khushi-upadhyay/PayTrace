@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import Optional
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
+from app.db.models.user import User
 from app.db.models.payment import Payment
 from app.schemas.payment import PaymentResponse, PaymentListResponse
 from app.schemas.timeline import TimelineResponse, PaymentEventResponse
@@ -19,6 +20,7 @@ def list_payments(
     actor: Optional[str] = None,
     search: Optional[str] = None,
     db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
     """Lists payments with search, pagination, and multi-field filters."""
     query = db.query(Payment)
@@ -58,7 +60,7 @@ def list_payments(
     )
 
 @router.get("/{payment_id}", response_model=PaymentResponse)
-def get_payment(payment_id: str, db: Session = Depends(get_db)):
+def get_payment(payment_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Retrieves full details of a single payment."""
     payment = db.query(Payment).filter(Payment.id == payment_id).first()
     if not payment:
@@ -66,7 +68,7 @@ def get_payment(payment_id: str, db: Session = Depends(get_db)):
     return PaymentResponse.model_validate(payment)
 
 @router.get("/{payment_id}/timeline", response_model=TimelineResponse)
-def get_payment_timeline(payment_id: str, db: Session = Depends(get_db)):
+def get_payment_timeline(payment_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Retrieves unified, chronological lifecycle event timeline."""
     payment = db.query(Payment).filter(Payment.id == payment_id).first()
     if not payment:

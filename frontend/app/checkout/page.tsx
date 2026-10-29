@@ -18,6 +18,7 @@ import {
   AlertTriangle,
   Loader2,
   Lock,
+  ArrowLeft,
   ArrowRight,
   ShieldAlert,
   Zap,
@@ -35,6 +36,7 @@ const PRODUCTS = [
 const CHECKOUT_CURRENCY = "USD";
 
 function CheckoutContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const { sessionId, addSessionMarker } = useSessionRecording();
 
@@ -272,9 +274,17 @@ function CheckoutContent() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto animate-fadeIn pb-16">
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-slate-400 transition-colors duration-150 hover:text-ink"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Go back
+      </button>
       {/* Header */}
       <div className="text-center space-y-2 pb-4 border-b border-slate-800">
-        <h1 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2.5">
+        <h1 className="text-2xl font-bold tracking-tight text-ink flex items-center justify-center gap-2.5">
           <ShoppingCart className="w-6 h-6 text-cyan-400" />
           PayPal Sandbox Demo Checkout
         </h1>
@@ -300,7 +310,7 @@ function CheckoutContent() {
         <div className="md:col-span-7 space-y-6">
           {/* Product Selector */}
           <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
+            <h2 className="text-sm font-bold text-ink uppercase font-mono tracking-wider">
               1. Select Demo Item
             </h2>
             <div className="space-y-2.5">
@@ -310,7 +320,7 @@ function CheckoutContent() {
                   onClick={() => setSelectedProduct(prod)}
                   className={`p-4 rounded-xl border cursor-pointer transition-all ${
                     selectedProduct.id === prod.id
-                      ? "border-cyan-500 bg-cyan-950/20 text-white shadow-sm shadow-cyan-500/10"
+                      ? "border-cyan-500 bg-cyan-950/20 text-ink shadow-sm shadow-cyan-500/10"
                       : "border-slate-800 bg-slate-900/40 text-slate-300 hover:border-slate-700"
                   }`}
                 >
@@ -326,7 +336,7 @@ function CheckoutContent() {
 
           {/* Scenario Trigger Mode */}
           <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-            <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
+            <h2 className="text-sm font-bold text-ink uppercase font-mono tracking-wider flex items-center gap-2">
               <Zap className="w-4 h-4 text-amber-400" />
               2. Choose Test Scenario
             </h2>
@@ -341,7 +351,7 @@ function CheckoutContent() {
                   className="mt-1 text-cyan-500"
                 />
                 <div>
-                  <span className="text-xs font-bold text-white block">Standard Successful Payment</span>
+                  <span className="text-xs font-bold text-ink block">Standard Successful Payment</span>
                   <span className="text-[11px] text-slate-400">Order created, approved, and captured normally.</span>
                 </div>
               </label>
@@ -376,7 +386,7 @@ function CheckoutContent() {
                   className="mt-1 text-rose-500"
                 />
                 <div>
-                  <span className="text-xs font-bold text-white block">Card Instrument Declined</span>
+                  <span className="text-xs font-bold text-ink block">Card Instrument Declined</span>
                   <span className="text-[11px] text-slate-400">Simulates buyer bank decline (INSTRUMENT_DECLINED).</span>
                 </div>
               </label>
@@ -387,20 +397,20 @@ function CheckoutContent() {
         {/* Right: Checkout Order Summary (5 cols) */}
         <div className="md:col-span-5 space-y-6">
           <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
-            <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider">
+            <h2 className="text-sm font-bold text-ink uppercase font-mono tracking-wider">
               Order Summary
             </h2>
 
             <div className="space-y-3 text-xs divide-y divide-slate-800/80">
               <div className="flex justify-between pt-2">
                 <span className="text-slate-400">Item</span>
-                <span className="text-white font-medium">{selectedProduct.name}</span>
+                <span className="text-ink font-medium">{selectedProduct.name}</span>
               </div>
               <div className="flex justify-between pt-2">
                 <span className="text-slate-400">Buyer Identifier</span>
                 <span className="text-slate-200 font-mono text-[11px]">{buyerEmail}</span>
               </div>
-              <div className="flex justify-between pt-2 text-sm font-extrabold text-white">
+              <div className="flex justify-between pt-2 text-sm font-extrabold text-ink">
                 <span>Total Due</span>
                 <span className="text-cyan-400 font-black">{new Intl.NumberFormat("en-US", { style: "currency", currency: CHECKOUT_CURRENCY }).format(selectedProduct.price)} USD</span>
               </div>
@@ -429,7 +439,7 @@ function CheckoutContent() {
                     type="button"
                     onClick={() => verifyAndCapture(activeOrderId)}
                     disabled={processing || verifying}
-                    className="w-full mt-2 py-2.5 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full mt-2 py-2.5 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-onsolid text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {verifying || processing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
                     Confirm Buyer Approval & Capture
@@ -474,16 +484,16 @@ function CheckoutContent() {
               <button
                 type="submit"
                 disabled={processing || waitingApproval}
-                className="w-full py-3.5 px-4 rounded-xl font-extrabold text-xs text-slate-950 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 px-4 rounded-xl font-extrabold text-xs text-onsolid bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:to-yellow-300 shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {processing ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin text-slate-950" />
+                    <Loader2 className="w-4 h-4 animate-spin text-onsolid" />
                     Processing with PayPal Sandbox...
                   </>
                 ) : (
                   <>
-                    <CreditCard className="w-4 h-4 text-slate-950" />
+                    <CreditCard className="w-4 h-4 text-onsolid" />
                     Pay with PayPal Sandbox
                   </>
                 )}
@@ -513,7 +523,7 @@ function CheckoutContent() {
                 ) : (
                   <ShieldAlert className="w-5 h-5 text-amber-400" />
                 )}
-                <h3 className="text-sm font-bold text-white">
+                <h3 className="text-sm font-bold text-ink">
                   Checkout Outcome: {result.status === "OUTCOME_UNKNOWN" ? "OUTCOME UNKNOWN — RECONCILIATION REQUIRED" : result.status}
                 </h3>
               </div>
@@ -541,7 +551,7 @@ function CheckoutContent() {
                   type="button"
                   onClick={() => verifyAndCapture(result.order_id)}
                   disabled={processing || verifying}
-                  className="w-full py-2.5 px-4 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold transition-colors disabled:opacity-50"
+                  className="w-full py-2.5 px-4 rounded-lg bg-amber-400 hover:bg-amber-300 text-onsolid text-xs font-bold transition-colors disabled:opacity-50"
                 >
                   {processing ? "Checking PayPal status..." : "Check PayPal & reconcile existing order"}
                 </button>
@@ -549,7 +559,7 @@ function CheckoutContent() {
 
               <Link
                 href={`/payments/${result.payment_id}`}
-                className="w-full py-2.5 px-4 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 px-4 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-onsolid text-xs font-bold transition-colors inline-flex items-center justify-center gap-1.5"
               >
                 Inspect Lifecycle in PayTrace
                 <ArrowRight className="w-3.5 h-3.5" />

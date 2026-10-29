@@ -167,9 +167,9 @@ export default function PaymentDetailPage() {
     return (
       <div className="glass-panel p-8 rounded-xl border border-rose-500/30 text-center space-y-4 max-w-xl mx-auto my-12">
         <AlertTriangle className="w-10 h-10 text-rose-400 mx-auto" />
-        <h2 className="text-lg font-bold text-white">Payment Record Not Found</h2>
+        <h2 className="text-lg font-bold text-ink">Payment Record Not Found</h2>
         <p className="text-xs text-slate-400">{error || "Payment record could not be loaded."}</p>
-        <Link href="/payments" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg inline-block">
+        <Link href="/payments" className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink text-xs font-semibold rounded-lg inline-block transition-colors duration-150">
           Return to Ledger
         </Link>
       </div>
@@ -200,7 +200,7 @@ export default function PaymentDetailPage() {
             <button
               onClick={handleReconcileOrder}
               disabled={reconciling}
-              className="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-slate-950 text-xs font-bold transition-colors flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-onsolid text-xs font-bold transition-colors flex items-center gap-1.5"
             >
               {reconciling ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <RotateCcw className="w-3.5 h-3.5" />}
               Reconcile with PayPal
@@ -221,7 +221,7 @@ export default function PaymentDetailPage() {
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-extrabold text-white font-mono tracking-tight">
+              <h1 className="text-xl font-extrabold text-ink tracking-tight">
                 {payment.id}
               </h1>
               <button
@@ -232,7 +232,7 @@ export default function PaymentDetailPage() {
                 <Copy className="w-3.5 h-3.5" />
               </button>
               {copiedField === "pid" && (
-                <span className="text-[10px] text-cyan-400 font-mono">Copied!</span>
+                <span className="text-[10px] text-cyan-400">Copied!</span>
               )}
             </div>
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-2">
@@ -245,7 +245,7 @@ export default function PaymentDetailPage() {
           <div className="flex flex-wrap items-center gap-3">
             {/* Status Pill */}
             <div className="flex flex-col items-end">
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">Lifecycle State</span>
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Lifecycle State</span>
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide mt-0.5 ${
                   payment.status === "CAPTURED"
@@ -265,8 +265,8 @@ export default function PaymentDetailPage() {
 
             {/* Amount */}
             <div className="flex flex-col items-end pl-4 border-l border-slate-800">
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider font-mono">Amount</span>
-              <span className="text-xl font-black text-white mt-0.5">
+              <span className="text-[10px] text-slate-500 uppercase tracking-wider">Amount</span>
+              <span className="text-xl font-black text-ink mt-0.5">
                 ${Number(payment.amount).toFixed(2)} <span className="text-xs text-slate-400">{payment.currency}</span>
               </span>
             </div>
@@ -276,15 +276,15 @@ export default function PaymentDetailPage() {
         {/* Provider IDs & Metadata Bar */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
           <div className="rounded-lg p-3 bg-slate-900/60 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 uppercase font-mono block">PayPal Order ID</span>
+            <span className="text-[10px] text-slate-500 uppercase block">PayPal Order ID</span>
             <div className="flex items-center justify-between mt-1">
-              <span className="font-mono text-slate-200 font-medium">
+              <span className="text-slate-200 font-medium">
                 {payment.paypal_order_id || "None"}
               </span>
               {payment.paypal_order_id && (
                 <button
                   onClick={() => handleCopy(payment.paypal_order_id!, "oid")}
-                  className="text-slate-500 hover:text-cyan-400"
+                  className="text-slate-500 transition-colors duration-150 hover:text-cyan-400"
                 >
                   <Copy className="w-3 h-3" />
                 </button>
@@ -293,15 +293,15 @@ export default function PaymentDetailPage() {
           </div>
 
           <div className="rounded-lg p-3 bg-slate-900/60 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 uppercase font-mono block">PayPal Capture ID</span>
+            <span className="text-[10px] text-slate-500 uppercase block">PayPal Capture ID</span>
             <div className="flex items-center justify-between mt-1">
-              <span className="font-mono text-slate-200 font-medium">
+              <span className="text-slate-200 font-medium">
                 {payment.paypal_capture_id || "Unresolved"}
               </span>
               {payment.paypal_capture_id && (
                 <button
                   onClick={() => handleCopy(payment.paypal_capture_id!, "cid")}
-                  className="text-slate-500 hover:text-cyan-400"
+                  className="text-slate-500 transition-colors duration-150 hover:text-cyan-400"
                 >
                   <Copy className="w-3 h-3" />
                 </button>
@@ -310,9 +310,9 @@ export default function PaymentDetailPage() {
           </div>
 
           <div className="rounded-lg p-3 bg-slate-900/60 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 uppercase font-mono block">Source Environment</span>
+            <span className="text-[10px] text-slate-500 uppercase block">Source Environment</span>
             <span
-              className={`font-mono text-xs font-semibold inline-block mt-1 ${
+              className={`text-xs font-semibold inline-block mt-1 ${
                 payment.source_mode === "SIMULATED" ? "text-amber-400" : "text-cyan-400"
               }`}
             >
@@ -321,8 +321,8 @@ export default function PaymentDetailPage() {
           </div>
 
           <div className="rounded-lg p-3 bg-slate-900/60 border border-slate-800/80">
-            <span className="text-[10px] text-slate-500 uppercase font-mono block">Total Lifecycle Duration</span>
-            <span className="text-slate-200 font-mono font-medium block mt-1">
+            <span className="text-[10px] text-slate-500 uppercase block">Total Lifecycle Duration</span>
+            <span className="text-slate-200 font-medium block mt-1">
               {timeline?.duration_ms ? `${timeline.duration_ms} ms` : "Instant / In-Progress"}
             </span>
           </div>
@@ -342,11 +342,11 @@ export default function PaymentDetailPage() {
               </h3>
               <p className="text-xs text-amber-300/90 mt-0.5">
                 The merchant backend timed out (&gt;5000ms) waiting for PayPal&apos;s capture response.
-                Funds may already be captured at PayPal. <strong className="text-white underline">DO NOT BLINDLY RETRY</strong>.
+                Funds may already be captured at PayPal. <strong className="text-ink underline">DO NOT BLINDLY RETRY</strong>.
               </p>
             </div>
           </div>
-          <div className="text-xs bg-slate-950/70 p-3 rounded-lg border border-amber-800/50 text-slate-300 font-mono">
+          <div className="text-xs bg-slate-950/70 p-3 rounded-lg border border-amber-800/50 text-slate-300">
             Safety Guardrail Active: Automatic retries have been suppressed to prevent duplicate customer charges.
             Next step: Reconcile provider order state via <span className="text-cyan-300">GET /paypal/orders/{payment.paypal_order_id}</span> or await incoming webhooks.
           </div>
@@ -360,7 +360,7 @@ export default function PaymentDetailPage() {
           <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-slate-800">
               <div>
-                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                <h2 className="text-base font-bold text-ink flex items-center gap-2">
                   <Activity className="w-4 h-4 text-cyan-400" />
                   Unified Chronological Timeline
                 </h2>
@@ -368,14 +368,14 @@ export default function PaymentDetailPage() {
                   Append-only trace correlating frontend, PayPal APIs, and webhooks
                 </p>
               </div>
-              <span className="text-xs font-mono text-slate-400">
+              <span className="text-xs text-slate-400">
                 {timeline?.total_events || 0} Events
               </span>
             </div>
 
             {/* Timeline Events Stack */}
             <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-800">
-              {timeline?.events.map((ev, idx) => (
+              {timeline?.events.map((ev: any, idx: number) => (
                 <div key={ev.id} className="relative group">
                   {/* Event Marker Dot */}
                   <div
@@ -394,11 +394,11 @@ export default function PaymentDetailPage() {
                   <div className="rounded-xl p-4 bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-colors space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs font-bold text-white">
+                        <span className="text-xs font-bold text-ink">
                           {ev.event_type}
                         </span>
                         <span
-                          className={`text-[10px] font-mono px-2 py-0.5 rounded ${
+                          className={`text-[10px] px-2 py-0.5 rounded ${
                             ev.source === "PAYPAL_API"
                               ? "bg-sky-950 text-sky-300 border border-sky-800/60"
                               : ev.source === "PAYPAL_WEBHOOK"
@@ -411,12 +411,12 @@ export default function PaymentDetailPage() {
                           {ev.source}
                         </span>
                         {ev.is_simulated && (
-                          <span className="text-[9px] font-mono text-amber-500/90 font-bold uppercase">
+                          <span className="text-[9px] text-amber-500/90 font-bold uppercase">
                             [SIMULATED]
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] font-mono text-slate-500">
+                      <span className="text-[11px] text-slate-500">
                         {new Date(ev.occurred_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                       </span>
                     </div>
@@ -424,13 +424,13 @@ export default function PaymentDetailPage() {
                     {/* Latency and Details */}
                     <div className="flex items-center gap-4 text-xs text-slate-400">
                       {ev.latency_ms !== null && ev.latency_ms !== undefined && (
-                        <span className="flex items-center gap-1 font-mono text-[11px] text-cyan-400">
+                        <span className="flex items-center gap-1 text-[11px] text-cyan-400">
                           <Clock className="w-3 h-3" />
                           {ev.latency_ms} ms
                         </span>
                       )}
                       {ev.paypal_capture_id && (
-                        <span className="font-mono text-[11px] text-slate-400">
+                        <span className="text-[11px] text-slate-400">
                           Capture: {ev.paypal_capture_id}
                         </span>
                       )}
@@ -438,7 +438,7 @@ export default function PaymentDetailPage() {
 
                     {/* Metadata summary */}
                     {Object.keys(ev.metadata_redacted || {}).length > 0 && (
-                      <div className="p-2.5 rounded bg-slate-950/70 border border-slate-800/70 font-mono text-[11px] text-slate-300 overflow-x-auto">
+                      <div className="p-2.5 rounded bg-slate-950/70 border border-slate-800/70 text-[11px] text-slate-300 overflow-x-auto">
                         <pre className="whitespace-pre-wrap">
                           {JSON.stringify(ev.metadata_redacted, null, 2)}
                         </pre>
@@ -456,17 +456,17 @@ export default function PaymentDetailPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <Video className="w-4 h-4 text-cyan-400" />
-                  <h3 className="text-sm font-bold text-white">Linked Customer Checkout Session</h3>
+                  <h3 className="text-sm font-bold text-ink">Linked Customer Checkout Session</h3>
                 </div>
-                <span className="text-xs font-mono text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+                <span className="text-xs text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
                   {sessionInfo.events_count} SESSION EVENTS
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Session ID <span className="font-mono text-slate-200">{sessionInfo.session_id}</span> recorded
+                Session ID <span className="text-slate-200">{sessionInfo.session_id}</span> recorded
                 with privacy masking on input elements. PayPal-hosted pages are not recorded.
               </p>
-              <Link href={`/sessions/${sessionInfo.session_id}`} className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-950/30 px-3 py-2 text-xs font-semibold text-cyan-200 hover:bg-cyan-950/60">
+              <Link href={`/sessions/${sessionInfo.session_id}`} className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 bg-cyan-950/30 px-3 py-2 text-xs font-semibold text-cyan-200 transition-colors duration-150 hover:bg-cyan-950/60">
                 Replay customer session <Video className="h-3.5 w-3.5" />
               </Link>
             </div>
@@ -482,7 +482,7 @@ export default function PaymentDetailPage() {
                   <Brain className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-base font-bold text-white">AI Payment Investigator</h2>
+                  <h2 className="text-base font-bold text-ink">AI Payment Investigator</h2>
                   <p className="text-xs text-slate-400">Cross-signal root cause & safe recommendations</p>
                 </div>
               </div>
@@ -492,7 +492,7 @@ export default function PaymentDetailPage() {
             {!investigation ? (
               <div className="text-center py-8 space-y-4">
                 <Sparkles className="w-10 h-10 text-cyan-400 mx-auto animate-pulse" />
-                <h3 className="text-sm font-bold text-white">Launch Evidence-Grounded Analysis</h3>
+                <h3 className="text-sm font-bold text-ink">Launch Evidence-Grounded Analysis</h3>
                 <p className="text-xs text-slate-400 max-w-sm mx-auto">
                   The AI investigator will gather deterministic payment facts, check for timeout/decline patterns,
                   and formulate verified findings without inventing unobserved events.
@@ -500,7 +500,7 @@ export default function PaymentDetailPage() {
                 <button
                   onClick={handleRunInvestigation}
                   disabled={investigating}
-                  className="px-5 py-2.5 rounded-lg bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-2 mx-auto disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-lg bg-cyan-500 text-onsolid font-bold text-xs hover:bg-cyan-400 transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-2 mx-auto disabled:opacity-50"
                 >
                   {investigating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Brain className="w-4 h-4" />}
                   Investigate Payment with AI
@@ -511,9 +511,9 @@ export default function PaymentDetailPage() {
                 {/* Confidence & Severity Header */}
                 <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
                   <div>
-                    <span className="text-[10px] text-slate-400 uppercase font-mono block">Severity Assessment</span>
+                    <span className="text-[10px] text-slate-400 uppercase block">Severity Assessment</span>
                     <span
-                      className={`text-xs font-bold font-mono ${
+                      className={`text-xs font-bold ${
                         investigation.severity === "HIGH"
                           ? "text-rose-400"
                           : investigation.severity === "MEDIUM"
@@ -525,8 +525,8 @@ export default function PaymentDetailPage() {
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 uppercase font-mono block">Evidence Confidence</span>
-                    <span className="text-xs font-bold text-cyan-400 font-mono">
+                    <span className="text-[10px] text-slate-400 uppercase block">Evidence Confidence</span>
+                    <span className="text-xs font-bold text-cyan-400">
                       {(investigation.confidence * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -534,8 +534,8 @@ export default function PaymentDetailPage() {
 
                 {/* Root Cause Card */}
                 <div className="space-y-2">
-                  <span className="text-[10px] font-mono uppercase text-slate-400 tracking-wider">Likely Root Cause</span>
-                  <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs font-semibold text-white leading-relaxed">
+                  <span className="text-[10px] uppercase text-slate-400 tracking-wider">Likely Root Cause</span>
+                  <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs font-semibold text-ink leading-relaxed">
                     {investigation.root_cause}
                   </div>
                 </div>
@@ -544,12 +544,12 @@ export default function PaymentDetailPage() {
                 <div className="space-y-4">
                   {/* Verified Facts */}
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-mono uppercase text-emerald-400 tracking-wider flex items-center gap-1">
+                    <span className="text-[10px] uppercase text-emerald-400 tracking-wider flex items-center gap-1">
                       <CheckCircle2 className="w-3 h-3" />
                       Verified Provider Facts
                     </span>
                     <ul className="space-y-1.5">
-                      {investigation.facts.map((fact, idx) => (
+                      {investigation.facts.map((fact: any, idx: number) => (
                         <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2 rounded border border-slate-800/60">
                           <span className="text-emerald-400 font-bold">•</span>
                           <span>{fact}</span>
@@ -560,12 +560,12 @@ export default function PaymentDetailPage() {
 
                   {/* Logical Inferences */}
                   <div className="space-y-1.5">
-                    <span className="text-[10px] font-mono uppercase text-sky-400 tracking-wider flex items-center gap-1">
+                    <span className="text-[10px] uppercase text-sky-400 tracking-wider flex items-center gap-1">
                       <Brain className="w-3 h-3" />
                       Investigative Inferences
                     </span>
                     <ul className="space-y-1.5">
-                      {investigation.inferences.map((inf, idx) => (
+                      {investigation.inferences.map((inf: any, idx: number) => (
                         <li key={idx} className="text-xs text-slate-300 flex items-start gap-2 bg-slate-950/40 p-2 rounded border border-slate-800/60">
                           <span className="text-sky-400 font-bold">↳</span>
                           <span>{inf}</span>
@@ -578,18 +578,18 @@ export default function PaymentDetailPage() {
                 {/* Customer & Revenue Impact */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 space-y-1">
-                    <span className="text-[10px] text-slate-500 uppercase font-mono block">Customer Impact</span>
+                    <span className="text-[10px] text-slate-500 uppercase block">Customer Impact</span>
                     <p className="text-slate-300 leading-relaxed text-[11px]">{investigation.customer_impact}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-slate-900/40 border border-slate-800 space-y-1">
-                    <span className="text-[10px] text-amber-400/80 uppercase font-mono block">Potential Revenue at Risk</span>
+                    <span className="text-[10px] text-amber-400/80 uppercase block">Potential Revenue at Risk</span>
                     <p className="text-slate-300 leading-relaxed text-[11px]">{investigation.business_impact}</p>
                   </div>
                 </div>
 
                 {/* Recommended Next Action */}
                 <div className="p-4 rounded-xl bg-cyan-950/30 border border-cyan-800/60 space-y-1.5">
-                  <span className="text-[10px] font-mono uppercase text-cyan-400 font-bold block">
+                  <span className="text-[10px] uppercase text-cyan-400 font-bold block">
                     Recommended Operator Action
                   </span>
                   <p className="text-xs text-cyan-200 font-medium leading-relaxed">
@@ -598,7 +598,7 @@ export default function PaymentDetailPage() {
                 </div>
 
                 {/* Model Attribution */}
-                <div className="text-[10px] font-mono text-slate-500 flex items-center justify-between pt-2 border-t border-slate-800">
+                <div className="text-[10px] text-slate-500 flex items-center justify-between pt-2 border-t border-slate-800">
                   <span>Engine: {investigation.model_name}</span>
                   <button
                     onClick={handleRunInvestigation}
@@ -617,7 +617,7 @@ export default function PaymentDetailPage() {
             <div className="glass-panel rounded-2xl p-5 border border-slate-800 space-y-4">
               <div className="flex items-center gap-2">
                 <Brain className="w-4 h-4 text-cyan-400" />
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
+                <h3 className="text-xs font-bold text-ink uppercase tracking-wider">
                   Ask Follow-Up Question
                 </h3>
               </div>
@@ -634,11 +634,11 @@ export default function PaymentDetailPage() {
                     key={i}
                     className={`p-3 rounded-lg text-xs leading-relaxed ${
                       msg.role === "user"
-                        ? "bg-slate-800 text-white ml-6"
+                        ? "bg-slate-800 text-ink ml-6"
                         : "bg-cyan-950/60 border border-cyan-800/60 text-cyan-100 mr-6"
                     }`}
                   >
-                    <span className="text-[9px] font-mono text-slate-400 block mb-1">
+                    <span className="text-[9px] text-slate-400 block mb-1">
                       {msg.role === "user" ? "OPERATOR" : "AI INVESTIGATOR"}
                     </span>
                     {msg.content}
@@ -659,12 +659,12 @@ export default function PaymentDetailPage() {
                   placeholder="e.g. Is it safe to retry this payment?"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500"
                 />
                 <button
                   type="submit"
                   disabled={chatLoading || !chatInput.trim()}
-                  className="px-3 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                  className="px-3 py-2 bg-cyan-500 hover:bg-cyan-400 text-onsolid rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>
@@ -678,7 +678,7 @@ export default function PaymentDetailPage() {
       {showRefundModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="glass-panel max-w-md w-full rounded-2xl p-6 border border-slate-700 space-y-5 animate-scaleUp">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
+            <h3 className="text-base font-bold text-ink flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-purple-400" />
               Propose Refund for Approval
             </h3>
@@ -688,19 +688,19 @@ export default function PaymentDetailPage() {
             </p>
 
             <div className="space-y-2">
-              <label className="text-xs font-mono text-slate-400">Refund Amount</label>
-              <div className="p-2.5 bg-slate-900 rounded-lg border border-slate-800 text-xs font-bold text-white">
+              <label className="text-xs text-slate-400">Refund Amount</label>
+              <div className="p-2.5 bg-slate-900 rounded-lg border border-slate-800 text-xs font-bold text-ink">
                 ${Number(payment.amount).toFixed(2)} {payment.currency} (Full Refund)
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-mono text-slate-400">Reason / Justification</label>
+              <label className="text-xs text-slate-400">Reason / Justification</label>
               <textarea
                 value={refundReason}
                 onChange={(e) => setRefundReason(e.target.value)}
                 rows={3}
-                className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500"
               />
             </div>
 
@@ -708,7 +708,7 @@ export default function PaymentDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowRefundModal(false)}
-                className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white"
+                className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 transition-colors duration-150 hover:text-ink"
               >
                 Cancel
               </button>
@@ -716,7 +716,7 @@ export default function PaymentDetailPage() {
                 type="button"
                 onClick={handleProposeRefund}
                 disabled={refundSubmitting}
-                className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-colors flex items-center gap-1.5"
+                className="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-onsolid text-xs font-bold transition-colors flex items-center gap-1.5"
               >
                 {refundSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
                 Submit Proposal

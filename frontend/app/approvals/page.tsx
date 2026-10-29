@@ -58,18 +58,17 @@ export default function ApprovalsPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto animate-fadeIn pb-16">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <ShieldCheck className="w-6 h-6 text-purple-400" />
+          <h1 className="font-display text-4xl font-bold tracking-tight text-black">
             Human Approval Inbox
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-base text-black/70 mt-2">
             Enforces policy checks before executing sensitive financial actions like customer refunds.
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-purple-300 bg-purple-950/80 border border-purple-800 px-3 py-1.5 rounded-lg">
+          <span className="text-xs text-purple-300 bg-purple-950/80 border border-purple-800 px-3 py-1.5 rounded-lg">
             Pending Review: <span className="font-bold">{pendingTickets.length}</span>
           </span>
         </div>
@@ -79,7 +78,7 @@ export default function ApprovalsPage() {
 
       {/* Pending Approvals Section */}
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
+        <h2 className="text-sm font-bold text-ink uppercase tracking-wider flex items-center gap-2">
           <Clock className="w-4 h-4 text-amber-400" />
           Pending Authorization ({pendingTickets.length})
         </h2>
@@ -102,15 +101,15 @@ export default function ApprovalsPage() {
                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold font-mono bg-purple-950 text-purple-300 border border-purple-800">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800">
                         {t.action_type} REQUEST
                       </span>
-                      <span className="text-xs font-mono text-slate-400">
-                        Ticket ID: <span className="text-white">{t.id.slice(0, 8)}...</span>
+                      <span className="text-xs text-slate-400">
+                        Ticket ID: <span className="text-ink">{t.id.slice(0, 8)}...</span>
                       </span>
                     </div>
 
-                    <h3 className="text-base font-bold text-white">
+                    <h3 className="text-base font-bold text-ink">
                       Authorize Refund of ${Number(t.amount || 0).toFixed(2)} {t.currency}
                     </h3>
 
@@ -121,7 +120,7 @@ export default function ApprovalsPage() {
                     <div className="flex items-center gap-4 text-xs text-slate-400 pt-1">
                       <span>
                         Target Payment:{" "}
-                        <Link href={`/payments/${t.payment_id}`} className="text-cyan-400 hover:underline font-mono">
+                        <Link href={`/payments/${t.payment_id}`} className="text-cyan-400 hover:underline">
                           {t.payment_id.slice(0, 12)}...
                         </Link>
                       </span>
@@ -144,7 +143,7 @@ export default function ApprovalsPage() {
                     <button
                       onClick={() => handleDecision(t.id, "APPROVED")}
                       disabled={decidingId === t.id}
-                      className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-slate-950 text-xs font-bold transition-colors flex items-center gap-1.5 shadow-md shadow-emerald-600/20 disabled:opacity-50"
+                      className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-onsolid text-xs font-bold transition-colors flex items-center gap-1.5 shadow-md shadow-emerald-600/20 disabled:opacity-50"
                     >
                       {decidingId === t.id ? (
                         <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -163,7 +162,7 @@ export default function ApprovalsPage() {
 
       {/* Historical Audit Trail Section */}
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
+        <h2 className="text-sm font-bold text-ink uppercase tracking-wider flex items-center gap-2">
           <UserCheck className="w-4 h-4 text-slate-400" />
           Audit Trail ({historicalTickets.length})
         </h2>
@@ -176,7 +175,7 @@ export default function ApprovalsPage() {
           <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-900/60 border-b border-slate-800 text-slate-400 font-mono uppercase text-[10px]">
+                <thead className="bg-slate-900/60 border-b border-slate-800 text-slate-400 uppercase text-[10px]">
                   <tr>
                     <th className="px-5 py-3">Ticket ID</th>
                     <th className="px-5 py-3">Action</th>
@@ -190,10 +189,10 @@ export default function ApprovalsPage() {
                 <tbody className="divide-y divide-slate-800/80">
                   {historicalTickets.map((t) => (
                     <tr key={t.id} className="hover:bg-slate-900/40 transition-colors">
-                      <td className="px-5 py-3.5 font-mono text-slate-300 font-medium">
+                      <td className="px-5 py-3.5 text-slate-300 font-medium">
                         {t.id.slice(0, 10)}...
                       </td>
-                      <td className="px-5 py-3.5 font-bold text-white">
+                      <td className="px-5 py-3.5 font-bold text-ink">
                         {t.action_type}
                       </td>
                       <td className="px-5 py-3.5 text-slate-200 font-semibold">
@@ -213,13 +212,13 @@ export default function ApprovalsPage() {
                       <td className="px-5 py-3.5 text-slate-300 font-medium">
                         {t.decided_by || "Operator"}
                       </td>
-                      <td className="px-5 py-3.5 text-slate-500 font-mono text-[11px]">
+                      <td className="px-5 py-3.5 text-slate-500 text-[11px]">
                         {t.decided_at ? new Date(t.decided_at).toLocaleString() : "—"}
                       </td>
                       <td className="px-5 py-3.5 text-right">
                         <Link
                           href={`/payments/${t.payment_id}`}
-                          className="text-cyan-400 hover:underline text-[11px] inline-flex items-center gap-1 font-mono"
+                          className="text-cyan-400 hover:underline text-[11px] inline-flex items-center gap-1"
                         >
                           Inspect
                           <ArrowRight className="w-3 h-3" />

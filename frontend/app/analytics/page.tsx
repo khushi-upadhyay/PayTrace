@@ -27,7 +27,7 @@ import {
   Pie,
 } from "recharts";
 
-const COLORS = ["#06b6d4", "#f59e0b", "#f43f5e", "#8b5cf6", "#10b981"];
+const COLORS = ["#0b73c2", "#f59e0b", "#f43f5e", "#8b5cf6", "#10b981"];
 
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -65,7 +65,7 @@ export default function AnalyticsPage() {
       <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
         <p className="text-sm font-semibold text-rose-200">Analytics are unavailable</p>
         <p className="mt-2 text-xs text-slate-400">{loadError || "No analytics response was returned."}</p>
-        <button onClick={fetchAnalytics} className="mt-4 rounded-lg bg-slate-800 px-3 py-2 text-xs text-white hover:bg-slate-700">Retry</button>
+        <button onClick={fetchAnalytics} className="mt-4 rounded-lg bg-paypal-navy px-3 py-2 text-xs text-onsolid transition-colors duration-150 hover:bg-paypal-blue">Retry</button>
       </div>
     );
   }
@@ -73,13 +73,12 @@ export default function AnalyticsPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto animate-fadeIn pb-16">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <BarChart3 className="w-6 h-6 text-cyan-400" />
+          <h1 className="font-display text-4xl font-bold tracking-tight text-black">
             Performance & SLA Analytics
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-base text-black/70 mt-2">
             Stage latencies, failure distributions, and revenue impact trends across PayPal checkout journeys.
           </p>
         </div>
@@ -96,7 +95,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
           <span className="text-xs font-medium text-slate-400">Total Settlement Volume</span>
-          <div className="text-2xl font-extrabold text-white">{analytics.total_payments} Transactions</div>
+          <div className="text-2xl font-extrabold text-ink">{analytics.total_payments} Transactions</div>
           <span className="text-[11px] text-emerald-400 font-semibold">{analytics.success_rate_percent}% Success Ratio</span>
         </div>
 
@@ -110,13 +109,13 @@ export default function AnalyticsPage() {
 
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
           <span className="text-xs font-medium text-slate-400">Average Outbound Latency</span>
-          <div className="text-2xl font-extrabold text-white">{analytics.average_latency_ms} ms</div>
+          <div className="text-2xl font-extrabold text-ink">{analytics.average_latency_ms} ms</div>
           <span className="text-[11px] text-slate-400">Across API order & capture calls</span>
         </div>
 
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
           <span className="text-xs font-medium text-slate-400">Avg Webhook Arrival Delay</span>
-          <div className="text-2xl font-extrabold text-white">{analytics.average_webhook_delay_seconds} s</div>
+          <div className="text-2xl font-extrabold text-ink">{analytics.average_webhook_delay_seconds} s</div>
           <span className="text-[11px] text-emerald-400">Well within healthy delivery SLA</span>
         </div>
       </div>
@@ -126,16 +125,16 @@ export default function AnalyticsPage() {
         {/* Daily Volume Trend */}
         <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-white">Transaction Outcome Volume</h3>
+            <h3 className="text-sm font-bold text-ink">Transaction Outcome Volume</h3>
             <p className="text-xs text-slate-400">Succeeded vs Failed vs Ambiguous/Uncertain</p>
           </div>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={analytics.volume_over_time} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis dataKey="date" stroke="#64748b" fontSize={11} />
-                <YAxis stroke="#64748b" fontSize={11} />
-                <Tooltip contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: "8px", fontSize: "12px" }} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                <XAxis dataKey="date" stroke="var(--chart-axis)" fontSize={11} />
+                <YAxis stroke="var(--chart-axis)" fontSize={11} />
+                <Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", borderColor: "var(--chart-tooltip-border)", borderRadius: "8px", fontSize: "12px" }} />
                 <Bar dataKey="successful" fill="#10b981" name="Successful" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="failed" fill="#f43f5e" name="Failed" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="uncertain" fill="#f59e0b" name="Uncertain / Timeout" radius={[4, 4, 0, 0]} />
@@ -147,7 +146,7 @@ export default function AnalyticsPage() {
         {/* Failure Breakdown Distribution */}
         <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-white">Failure Code Categorization</h3>
+            <h3 className="text-sm font-bold text-ink">Failure Code Categorization</h3>
             <p className="text-xs text-slate-400">Frequency of failure codes across recorded incidents</p>
           </div>
           <div className="h-72 w-full">
@@ -157,11 +156,11 @@ export default function AnalyticsPage() {
                 data={analytics.failure_categories}
                 margin={{ top: 10, right: 20, left: 40, bottom: 0 }}
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-                <XAxis type="number" stroke="#64748b" fontSize={11} />
-                <YAxis type="category" dataKey="category" stroke="#64748b" fontSize={10} width={100} />
-                <Tooltip contentStyle={{ backgroundColor: "#0f172a", borderColor: "#334155", borderRadius: "8px", fontSize: "12px" }} />
-                <Bar dataKey="count" fill="#06b6d4" name="Occurrences" radius={[0, 4, 4, 0]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                <XAxis type="number" stroke="var(--chart-axis)" fontSize={11} />
+                <YAxis type="category" dataKey="category" stroke="var(--chart-axis)" fontSize={10} width={100} />
+                <Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", borderColor: "var(--chart-tooltip-border)", borderRadius: "8px", fontSize: "12px" }} />
+                <Bar dataKey="count" fill="#0b73c2" name="Occurrences" radius={[0, 4, 4, 0]}>
                   {analytics.failure_categories.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}

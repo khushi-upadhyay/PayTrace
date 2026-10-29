@@ -9,6 +9,8 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.db.base import Base
+from app.api.dependencies import get_current_user
+from app.db.models.user import User
 from app.db.session import get_db
 from app.core.config import settings
 from app.main import app
@@ -51,6 +53,8 @@ def client(db_session):
             pass
 
     app.dependency_overrides[get_db] = override_get_db
+    # Operator routes need a login; individual tests use the auth_client fixture to exercise it.
+    app.dependency_overrides[get_current_user] = lambda: User(id="test-user", name="Test", email="t@example.com", password_hash="x", role="Payments Operator")
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
