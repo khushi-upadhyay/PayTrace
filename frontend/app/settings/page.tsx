@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { useCallback, useEffect, useState } from "react";
+import { api, getApiBaseUrl } from "@/lib/api";
 import {
   Settings,
   ShieldCheck,
@@ -20,23 +20,33 @@ export default function SettingsPage() {
   const [settingsData, setSettingsData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedUrl, setCopiedUrl] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  useEffect(() => {
-    api.getSettings().then((data) => {
+  const loadSettings = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const data = await api.getSettings();
       setSettingsData(data);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Unable to load settings.");
+    } finally {
       setLoading(false);
-    }).catch(() => setLoading(false));
+    }
   }, []);
 
-  const webhookUrl = "http://localhost:8000/api/webhooks/paypal";
+  useEffect(() => { void loadSettings(); }, [loadSettings]);
+
+  const webhookUrl = `${getApiBaseUrl()}/api/webhooks/paypal`;
 
   const handleCopyWebhookUrl = () => {
-    navigator.clipboard.writeText(webhookUrl);
-    setCopiedUrl(true);
-    setTimeout(() => setCopiedUrl(false), 2000);
+    void navigator.clipboard.writeText(webhookUrl).then(() => {
+      setCopiedUrl(true);
+      setTimeout(() => setCopiedUrl(false), 2000);
+    }).catch(() => setCopiedUrl(false));
   };
 
-  if (loading) {
+  if (loading && !settingsData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
         <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
@@ -45,16 +55,25 @@ export default function SettingsPage() {
     );
   }
 
+  if (!settingsData) {
+    return (
+      <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
+        <p className="text-sm font-semibold text-rose-200">Settings are unavailable</p>
+        <p className="mt-2 text-xs text-slate-400">{loadError || "No settings response was returned."}</p>
+        <button onClick={() => void loadSettings()} className="mt-4 rounded-lg bg-paypal-navy px-3 py-2 text-xs text-onsolid transition-colors duration-150 hover:bg-paypal-blue">Retry</button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto animate-fadeIn pb-16">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-800">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Settings className="w-6 h-6 text-cyan-400" />
+          <h1 className="font-display text-4xl font-bold tracking-tight text-black">
             Integrations & Safety Policy
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-base text-black/70 mt-2">
             Verification status of the explicitly configured PayPal environment, AI engine, and security boundaries.
           </p>
         </div>
@@ -69,12 +88,12 @@ export default function SettingsPage() {
                 PP
               </div>
               <div>
-                <h2 className="text-sm font-bold text-white">PayPal {settingsData?.paypal?.environment || "Sandbox"} API</h2>
-                <span className="text-[10px] text-slate-400 font-mono">REST v2/checkout</span>
+                <h2 className="text-sm font-bold text-ink">PayPal {settingsData?.paypal?.environment || "Sandbox"} API</h2>
+                <span className="text-[10px] text-slate-400">REST v2/checkout</span>
               </div>
             </div>
             <span
-              className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+              className={`text-[10px] px-2 py-0.5 rounded border ${
                 settingsData?.paypal?.is_configured
                   ? "bg-emerald-950 text-emerald-300 border-emerald-800"
                   : "bg-cyan-950 text-cyan-300 border-cyan-800"
@@ -87,15 +106,15 @@ export default function SettingsPage() {
           <div className="space-y-2.5 text-xs">
             <div className="flex justify-between py-1 border-b border-slate-800/60">
               <span className="text-slate-400">Environment</span>
-              <span className="font-mono text-slate-200 uppercase">{settingsData?.paypal?.environment || "sandbox"}</span>
+              <span className="text-slate-200 uppercase">{settingsData?.paypal?.environment || "sandbox"}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-slate-800/60">
               <span className="text-slate-400">Client ID</span>
-              <span className="font-mono text-slate-200">{settingsData?.paypal?.client_id_masked || "Not configured"}</span>
+              <span className="text-slate-200">{settingsData?.paypal?.client_id_masked || "Not configured"}</span>
             </div>
             <div className="flex justify-between py-1">
               <span className="text-slate-400">Webhook Signature Verification</span>
-              <span className={`font-mono flex items-center gap-1 ${settingsData?.paypal?.webhook_id_configured ? "text-emerald-400" : "text-amber-400"}`}>
+              <span className={`flex items-center gap-1 ${settingsData?.paypal?.webhook_id_configured ? "text-emerald-400" : "text-amber-400"}`}>
                 {settingsData?.paypal?.webhook_id_configured ? <CheckCircle2 className="w-3.5 h-3.5" /> : <AlertTriangle className="w-3.5 h-3.5" />}
                 {settingsData?.paypal?.webhook_id_configured ? "Configured" : "Not configured"}
               </span>
@@ -111,12 +130,12 @@ export default function SettingsPage() {
                 <Brain className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-white">AI Investigator Engine</h2>
-                <span className="text-[10px] text-slate-400 font-mono">Evidence-Grounded</span>
+                <h2 className="text-sm font-bold text-ink">AI Investigator Engine</h2>
+                <span className="text-[10px] text-slate-400">Evidence-Grounded</span>
               </div>
             </div>
             <span
-              className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+              className={`text-[10px] px-2 py-0.5 rounded border ${
                 settingsData?.ai?.is_configured
                   ? "bg-emerald-950 text-emerald-300 border-emerald-800"
                   : "bg-amber-950 text-amber-300 border-amber-800"
@@ -129,17 +148,17 @@ export default function SettingsPage() {
           <div className="space-y-2.5 text-xs">
             <div className="flex justify-between py-1 border-b border-slate-800/60">
               <span className="text-slate-400">Provider</span>
-              <span className="font-mono text-slate-200 capitalize">{settingsData?.ai?.provider || "OpenAI Compatible"}</span>
+              <span className="text-slate-200 capitalize">{settingsData?.ai?.provider || "OpenAI Compatible"}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-slate-800/60">
               <span className="text-slate-400">Model</span>
-              <span className="font-mono text-slate-200">{settingsData?.ai?.model || "gpt-4o-mini / Fallback v1"}</span>
+              <span className="text-slate-200">{settingsData?.ai?.model || "gpt-4o-mini / Fallback v1"}</span>
             </div>
             <div className="flex justify-between py-1">
-              <span className="text-slate-400">Fallback Availability</span>
-              <span className="font-mono text-emerald-400 flex items-center gap-1">
+              <span className="text-slate-400">Fallback Path</span>
+              <span className="text-emerald-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                100% Deterministic Fallback Ready
+                Deterministic fallback available
               </span>
             </div>
           </div>
@@ -150,17 +169,17 @@ export default function SettingsPage() {
       <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
         <div className="flex items-center gap-2.5">
           <Webhook className="w-5 h-5 text-indigo-400" />
-          <h2 className="text-sm font-bold text-white">PayPal Webhook Endpoint Configuration</h2>
+          <h2 className="text-sm font-bold text-ink">PayPal Webhook Endpoint Configuration</h2>
         </div>
         <p className="text-xs text-slate-300 leading-relaxed">
           Configure this URL in your PayPal Developer Sandbox application to receive real-time webhook events:
         </p>
 
         <div className="flex items-center gap-2 p-3 rounded-lg bg-slate-900 border border-slate-800">
-          <code className="text-xs font-mono text-cyan-300 flex-1 truncate">{webhookUrl}</code>
+          <code className="text-xs text-cyan-300 flex-1 truncate">{webhookUrl}</code>
           <button
             onClick={handleCopyWebhookUrl}
-            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-semibold flex items-center gap-1"
+            className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-ink rounded text-xs font-semibold flex items-center gap-1 transition-colors duration-150"
           >
             <Copy className="w-3.5 h-3.5" />
             {copiedUrl ? "Copied" : "Copy"}
@@ -171,7 +190,7 @@ export default function SettingsPage() {
           <span className="font-bold text-slate-300 block">Required Subscribed Events:</span>
           <div className="flex flex-wrap gap-1.5 pt-1">
             {["CHECKOUT.ORDER.APPROVED", "PAYMENT.CAPTURE.COMPLETED", "PAYMENT.CAPTURE.DENIED", "PAYMENT.CAPTURE.REFUNDED"].map((evt) => (
-              <span key={evt} className="px-2 py-0.5 rounded bg-slate-950 font-mono border border-slate-800 text-slate-300">
+              <span key={evt} className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300">
                 {evt}
               </span>
             ))}
@@ -181,7 +200,7 @@ export default function SettingsPage() {
 
       {/* Security & Safety Guardrails */}
       <div className="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
-        <h2 className="text-sm font-bold text-white flex items-center gap-2">
+        <h2 className="text-sm font-bold text-ink flex items-center gap-2">
           <Lock className="w-4 h-4 text-emerald-400" />
           PayTrace Production Safety Guardrails
         </h2>

@@ -1,55 +1,55 @@
 /** @type {import('tailwindcss').Config} */
+const shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+
+// Every palette family reads its channels from CSS variables (app/palette.css),
+// so palette changes happen in one place.
+const themed = (name) =>
+  Object.fromEntries(shades.map((s) => [s, `rgb(var(--${name}-${s}) / <alpha-value>)`]));
+
 module.exports = {
-  darkMode: ["class"],
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        display: ["var(--font-display)", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+      },
       colors: {
-        border: "hsl(215 27.9% 16.9%)",
-        background: "hsl(222 47% 7%)",
-        foreground: "hsl(210 40% 98%)",
-        card: {
-          DEFAULT: "hsl(222 47% 9%)",
-          foreground: "hsl(210 40% 98%)",
-        },
-        primary: {
-          DEFAULT: "hsl(199 89% 48%)", // PayPal/Cyber Cyan
-          foreground: "hsl(210 40% 98%)",
-        },
-        secondary: {
-          DEFAULT: "hsl(217 32% 17%)",
-          foreground: "hsl(210 40% 98%)",
-        },
-        muted: {
-          DEFAULT: "hsl(217 32% 14%)",
-          foreground: "hsl(215 20.2% 65.1%)",
-        },
-        accent: {
-          DEFAULT: "hsl(217 32% 20%)",
-          foreground: "hsl(210 40% 98%)",
-        },
-        destructive: {
-          DEFAULT: "hsl(0 84.2% 60.2%)",
-          foreground: "hsl(210 40% 98%)",
-        },
-        warning: {
-          DEFAULT: "hsl(38 92% 50%)",
-          foreground: "hsl(210 40% 98%)",
-        },
-        success: {
-          DEFAULT: "hsl(142 76% 45%)",
-          foreground: "hsl(210 40% 98%)",
+        slate: themed("slate"),
+        cyan: themed("cyan"), // PayPal blue scale
+        amber: themed("amber"),
+        emerald: themed("emerald"),
+        rose: themed("rose"),
+        sky: themed("sky"),
+        purple: themed("purple"),
+        indigo: themed("indigo"),
+        // Headline text: PayPal navy-black.
+        ink: "rgb(var(--ink) / <alpha-value>)",
+        // Text on solid brand-coloured buttons.
+        onsolid: "#ffffff",
+        onamber: "#1c1300",
+        paypal: {
+          navy: "#1e2d8a",
+          blue: "#2c4fae",
+          sky: "#85cbf9",
+          cream: "#f9f7f3",
         },
       },
       borderRadius: {
         lg: "0.5rem",
+        xl: "0.75rem",
+        "2xl": "0.75rem",
         md: "calc(0.5rem - 2px)",
         sm: "calc(0.5rem - 4px)",
       },
+      keyframes: {
+        fadeIn: { from: { opacity: 0, transform: "translateY(4px)" }, to: { opacity: 1, transform: "none" } },
+      },
+      animation: { fadeIn: "fadeIn 0.3s ease-out both" },
     },
   },
   plugins: [],
-}
+};

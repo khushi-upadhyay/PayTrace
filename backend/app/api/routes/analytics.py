@@ -2,16 +2,17 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from decimal import Decimal
 from datetime import datetime, timedelta
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
 from app.db.models.payment import Payment
 from app.db.models.payment_event import PaymentEvent
 from app.db.models.incident import Incident
+from app.db.models.user import User
 from app.schemas.analytics import AnalyticsOverviewResponse
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 @router.get("", response_model=AnalyticsOverviewResponse)
-def get_analytics(db: Session = Depends(get_db)):
+def get_analytics(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Computes comprehensive payment performance metrics, failure distributions, and revenue at risk."""
     payments = db.query(Payment).all()
     total_count = len(payments)

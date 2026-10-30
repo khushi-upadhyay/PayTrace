@@ -6,7 +6,8 @@ from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
+from app.db.models.user import User
 from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction
 from app.db.models.payment import Payment
 from app.schemas.shelfswipe import (
@@ -115,7 +116,7 @@ def seed_demo_catalog(db: Session) -> None:
     db.commit()
 
 @router.post("/onboard")
-def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db)):
+def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Loads the curated demo catalog without accessing an external merchant site."""
     seller = db.query(Seller).filter(Seller.source_url == req.shop_url).first()
     if not seller:
@@ -171,7 +172,8 @@ def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db)):
 def get_swipe_deck(
     query: str = Query("gift", description="Natural language buyer search query"),
     buyer_ref: str = Query("buyer_demo_01"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
 ):
     """
     Returns a deterministic, search-filtered demo deck.
@@ -252,7 +254,7 @@ def get_swipe_deck(
     )
 
 @router.post("/swipe")
-def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
+def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Records a swipe (right=like, left=pass) to iteratively teach the AI preference vector."""
     swipe = SwipeAction(
         id=str(uuid.uuid4()),
@@ -265,7 +267,7 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
     return {"status": "recorded", "direction": req.direction, "product_id": req.product_id}
 
 @router.post("/checkout")
-async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
+async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """
     Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
     """
@@ -322,6 +324,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         id=payment_id,
         paypal_order_id=paypal_order_id,
         customer_ref=req.buyer_ref,
+        session_id=req.session_id,
         amount=total_amount,
         currency=prod.currency,
         status="CREATED",

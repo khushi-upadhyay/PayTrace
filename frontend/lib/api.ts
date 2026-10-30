@@ -11,7 +11,7 @@ import { classifyFetchFailure } from "@/lib/checkout-state.mjs";
 
 const API_PREFIX = "/api/v1";
 
-function getApiBaseUrl(): string {
+export function getApiBaseUrl(): string {
   const configured = process.env.NEXT_PUBLIC_API_BASE_URL?.trim();
   return (configured && configured.length > 0 ? configured : "http://localhost:8000").replace(
     /\/$/,
@@ -88,10 +88,55 @@ function toQuery(params: Record<string, string | number | undefined>): string {
   return qs ? `?${qs}` : "";
 }
 
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export interface AuthTokenResponse {
+  access_token: string;
+  token_type: string;
+  user: AuthUser;
+}
+
+const AUTH_TOKEN_KEY = "paytrace.auth.token";
+let unauthorizedHandler: (() => void) | null = null;
+
+export function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return localStorage.getItem(AUTH_TOKEN_KEY) ?? sessionStorage.getItem(AUTH_TOKEN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** Persists the token (localStorage when `remember`, else this tab only); null clears it. */
+export function setAuthToken(token: string | null, remember = true): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+    sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    if (token) (remember ? localStorage : sessionStorage).setItem(AUTH_TOKEN_KEY, token);
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+export function onUnauthorized(handler: (() => void) | null): void {
+  unauthorizedHandler = handler;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${getApiBaseUrl()}${API_PREFIX}${path}`;
   const headers = new Headers(init?.headers);
   headers.set("Accept", "application/json");
+  const authToken = getAuthToken();
+  if (authToken && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${authToken}`);
+  }
   if (init?.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
@@ -112,6 +157,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const { message, detail } = await extractErrorMessage(res);
+    if (res.status === 401 && authToken && !path.startsWith("/auth/")) {
+      unauthorizedHandler?.();
+    }
     throw new ApiError(message, res.status, detail);
   }
 
@@ -177,6 +225,59 @@ export interface PaymentSessionInfo {
   started_at?: string | null;
   events_count?: number;
   recording_enabled?: boolean;
+}
+
+export interface BrowserSessionItem {
+  id: string;
+  visitor_ref: string;
+  payment_id: string | null;
+  payment_ids?: string[];
+  started_at: string;
+  ended_at: string | null;
+  recording_enabled: boolean;
+  events_count: number;
+  user_agent?: string | null;
+  metadata_redacted?: Record<string, unknown>;
+}
+
+export interface BrowserSessionEvent {
+  id?: string;
+  event_type: string;
+  category?: string;
+  source?: "browser" | "sdk" | "backend" | "provider";
+  session_id?: string;
+  tab_id?: string | null;
+  segment_id?: string | null;
+  occurred_at?: string;
+  received_at?: string;
+  session_offset_ms?: number | null;
+  route?: string | null;
+  payment_id?: string | null;
+  order_id?: string | null;
+  severity?: "debug" | "info" | "warn" | "error" | null;
+  trace_id?: string | null;
+  attributes?: Record<string, unknown>;
+  payload: Record<string, unknown>;
+}
+
+export interface BrowserSessionReplay {
+  session_id: string;
+  payment_id: string | null;
+  payment_ids?: string[];
+  visitor_ref: string;
+  started_at?: string;
+  ended_at?: string | null;
+  user_agent?: string | null;
+  metadata_redacted?: Record<string, unknown>;
+  events: Array<BrowserSessionEvent & { id: string; occurred_at: string }>;
+  total_events: number;
+  returned_events?: number;
+  rrweb_events?: number;
+  investigation_events?: number;
+  offset?: number;
+  limit?: number;
+  has_more?: boolean;
+  payment_events?: Array<Record<string, unknown>>;
 }
 
 export interface OrderCreateRequest {
@@ -431,6 +532,50 @@ export interface PaymentListParams {
 }
 
 export const api = {
+  me(): Promise<AuthUser> {
+    return request<AuthUser>("/auth/me");
+  },
+
+  login(email: string, password: string): Promise<AuthTokenResponse> {
+    return request<AuthTokenResponse>("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+  },
+
+  register(name: string, email: string, password: string): Promise<AuthTokenResponse> {
+    return request<AuthTokenResponse>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
+  },
+
+  createSession(body: { session_id?: string; visitor_ref?: string; user_agent?: string; metadata?: Record<string, unknown> }) {
+    return request<{ id: string; visitor_ref: string; payment_id: string | null; started_at: string; recording_enabled: boolean }>(
+      "/sessions",
+      { method: "POST", body: JSON.stringify(body), signal: AbortSignal.timeout(5000) }
+    );
+  },
+
+  ingestSessionEvents(sessionId: string, events: BrowserSessionEvent[]) {
+    return request<{ status: string; session_id: string; events_ingested: number }>(
+      `/sessions/${encodeURIComponent(sessionId)}/events`,
+      { method: "POST", body: JSON.stringify({ events }), signal: AbortSignal.timeout(10000) }
+    );
+  },
+
+  stopSession(sessionId: string) {
+    return request<void>(`/sessions/${encodeURIComponent(sessionId)}/stop`, { method: "POST" });
+  },
+
+  getSessions(limit = 100): Promise<BrowserSessionItem[]> {
+    return request<BrowserSessionItem[]>(`/sessions${toQuery({ limit })}`);
+  },
+
+  getSessionReplay(sessionId: string, limit = 500, offset = 0, tabId?: string): Promise<BrowserSessionReplay> {
+    return request<BrowserSessionReplay>(`/sessions/${encodeURIComponent(sessionId)}/replay${toQuery({ limit, offset, tab_id: tabId })}`);
+  },
+
   getShelfDeck(query: string, buyerRef: string) {
     return request<ShelfDeckResponse>(
       `/shelfswipe/deck${toQuery({ query, buyer_ref: buyerRef })}`
@@ -451,12 +596,13 @@ export const api = {
     });
   },
 
-  checkoutShelfItem(productId: string, buyerRef: string, simulateScenario?: string) {
+  checkoutShelfItem(productId: string, buyerRef: string, simulateScenario?: string, sessionId?: string) {
     return request<ShelfCheckoutResponse>("/shelfswipe/checkout", {
       method: "POST",
       body: JSON.stringify({
         product_id: productId,
         buyer_ref: buyerRef,
+        session_id: sessionId,
         simulate_scenario: simulateScenario,
       }),
     });

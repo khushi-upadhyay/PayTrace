@@ -7,14 +7,17 @@
     "build": "next build",
     "start": "next start -p 3000",
     "typecheck": "tsc --noEmit",
-    "test:checkout": "node --test lib/checkout-state.test.mjs"
+    "test:checkout": "node --test lib/checkout-state.test.mjs",
+    "test:sessions": "node --test lib/session-recording-policy.test.mjs lib/session-identity.test.mjs lib/session-instrumentation.test.mjs lib/session-playback.test.mjs lib/session-buffer-policy.test.mjs"
   },
   "dependencies": {
+    "@rrweb/replay": "^2.2.0",
     "lucide-react": "^0.428.0",
     "next": "14.2.14",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "recharts": "^2.12.7"
+    "recharts": "^2.12.7",
+    "rrweb": "^2.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",

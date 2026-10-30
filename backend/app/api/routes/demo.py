@@ -3,7 +3,8 @@ from decimal import Decimal
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.api.dependencies import get_db
+from app.api.dependencies import get_current_user, get_db
+from app.db.models.user import User
 from app.core.time import utc_now
 from app.db.models.payment import Payment
 from app.db.models.payment_event import PaymentEvent
@@ -34,12 +35,12 @@ AVAILABLE_SCENARIOS = [
 ]
 
 @router.get("/scenarios")
-def list_scenarios():
+def list_scenarios(user: User = Depends(get_current_user)):
     """Lists available reproducible demo failure scenarios."""
     return AVAILABLE_SCENARIOS
 
 @router.post("/scenarios", response_model=DemoScenarioResponse)
-def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db)):
+def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Triggers a labelled, deterministic demo scenario."""
     scenario_id = req.scenario
     now = utc_now()
@@ -149,7 +150,7 @@ def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail=f"Scenario '{scenario_id}' not supported")
 
 @router.post("/reset", response_model=DemoResetResponse)
-def reset_demo_data(db: Session = Depends(get_db)):
+def reset_demo_data(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Explicitly resets development demo data; unavailable in deployed environments."""
     if settings.APP_ENV.strip().lower() not in {"development", "test"}:
         raise HTTPException(status_code=403, detail="Demo data reset is disabled outside development and tests")

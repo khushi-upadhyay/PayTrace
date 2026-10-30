@@ -220,7 +220,7 @@ python -m pytest tests -v
 - `test_payments.py`: Payment creation and ledger querying.
 - `test_timeline.py`: Unified chronological event sequence reconstruction.
 - `test_webhooks.py`: Webhook signature verification and idempotency deduplication.
-- `test_sessions.py`: Browser session recording and automatic PII/credential redaction.
+- `test_sessions.py`: Consent-compatible browser session storage, rrweb input redaction, idempotent batches, size limits, replay listing, checkout correlation, and opt-out handling.
 - `test_analytics.py`: Performance metrics, latency stats, and revenue-at-risk aggregation.
 - `test_settings.py`: Safe integration disclosure without credential leakage.
 - `test_demo.py`: Demo scenarios and clean database re-seeding.
@@ -320,6 +320,10 @@ PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver 
 
 - **Zero Secret Exposure**: No PayPal client secrets or AI keys are ever transmitted to the frontend or exposed in API responses.
 - **Privacy Masking**: Browser interaction sessions redact credit card numbers, passwords, CVV, and authentication tokens before storage.
+- **Privacy-Masked Session Replay**: Recording starts automatically unless a visitor explicitly stops it from the in-app notice. rrweb masks inputs and excludes PayPal-hosted pages. Fetch/XHR and console capture records safe metadata only; it does not collect request/response bodies, authorization headers, cookies, or credentials. Checkout remains available when recording is disabled or unavailable.
+- **Session Review**: Open **Session Replay** in the sidebar to browse recent sessions, review masked recordings and lifecycle markers, and follow linked payments. Session uploads are limited to 500 events per batch, 100 KB per event, and 10,000 events per session.
+- **Session and Tab Identity**: The cryptographically random session ID is shared across tabs and survives refreshes; each tab has its own sessionStorage ID and an expiring shared lease to detect copied tab state. The default idle timeout is 30 minutes. Configure `SESSION_IDLE_TIMEOUT_SECONDS` in the backend and `NEXT_PUBLIC_SESSION_IDLE_TIMEOUT_MS` in the frontend to the same duration. If browser storage is blocked, recording falls back to per-tab in-memory identity and cannot guarantee cross-tab continuity. A browser cannot reliably signal that a tab was permanently closed; tab end times are therefore best-effort.
+- **Timeline Semantics**: Event occurrence and ingestion times are stored separately and serialized in UTC (`Z`). Replay is separated by tab/recording segment; events outside a segment’s occurrence range remain visible without being seekable. Older events without reliable timestamps remain marked as unavailable instead of being assigned a fabricated zero offset.
 - **Human Approval**: Consequential money movements (such as refunds) cannot be executed by AI agents; they require explicit human approval via `/approvals`.
 - **Honest Evidence Boundaries**: Simulated events are tagged with `source_mode="SIMULATED"` and visibly labelled in the UI.
 

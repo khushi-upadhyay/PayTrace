@@ -14,6 +14,7 @@ def test_settings_exposure_safety(client):
     assert "is_configured" in data["ai"]
     assert "environment" in data["paypal"]
     assert "provider" in data["ai"]
+    assert data["database"]["connected"] is True
 
     # Verify no secret credentials exist anywhere in the payload
     serialized = str(data).lower()
