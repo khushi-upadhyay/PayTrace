@@ -17,6 +17,12 @@ export function sessionIdleTimeout(configured) {
   return Number.isFinite(value) ? Math.min(86_400_000, Math.max(60_000, value)) : 1_800_000;
 }
 
+export function isSessionExpiredDetail(detail) {
+  let value = detail;
+  if (value && typeof value === "object" && "detail" in value) value = value.detail;
+  return Boolean(value && typeof value === "object" && "code" in value && value.code === "session_expired");
+}
+
 function parseRecord(raw) {
   if (!raw) return null;
   try {
@@ -34,6 +40,35 @@ export function getOrCreateSessionRecord(storage, { now = Date.now(), idleTimeou
     : { id: idFactory(), created_at: now, last_activity_at: now };
   storage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(record));
   return { record, expiredSessionId };
+}
+
+export function replaceExpiredSessionRecord(storage, expiredSessionId, { now = Date.now(), idFactory = generateSecureId } = {}) {
+  const current = parseRecord(storage.getItem(ACTIVE_SESSION_KEY));
+  if (current && current.id !== expiredSessionId) {
+    const record = { ...current, last_activity_at: now };
+    storage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(record));
+    return record;
+  }
+  const record = { id: idFactory(), created_at: now, last_activity_at: now };
+  storage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(record));
+  return record;
+}
+
+/** Create a replacement session with bounded recovery if the candidate was also expired. */
+export async function createWithExpiredSessionRecovery({ expiredSessionId, createSession, rotateSession, isExpired, maxAttempts = 2 }) {
+  let staleId = expiredSessionId;
+  let lastError;
+  for (let attempt = 0; attempt < Math.max(1, maxAttempts); attempt += 1) {
+    const replacement = await rotateSession(staleId);
+    try {
+      return { replacement, session: await createSession(replacement) };
+    } catch (error) {
+      if (!isExpired(error)) throw error;
+      lastError = error;
+      staleId = replacement.id;
+    }
+  }
+  throw lastError;
 }
 
 export function touchSessionRecord(storage, sessionId, now = Date.now()) {

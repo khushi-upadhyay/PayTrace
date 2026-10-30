@@ -42,6 +42,10 @@ function formatFastApiDetail(detail: unknown): string | null {
   if (typeof detail === "string" && detail.length > 0) {
     return detail;
   }
+  if (detail && typeof detail === "object" && !Array.isArray(detail)) {
+    if ("message" in detail && typeof detail.message === "string" && detail.message.length > 0) return detail.message;
+    if ("msg" in detail && typeof detail.msg === "string" && detail.msg.length > 0) return detail.msg;
+  }
   if (Array.isArray(detail)) {
     const parts = detail
       .map((item) => {
@@ -72,7 +76,7 @@ async function extractErrorMessage(res: Response): Promise<{ message: string; de
     if (typeof body.message === "string" && body.message.length > 0) {
       return { message: body.message, detail: body };
     }
-    return { message: fallback, detail: body };
+    return { message: fallback, detail: body.detail ?? body };
   } catch {
     return { message: fallback, detail: null };
   }

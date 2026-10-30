@@ -1,17 +1,19 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { api, getApiBaseUrl, type BrowserSessionEvent } from "@/lib/api";
+import { api, ApiError, getApiBaseUrl, type BrowserSessionEvent } from "@/lib/api";
 import { persistSessionEvents, readSessionEvents, removeSessionEvents } from "@/lib/session-outbox";
-import { ACTIVE_SESSION_KEY, activeTabLeaseCount, claimTabId, getOrCreateSessionRecord, releaseTabLease, renewTabLease, withSessionIdentityLock } from "@/lib/session-identity.mjs";
+import { ACTIVE_SESSION_KEY, activeTabLeaseCount, claimTabId, createWithExpiredSessionRecovery, getOrCreateSessionRecord, isSessionExpiredDetail, releaseTabLease, renewTabLease, replaceExpiredSessionRecord, withSessionIdentityLock } from "@/lib/session-identity.mjs";
 import { instrumentConsole, instrumentNetwork, sanitizeRequestUrl, sanitizeRrwebEvent } from "@/lib/session-instrumentation.mjs";
-import { MAX_PACKETS_PER_UPLOAD, MEMORY_BUFFER_LIMIT, MEMORY_FLUSH_DELAY_MS, MEMORY_FLUSH_SIZE, PACKET_PACING_MS, retryDelay, restoreUnsentBatch, shouldPersistBuffer, UPLOAD_BATCH_SIZE, UPLOAD_INTERVAL_MS } from "@/lib/session-buffer-policy.mjs";
+import { MAX_PACKETS_PER_UPLOAD, MEMORY_BUFFER_LIMIT, MEMORY_FLUSH_DELAY_MS, MEMORY_FLUSH_SIZE, PACKET_PACING_MS, groupEventsBySession, retryDelay, restoreUnsentBatch, shouldPersistBuffer, UPLOAD_BATCH_SIZE, UPLOAD_INTERVAL_MS } from "@/lib/session-buffer-policy.mjs";
 import { shouldStartSessionRecording } from "@/lib/session-recording-policy.mjs";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 type RecordingChoice = "loading" | "enabled" | "disabled";
 type SessionRecordingContextValue = {
   sessionId: string | null;
   recordingChoice: RecordingChoice;
+  recorderReady: boolean;
   recordingError: string | null;
   enableRecording: () => Promise<void>;
   disableRecording: () => void;
@@ -44,9 +46,31 @@ function metadata() {
   };
 }
 
+function isSessionExpiredError(error: unknown) {
+  return error instanceof ApiError && error.status === 409 && isSessionExpiredDetail(error.detail);
+}
+
+async function createReplacementSession(expiredId: string, sharedStorage: Pick<Storage, "getItem" | "setItem">, tabStorage: Pick<Storage, "setItem">) {
+  const { replacement: record, session } = await createWithExpiredSessionRecovery({
+    expiredSessionId: expiredId,
+    rotateSession: (staleId: string) => replaceExpiredSessionRecord(sharedStorage, staleId),
+    createSession: (candidate: { id: string }) => {
+      const visitorRef = `anon_${candidate.id}`;
+      tabStorage.setItem("paytrace_visitor_ref", visitorRef);
+      return api.createSession({ session_id: candidate.id, visitor_ref: visitorRef, user_agent: navigator.userAgent, metadata: metadata() });
+    },
+    isExpired: isSessionExpiredError,
+    maxAttempts: 2,
+  });
+  return { record, session };
+}
+
 export function SessionRecordingProvider({ children }: { children: ReactNode }) {
+  const { ready: authReady } = useAuth();
   const [recordingChoice, setRecordingChoice] = useState<RecordingChoice>("loading");
   const recordingChoiceRef = useRef<RecordingChoice>("loading");
+  const [recorderReady, setRecorderReady] = useState(false);
+  const [recorderGeneration, setRecorderGeneration] = useState(0);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [recordingError, setRecordingError] = useState<string | null>(null);
   const pendingEvents = useRef<BrowserSessionEvent[]>([]);
@@ -59,6 +83,8 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
   const sessionCreateRetryTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const retryAttempt = useRef(0);
   const creating = useRef<Promise<string> | null>(null);
+  const recovering = useRef<Map<string, Promise<string>>>(new Map());
+  const expiredSessionIds = useRef<Set<string>>(new Set());
   const stopRequested = useRef(false);
 
   useEffect(() => { recordingChoiceRef.current = recordingChoice; }, [recordingChoice]);
@@ -109,17 +135,26 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
     if (creating.current) return creating.current;
     const task = (async () => {
       const sharedStorage = availableStorage(localStorage);
-      const record = await withSessionIdentityLock(() => getOrCreateSessionRecord(sharedStorage, { idleTimeout: SESSION_IDLE_TIMEOUT_MS }), { storage: sharedStorage as Storage });
-      sessionStartedAt.current = record.record.created_at;
-      if (record.expiredSessionId) {
-        try { await api.stopSession(record.expiredSessionId); } catch { /* Expired server sessions are stopped by their idle timeout. */ }
-      }
-      const saved = availableStorage(sessionStorage).getItem(SESSION_CREATE_RETRY_KEY);
-      const id = saved === record.record.id ? saved : record.record.id;
       const tabStorage = availableStorage(sessionStorage);
-      const visitorRef = tabStorage.getItem("paytrace_visitor_ref") ?? `anon_${id}`;
-      tabStorage.setItem("paytrace_visitor_ref", visitorRef);
-      const session = await api.createSession({ session_id: id, visitor_ref: visitorRef, user_agent: navigator.userAgent, metadata: metadata() });
+      const session = await withSessionIdentityLock(async () => {
+        let record = getOrCreateSessionRecord(sharedStorage, { idleTimeout: SESSION_IDLE_TIMEOUT_MS });
+        sessionStartedAt.current = record.record.created_at;
+        if (record.expiredSessionId) {
+          try { await api.stopSession(record.expiredSessionId); } catch { /* Existing event and session data remain available for replay. */ }
+        }
+        const id = record.record.id;
+        const visitorRef = tabStorage.getItem("paytrace_visitor_ref") ?? `anon_${id}`;
+        tabStorage.setItem("paytrace_visitor_ref", visitorRef);
+        try {
+          return await api.createSession({ session_id: id, visitor_ref: visitorRef, user_agent: navigator.userAgent, metadata: metadata() });
+        } catch (error) {
+          if (!isSessionExpiredError(error)) throw error;
+          expiredSessionIds.current.add(id);
+          const replacement = await createReplacementSession(id, sharedStorage, tabStorage);
+          sessionStartedAt.current = replacement.record.created_at;
+          return replacement.session;
+        }
+      }, { storage: sharedStorage as Storage });
       availableStorage(sessionStorage).setItem(SESSION_CREATE_RETRY_KEY, session.id);
       activeSessionId.current = session.id;
       setSessionId(session.id);
@@ -130,13 +165,43 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
     try { return await task; } finally { creating.current = null; }
   }, []);
 
+  const recoverExpiredSession = useCallback((expiredId: string): Promise<string> => {
+    const existing = recovering.current.get(expiredId);
+    if (existing) return existing;
+    expiredSessionIds.current.add(expiredId);
+    const sharedStorage = availableStorage(localStorage);
+    const tabStorage = availableStorage(sessionStorage);
+    const task = withSessionIdentityLock(
+      async () => createReplacementSession(expiredId, sharedStorage, tabStorage),
+      { storage: sharedStorage as Storage },
+    ).then(({ record, session }) => {
+      sessionStartedAt.current = record.created_at;
+      activeSessionId.current = session.id;
+      setSessionId(session.id);
+      availableStorage(sessionStorage).setItem(SESSION_CREATE_RETRY_KEY, session.id);
+      setRecordingError(null);
+      return session.id;
+    }).catch((error) => {
+      activeSessionId.current = null;
+      setSessionId(null);
+      throw error;
+    });
+    recovering.current.set(expiredId, task);
+    void task.then(
+      () => { if (recovering.current.get(expiredId) === task) recovering.current.delete(expiredId); },
+      () => { if (recovering.current.get(expiredId) === task) recovering.current.delete(expiredId); },
+    );
+    return task;
+  }, []);
+
   const persistBuffer = useCallback(async () => {
     if (flushMemoryTimer.current) { clearTimeout(flushMemoryTimer.current); flushMemoryTimer.current = null; }
     const id = activeSessionId.current;
     if (!id || pendingEvents.current.length === 0) return;
     const batch = pendingEvents.current.splice(0, MEMORY_FLUSH_SIZE);
     try {
-      const evicted = await persistSessionEvents(id, batch);
+      let evicted = 0;
+      for (const [eventSessionId, events] of Array.from(groupEventsBySession(batch, id).entries())) evicted += await persistSessionEvents(eventSessionId, events);
       if (evicted > 0) setRecordingError(`The local event queue reached its ${MEMORY_BUFFER_LIMIT}-event limit; ${evicted} oldest replay event(s) were evicted to preserve investigation events.`);
     } catch {
       const restored = restoreUnsentBatch(pendingEvents.current, batch, MEMORY_BUFFER_LIMIT);
@@ -151,7 +216,7 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
 
   const uploadOutbox = useCallback(async () => {
     const id = activeSessionId.current;
-    if (!id) return;
+    if (!id || expiredSessionIds.current.has(id)) return;
     await persistBuffer();
     try {
       let remaining = 0;
@@ -181,7 +246,17 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
       } else if (!uploadTimer.current && recordingChoiceRef.current === "enabled") {
         uploadTimer.current = setInterval(() => void uploadOutbox(), 4000);
       }
-    } catch {
+    } catch (error) {
+      if (isSessionExpiredError(error)) {
+        try {
+          await recoverExpiredSession(id);
+          retryAttempt.current = 0;
+          if (!createRetryTimer.current) createRetryTimer.current = setTimeout(() => { createRetryTimer.current = null; void uploadOutbox(); }, 0);
+        } catch {
+          setRecordingError("The previous session expired. Its queued events remain attached to that session while PayTrace reconnects.");
+        }
+        return;
+      }
       setRecordingError("Session events are waiting to upload. They will retry automatically when PayTrace is reachable.");
       const delay = retryDelay(retryAttempt.current++);
       if (uploadTimer.current) { clearInterval(uploadTimer.current); uploadTimer.current = null; }
@@ -190,16 +265,23 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
         if (activeSessionId.current) void uploadOutbox();
       }, delay);
     }
-  }, [persistBuffer]);
+  }, [persistBuffer, recoverExpiredSession]);
 
   const enableRecording = useCallback(async () => {
-    if (recordingChoiceRef.current === "enabled") return;
+    const alreadyEnabled = recordingChoiceRef.current === "enabled";
+    recordingChoiceRef.current = "enabled";
     availableStorage(localStorage).setItem(CONSENT_KEY, "enabled");
     stopRequested.current = false;
     setRecordingChoice("enabled");
     setRecordingError(null);
-    try { await ensureSession(); } catch (err) { setRecordingError(err instanceof Error ? err.message : "Could not start session recording."); }
-    enqueue({ id: crypto.randomUUID(), event_type: "recording_enabled", category: "lifecycle", occurred_at: new Date().toISOString(), payload: { name: "recording_enabled" } });
+    try {
+      await ensureSession();
+      if (alreadyEnabled) setRecorderGeneration((generation) => generation + 1);
+      else enqueue({ id: crypto.randomUUID(), event_type: "recording_enabled", category: "lifecycle", occurred_at: new Date().toISOString(), payload: { name: "recording_enabled" } });
+    } catch (err) {
+      setRecordingError(err instanceof Error ? err.message : "Could not start session recording.");
+      if (alreadyEnabled) setRecorderGeneration((generation) => generation + 1);
+    }
   }, [enqueue, ensureSession]);
 
   const disableRecording = useCallback(() => {
@@ -207,6 +289,8 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
     enqueue({ id: crypto.randomUUID(), event_type: "recording_disabled", category: "lifecycle", occurred_at: new Date().toISOString(), payload: { name: "recording_disabled" } });
     availableStorage(localStorage).setItem(CONSENT_KEY, "disabled");
     stopRequested.current = true;
+    recordingChoiceRef.current = "disabled";
+    setRecorderReady(false);
     setRecordingChoice("disabled");
     if (flushMemoryTimer.current) clearTimeout(flushMemoryTimer.current);
     if (uploadTimer.current) clearInterval(uploadTimer.current);
@@ -223,11 +307,20 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
   }, [enqueue, recordingChoice]);
 
   const retryRecording = useCallback(async () => {
+    if (recordingChoiceRef.current !== "enabled") {
+      await enableRecording();
+      return;
+    }
     setRecordingError(null);
-    try { await ensureSession(); await uploadOutbox(); } catch (err) { setRecordingError(err instanceof Error ? err.message : "Could not connect to PayTrace."); }
-  }, [ensureSession, uploadOutbox]);
+    try {
+      await ensureSession();
+      await uploadOutbox();
+      setRecorderGeneration((generation) => generation + 1);
+    } catch (err) { setRecordingError(err instanceof Error ? err.message : "Could not connect to PayTrace."); }
+  }, [enableRecording, ensureSession, uploadOutbox]);
 
   useEffect(() => {
+    if (!authReady) return;
     const sharedStorage = availableStorage(localStorage);
     const tabStorage = availableStorage(sessionStorage);
     const consent = sharedStorage.getItem(CONSENT_KEY);
@@ -253,7 +346,7 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
     const release = () => { if (tabClaim.current) releaseTabLease(sharedStorage, tabClaim.current); };
     window.addEventListener("pagehide", release);
     return () => { clearInterval(lease); window.removeEventListener("pagehide", release); release(); };
-  }, [ensureSession, recordingChoice]);
+  }, [authReady, ensureSession, recordingChoice]);
 
   useEffect(() => {
     const onConsentChange = (event: StorageEvent) => {
@@ -269,16 +362,31 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
     if (recordingChoice !== "enabled" || sessionId) return;
     let active = true;
     let delay = 1000;
+    let attempts = 0;
+    const maxAttempts = 5;
     const retry = () => {
+      if (!active || attempts >= maxAttempts) return;
       void ensureSession().then(() => { delay = 1000; }).catch((err) => {
         if (!active) return;
         setRecordingError(err instanceof Error ? err.message : "Session setup is offline; retrying automatically.");
+        attempts += 1;
+        if (attempts >= maxAttempts) return;
         sessionCreateRetryTimer.current = setTimeout(retry, delay);
         delay = Math.min(30_000, delay * 2);
       });
     };
+    const onOnline = () => { attempts = 0; delay = 1000; retry(); };
+    const onVisible = () => { if (document.visibilityState === "visible") onOnline(); };
+    window.addEventListener("online", onOnline);
+    document.addEventListener("visibilitychange", onVisible);
     retry();
-    return () => { active = false; if (sessionCreateRetryTimer.current) clearTimeout(sessionCreateRetryTimer.current); sessionCreateRetryTimer.current = null; };
+    return () => {
+      active = false;
+      window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onVisible);
+      if (sessionCreateRetryTimer.current) clearTimeout(sessionCreateRetryTimer.current);
+      sessionCreateRetryTimer.current = null;
+    };
   }, [ensureSession, recordingChoice, sessionId]);
 
   useEffect(() => {
@@ -286,9 +394,10 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
   }, [recordingChoice, sessionId, uploadOutbox]);
 
   useEffect(() => {
-    if (recordingChoice !== "enabled") return;
+    if (!authReady || recordingChoice !== "enabled") { setRecorderReady(false); return; }
     let disposed = false;
     let teardown: (() => void) | undefined;
+    setRecorderReady(false);
     uploadTimer.current = setInterval(() => void uploadOutbox(), UPLOAD_INTERVAL_MS);
     void import("rrweb").then(({ record }) => {
       if (disposed) return;
@@ -337,6 +446,7 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
       const context = () => ({ session_id: activeSessionId.current, tab_id: tabClaim.current?.tabId, segment_id: tabClaim.current?.owner, route: window.location.pathname });
       const stopNetwork = instrumentNetwork({ apiBaseUrl: getApiBaseUrl(), context, emit: enqueue });
       const stopConsole = instrumentConsole({ context, emit: enqueue });
+      setRecorderReady(true);
       teardown = () => {
         stop?.(); stopNetwork(); stopConsole();
         window.removeEventListener("popstate", onRoute);
@@ -346,9 +456,13 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
         if (history.pushState !== originalPushState) history.pushState = originalPushState;
         if (history.replaceState !== originalReplaceState) history.replaceState = originalReplaceState;
       };
-    }).catch(() => setRecordingError("Session recording could not load in this browser."));
+    }).catch(() => {
+      if (disposed) return;
+      setRecorderReady(false);
+      setRecordingError("Session recording could not load in this browser. Use Retry recording in Settings to try again.");
+    });
     return () => { disposed = true; teardown?.(); if (uploadTimer.current) clearInterval(uploadTimer.current); if (createRetryTimer.current) clearTimeout(createRetryTimer.current); };
-  }, [enqueue, recordingChoice, uploadOutbox]);
+  }, [authReady, enqueue, recordingChoice, recorderGeneration, uploadOutbox]);
 
   useEffect(() => () => {
     if (flushMemoryTimer.current) clearTimeout(flushMemoryTimer.current);
@@ -358,7 +472,7 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
     void persistBuffer();
   }, [persistBuffer]);
 
-  const value = useMemo(() => ({ sessionId, recordingChoice, recordingError, enableRecording, disableRecording, retryRecording, addSessionMarker }), [sessionId, recordingChoice, recordingError, enableRecording, disableRecording, retryRecording, addSessionMarker]);
+  const value = useMemo(() => ({ sessionId, recordingChoice, recorderReady, recordingError, enableRecording, disableRecording, retryRecording, addSessionMarker }), [sessionId, recordingChoice, recorderReady, recordingError, enableRecording, disableRecording, retryRecording, addSessionMarker]);
   return <SessionRecordingContext.Provider value={value}>{children}</SessionRecordingContext.Provider>;
 }
 
@@ -366,11 +480,4 @@ export function useSessionRecording() {
   const value = useContext(SessionRecordingContext);
   if (!value) throw new Error("useSessionRecording must be used inside SessionRecordingProvider");
   return value;
-}
-
-export function RecordingNotice() {
-  const { sessionId, recordingChoice, recordingError, enableRecording, disableRecording, retryRecording } = useSessionRecording();
-  return <aside className="fixed bottom-4 right-4 z-50 max-w-sm rounded-xl border border-slate-700 bg-slate-950/95 p-3 shadow-xl backdrop-blur" aria-live="polite">
-    {recordingChoice === "loading" ? <p className="text-xs text-slate-300">Starting privacy-masked session recording…</p> : recordingChoice === "enabled" ? <div className="flex items-start gap-3"><span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-400" /><div className="min-w-0 flex-1"><p className="text-xs font-semibold text-slate-100">{sessionId ? "Session recording is on" : "Session recording is buffering"}</p><p className="mt-1 text-[11px] leading-relaxed text-slate-400">Inputs are masked. PayPal-hosted pages are not recorded.</p>{recordingError && <p className="mt-1 text-[11px] text-amber-300">{recordingError}</p>}{recordingError && <button onClick={() => void retryRecording()} className="mt-2 text-[11px] text-cyan-300 hover:underline">Retry connection</button>}</div><button onClick={disableRecording} className="text-[11px] text-slate-400 hover:text-white" aria-label="Stop session recording">Stop</button></div> : <div><p className="text-xs font-semibold text-slate-100">Session recording is off</p><p className="mt-1 text-[11px] leading-relaxed text-slate-400">Recording starts automatically unless stopped here. Inputs are masked; PayPal-hosted pages are not recorded.</p><button onClick={() => void enableRecording()} className="mt-2 rounded bg-cyan-500 px-2.5 py-1.5 text-[11px] font-semibold text-slate-950 hover:bg-cyan-400">Resume recording</button></div>}
-  </aside>;
 }
