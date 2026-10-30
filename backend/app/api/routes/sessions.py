@@ -16,7 +16,7 @@ from app.schemas.session import (
 )
 from app.db.models.session import SessionEvent
 from app.db.models.payment_event import PaymentEvent
-from app.services.sessions.recorder import session_recorder
+from app.services.sessions.recorder import SessionExpiredError, session_recorder
 
 router = APIRouter(prefix="/sessions", tags=["Sessions"])
 
@@ -66,8 +66,13 @@ def create_session(req: SessionCreateRequest, db: Session = Depends(get_db)):
             user_agent=req.user_agent,
             metadata=req.metadata,
         )
+    except SessionExpiredError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "session_expired", "message": str(exc)},
+        ) from exc
     except ValueError as exc:
-        raise HTTPException(status_code=409 if "expired" in str(exc).lower() else 413, detail=str(exc)) from exc
+        raise HTTPException(status_code=413, detail=str(exc)) from exc
     return SessionResponse.model_validate(session)
 
 @router.post("/{session_id}/events")
@@ -83,9 +88,14 @@ def ingest_session_events(
             session_id=session_id,
             events=[e.model_dump() for e in req.events],
         )
+    except SessionExpiredError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "session_expired", "message": str(exc)},
+        ) from exc
     except ValueError as exc:
         message = str(exc)
-        status_code = 404 if "not found" in message.lower() else (409 if "disabled" in message.lower() or "expired" in message.lower() else 413)
+        status_code = 404 if "not found" in message.lower() else 413
         raise HTTPException(status_code=status_code, detail=message) from exc
     return {"status": "success", "session_id": session_id, "events_ingested": count}
 

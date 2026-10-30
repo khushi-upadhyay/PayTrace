@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, getApiBaseUrl } from "@/lib/api";
 import {
+  Activity,
   Settings,
   ShieldCheck,
   CheckCircle2,
@@ -14,13 +15,19 @@ import {
   Database,
   Brain,
   Webhook,
+  Play,
+  Square,
+  RefreshCw,
 } from "lucide-react";
+import { useSessionRecording } from "@/components/session/SessionRecordingProvider";
 
 export default function SettingsPage() {
+  const { sessionId, recordingChoice, recorderReady, recordingError, enableRecording, disableRecording, retryRecording } = useSessionRecording();
   const [settingsData, setSettingsData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [recordingActionBusy, setRecordingActionBusy] = useState(false);
 
   const loadSettings = useCallback(async () => {
     setLoading(true);
@@ -38,6 +45,53 @@ export default function SettingsPage() {
   useEffect(() => { void loadSettings(); }, [loadSettings]);
 
   const webhookUrl = `${getApiBaseUrl()}/api/webhooks/paypal`;
+  const isRecording = recordingChoice === "enabled" && recorderReady && Boolean(sessionId);
+
+  const handleRecordingAction = async () => {
+    if (recordingActionBusy || recordingChoice === "loading") return;
+    setRecordingActionBusy(true);
+    try {
+      if (isRecording) disableRecording();
+      else if (recordingChoice === "enabled") await retryRecording();
+      else await enableRecording();
+    } finally {
+      setRecordingActionBusy(false);
+    }
+  };
+
+  const recordingControl = (
+    <section aria-labelledby="session-recording-heading" className="glass-panel rounded-2xl border border-slate-800 p-6">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${isRecording ? "bg-emerald-500/15 text-emerald-300" : "bg-slate-700/60 text-slate-300"}`}>
+            {isRecording ? <CheckCircle2 className="h-5 w-5" /> : <Activity className="h-5 w-5" />}
+          </div>
+          <div>
+            <h2 id="session-recording-heading" className="text-sm font-bold text-ink">Session recording</h2>
+            <p className="mt-1 text-xs text-slate-400">
+              {recordingChoice === "loading" ? "Checking recording permission…"
+                : isRecording ? "Recording is on. Browser events are attached to the active session."
+                  : recordingChoice === "enabled" ? sessionId ? "Starting the browser recorder…" : "Connecting to PayTrace and starting a fresh session…"
+                    : "Recording is off for this browser. Start it to capture session replay and activity."}
+            </p>
+            {sessionId && <p className="mt-1 font-mono text-[10px] text-slate-500">Session {sessionId}</p>}
+            {recordingError && <p role="alert" className="mt-2 max-w-2xl text-xs text-amber-300">{recordingError}</p>}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => void handleRecordingAction()}
+          disabled={recordingActionBusy || recordingChoice === "loading"}
+          className={`inline-flex shrink-0 items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-wait disabled:opacity-60 ${isRecording ? "border border-rose-400/40 bg-rose-950/30 text-rose-200 hover:bg-rose-950/60" : "bg-emerald-600 text-white hover:bg-emerald-500"}`}
+        >
+          {recordingActionBusy ? <Loader2 className="h-4 w-4 animate-spin" />
+            : isRecording ? <Square className="h-3.5 w-3.5" />
+              : recordingChoice === "enabled" ? <RefreshCw className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+          {recordingActionBusy ? "Working…" : isRecording ? "Stop recording" : recordingChoice === "enabled" ? "Retry recording" : "Start recording"}
+        </button>
+      </div>
+    </section>
+  );
 
   const handleCopyWebhookUrl = () => {
     void navigator.clipboard.writeText(webhookUrl).then(() => {
@@ -48,19 +102,25 @@ export default function SettingsPage() {
 
   if (loading && !settingsData) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-        <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
-        <p className="text-sm text-slate-400">Loading platform settings & security status...</p>
+      <div className="mx-auto max-w-5xl space-y-8 py-8">
+        {recordingControl}
+        <div className="flex min-h-[40vh] flex-col items-center justify-center space-y-4">
+          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+          <p className="text-sm text-slate-400">Loading platform settings & security status...</p>
+        </div>
       </div>
     );
   }
 
   if (!settingsData) {
     return (
-      <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
-        <p className="text-sm font-semibold text-rose-200">Settings are unavailable</p>
-        <p className="mt-2 text-xs text-slate-400">{loadError || "No settings response was returned."}</p>
-        <button onClick={() => void loadSettings()} className="mt-4 rounded-lg bg-paypal-navy px-3 py-2 text-xs text-onsolid transition-colors duration-150 hover:bg-paypal-blue">Retry</button>
+      <div className="mx-auto max-w-5xl space-y-8 py-8">
+        {recordingControl}
+        <div role="alert" className="mx-auto max-w-xl rounded-xl border border-rose-500/30 bg-rose-950/20 p-8 text-center">
+          <p className="text-sm font-semibold text-rose-200">Settings are unavailable</p>
+          <p className="mt-2 text-xs text-slate-400">{loadError || "No settings response was returned."}</p>
+          <button onClick={() => void loadSettings()} className="mt-4 rounded-lg bg-paypal-navy px-3 py-2 text-xs text-onsolid transition-colors duration-150 hover:bg-paypal-blue">Retry</button>
+        </div>
       </div>
     );
   }
@@ -78,6 +138,8 @@ export default function SettingsPage() {
           </p>
         </div>
       </div>
+
+      {recordingControl}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* PayPal Integration Card */}

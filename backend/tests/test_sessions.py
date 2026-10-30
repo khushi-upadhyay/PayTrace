@@ -1,5 +1,14 @@
 import uuid
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
+
+from sqlalchemy import create_engine, event
+from sqlalchemy.orm import sessionmaker
+
+from app.db.base import Base
+from app.db.models.session import Session as BrowserSession, SessionEvent
+from app.services.sessions.recorder import session_recorder
 
 
 def test_session_lifecycle_and_privacy_redaction(client):
@@ -184,6 +193,52 @@ def test_session_identity_envelope_is_idempotent_paginated_and_utc(client):
     assert stored["order_id"] == "19F21486TU6821704"
     assert stored["attributes"]["duration_ms"] == 1400
     assert stored["payload"]["name"] == "POST PayPal capture"
+
+
+def test_expired_session_returns_typed_conflict_and_preserves_recording_data(client, db_session):
+    session_id = str(uuid.uuid4())
+    created = client.post("/api/v1/sessions", json={"session_id": session_id})
+    assert created.status_code == 200
+    original_event_count = db_session.query(SessionEvent).filter_by(session_id=session_id).count()
+    row = db_session.query(BrowserSession).filter_by(id=session_id).one()
+    row.last_activity_at = datetime.utcnow() - timedelta(hours=2)
+    db_session.commit()
+
+    expired = client.post("/api/v1/sessions", json={"session_id": session_id})
+    assert expired.status_code == 409
+    assert expired.json()["detail"]["code"] == "session_expired"
+    assert db_session.query(SessionEvent).filter_by(session_id=session_id).count() >= original_event_count
+    assert db_session.query(BrowserSession).filter_by(id=session_id).one().recording_enabled is False
+
+
+def test_concurrent_initialization_for_same_id_creates_one_session(tmp_path):
+    engine = create_engine(f"sqlite:///{tmp_path / 'sessions.sqlite'}", connect_args={"timeout": 30})
+    @event.listens_for(engine, "connect")
+    def configure_sqlite(dbapi_connection, _):
+        dbapi_connection.execute("PRAGMA busy_timeout=30000")
+    Base.metadata.create_all(bind=engine)
+    make_session = sessionmaker(bind=engine, expire_on_commit=False)
+    session_id = str(uuid.uuid4())
+    barrier = Barrier(8)
+
+    def initialize():
+        db = make_session()
+        try:
+            barrier.wait(timeout=10)
+            return session_recorder.create_session(db, session_id=session_id).id
+        finally:
+            db.close()
+
+    try:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            returned_ids = list(pool.map(lambda _: initialize(), range(8)))
+        assert returned_ids == [session_id] * 8
+        with make_session() as db:
+            assert db.query(BrowserSession).filter_by(id=session_id).count() == 1
+            assert db.query(SessionEvent).filter_by(session_id=session_id, event_type="session_started").count() == 1
+    finally:
+        Base.metadata.drop_all(bind=engine)
+        engine.dispose()
 
 
 def test_missing_timestamp_is_marked_unavailable_and_routes_are_sanitized(client):

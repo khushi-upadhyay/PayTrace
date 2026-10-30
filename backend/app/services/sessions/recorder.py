@@ -3,6 +3,8 @@ import json
 from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from app.db.models.session import Session as BrowserSession, SessionEvent
 from app.core.security import redact_sensitive_data
 from app.core.time import utc_now
@@ -13,6 +15,10 @@ MAX_EVENTS_PER_BATCH = 500
 MAX_EVENT_PAYLOAD_SIZE = 100_000  # 100 KB limit per event
 MAX_EVENTS_PER_SESSION = 10_000
 MAX_SESSION_METADATA_SIZE = 50_000
+
+
+class SessionExpiredError(ValueError):
+    """Raised when a client tries to resume an ended or idle session."""
 
 class SessionRecorder:
     """Manages browser session recording storage and bounded replay retrieval."""
@@ -32,40 +38,64 @@ class SessionRecorder:
         if metadata_size > MAX_SESSION_METADATA_SIZE:
             raise ValueError("Session metadata exceeds the 50 KB limit")
         session_id = session_id or str(uuid.uuid4())
-        existing = db.query(BrowserSession).filter(BrowserSession.id == session_id).first()
         now = utc_now()
-        if existing:
-            if not existing.recording_enabled or (now - existing.last_activity_at).total_seconds() > _session_idle_timeout_seconds():
-                existing.recording_enabled = False
-                existing.ended_at = existing.ended_at or now
-                _record_lifecycle_event(db, session_id, "recording_stopped", existing.ended_at)
-                _record_lifecycle_event(db, session_id, "session_ended", existing.ended_at)
-                db.commit()
-                raise ValueError("Session expired; start a new session")
-            existing.last_activity_at = now
+        values = {
+            "id": session_id,
+            "visitor_ref": visitor_ref,
+            "user_agent": user_agent[:256] if user_agent else None,
+            "metadata_redacted": redact_sensitive_data(metadata or {}),
+            "started_at": now,
+            "last_activity_at": now,
+            "recording_enabled": True,
+        }
+        dialect = db.get_bind().dialect.name
+        if dialect == "postgresql":
+            statement = pg_insert(BrowserSession).values(**values).on_conflict_do_nothing(index_elements=["id"])
+        elif dialect == "sqlite":
+            statement = sqlite_insert(BrowserSession).values(**values).on_conflict_do_nothing(index_elements=["id"])
+        else:
+            statement = None
+
+        if statement is not None:
+            inserted = db.execute(statement).rowcount == 1
+        else:
+            inserted = False
+            existing = db.query(BrowserSession).filter(BrowserSession.id == session_id).with_for_update().first()
+            if existing is None:
+                session = BrowserSession(**values)
+                db.add(session)
+                db.flush()
+                inserted = True
+
+        session = db.query(BrowserSession).filter(BrowserSession.id == session_id).with_for_update().first()
+        if session is None:
+            db.rollback()
+            raise RuntimeError("Session insert did not produce a row")
+
+        if inserted:
+            db.add(SessionEvent(
+                id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"paytrace:session:{session_id}:started")),
+                session_id=session_id,
+                occurred_at=now,
+                received_at=now,
+                event_type="session_started",
+                category="lifecycle",
+                source="backend",
+                payload_redacted={"name": "session_started"},
+            ))
             db.commit()
-            return existing
-        session = BrowserSession(
-            id=session_id,
-            visitor_ref=visitor_ref,
-            user_agent=user_agent[:256] if user_agent else None,
-            metadata_redacted=redact_sensitive_data(metadata or {}),
-            started_at=now,
-            last_activity_at=now,
-            recording_enabled=True,
-        )
-        db.add(session)
-        db.flush()
-        db.add(SessionEvent(
-            id=str(uuid.uuid5(uuid.NAMESPACE_URL, f"paytrace:session:{session_id}:started")),
-            session_id=session_id,
-            occurred_at=now,
-            received_at=now,
-            event_type="session_started",
-            category="lifecycle",
-            source="backend",
-            payload_redacted={"name": "session_started"},
-        ))
+            db.refresh(session)
+            return session
+
+        if not session.recording_enabled or session.ended_at is not None or (now - session.last_activity_at).total_seconds() > _session_idle_timeout_seconds():
+            session.recording_enabled = False
+            session.ended_at = session.ended_at or now
+            _record_lifecycle_event(db, session_id, "recording_stopped", session.ended_at)
+            _record_lifecycle_event(db, session_id, "session_ended", session.ended_at)
+            db.commit()
+            raise SessionExpiredError("Session expired; start a new session")
+
+        session.last_activity_at = now
         db.commit()
         db.refresh(session)
         return session
@@ -103,7 +133,7 @@ class SessionRecorder:
             raise ValueError("Session not found")
 
         if not session.recording_enabled:
-            raise ValueError("Recording is disabled for this session")
+            raise SessionExpiredError("Session expired; start a new session")
 
         now = utc_now()
         if (now - session.last_activity_at).total_seconds() > _session_idle_timeout_seconds():
@@ -113,7 +143,7 @@ class SessionRecorder:
             _record_lifecycle_event(db, session_id, "recording_stopped", now)
             _record_lifecycle_event(db, session_id, "session_ended", now)
             db.commit()
-            raise ValueError("Session expired")
+            raise SessionExpiredError("Session expired; start a new session")
 
         added_count = 0
         event_ids = [str(ev["id"]) for ev in batch if ev.get("id")]
