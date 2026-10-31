@@ -173,7 +173,6 @@ def get_swipe_deck(
     query: str = Query("gift", description="Natural language buyer search query"),
     buyer_ref: str = Query("buyer_demo_01"),
     db: Session = Depends(get_db),
-    user: User = Depends(get_current_user),
 ):
     """
     Returns a deterministic, search-filtered demo deck.
@@ -254,7 +253,7 @@ def get_swipe_deck(
     )
 
 @router.post("/swipe")
-def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
     """Records a swipe (right=like, left=pass) to iteratively teach the AI preference vector."""
     swipe = SwipeAction(
         id=str(uuid.uuid4()),
@@ -267,7 +266,7 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db), user: U
     return {"status": "recorded", "direction": req.direction, "product_id": req.product_id}
 
 @router.post("/checkout")
-async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
     """
     Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
     """

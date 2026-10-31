@@ -33,8 +33,11 @@ def redact_sensitive_data(data: Any) -> Any:
     elif isinstance(data, list):
         return [redact_sensitive_data(item) for item in data]
     elif isinstance(data, str):
-        # Basic credit card pattern masking (13-19 digits)
-        masked = re.sub(r"\b(?:\d[ -]*?){13,19}\b", "[REDACTED_CARD]", data)
+        # Credit card pattern masking: either an unbroken 13-19 digit run, or
+        # groups of 4 digits joined by a single consistent space/dash (standard
+        # card formatting). Deliberately narrower than "any digits with dashes
+        # mixed in" so it doesn't also catch UUIDs, order IDs, etc.
+        masked = re.sub(r"\b\d{13,19}\b|\b\d{4}([ -])\d{4}\1\d{4}\1\d{1,7}\b", "[REDACTED_CARD]", data)
         return masked
     return data
 

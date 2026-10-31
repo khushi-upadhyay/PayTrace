@@ -155,6 +155,7 @@ function CheckoutContent() {
               paymentId: orderRes.payment_id,
               approvalUrl: orderRes.approval_url,
               isMock: orderRes.is_mock,
+              scenario,
             })
           );
         } catch {}
@@ -211,15 +212,24 @@ function CheckoutContent() {
       setUnapprovedWarning(null);
 
       let isSimulated = false;
+      let pendingScenario = scenario;
       try {
-        isSimulated = JSON.parse(sessionStorage.getItem("paytrace_pending_order") || "{}").isMock === true;
+        const pending = JSON.parse(sessionStorage.getItem("paytrace_pending_order") || "{}");
+        isSimulated = pending.isMock === true;
+        // The buyer approval step is a full-page redirect to PayPal (or the mock
+        // approval page) and back, which remounts this page and resets `scenario`
+        // to its default. Read the choice back from the order we persisted at
+        // checkout time instead of trusting the in-memory state here.
+        if (pending.orderId === orderId && typeof pending.scenario === "string") {
+          pendingScenario = pending.scenario;
+        }
       } catch {
         // A missing session entry does not change provider-side approval verification.
       }
 
       const capRes = await api.captureOrder(
         orderId,
-        scenario === "timeout_before_response"
+        pendingScenario === "timeout_before_response"
       );
       addSessionMarker("checkout_capture_response", {
         payment_id: capRes.payment_id,
