@@ -1,0 +1,2 @@
+"""ShelfSwipe feature service module."""
+
