@@ -206,7 +206,7 @@ export default function ShelfSwipePage() {
               ShelfSwipe + PayTrace Engine
             </span>
           </div>
-          <h1 className="text-2xl font-extrabold text-white mt-1 flex items-center gap-2">
+          <h1 className="text-2xl font-extrabold text-ink mt-1 flex items-center gap-2">
             Local Store Discovery Demo
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -236,7 +236,7 @@ export default function ShelfSwipePage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Describe what you want (e.g. 'thoughtful birthday gift under $35')"
-            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
+            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
           />
         </div>
         <button
@@ -276,9 +276,9 @@ export default function ShelfSwipePage() {
           ) : deckError ? (
             <div className="h-[460px] glass-panel rounded-2xl flex flex-col items-center justify-center gap-3 p-6 text-center">
               <AlertTriangle className="w-8 h-8 text-amber-400" />
-              <p className="text-sm font-semibold text-white">Shelf catalog could not be loaded</p>
+              <p className="text-sm font-semibold text-ink">Shelf catalog could not be loaded</p>
               <p className="text-xs text-slate-400">{deckError}</p>
-              <button onClick={() => fetchDeck(query)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold">
+              <button onClick={() => fetchDeck(query)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink rounded-lg text-xs font-semibold">
                 Retry
               </button>
             </div>
@@ -302,7 +302,7 @@ export default function ShelfSwipePage() {
               <div className="p-6 space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-lg font-bold text-white">{currentItem.name}</h3>
+                    <h3 className="text-lg font-bold text-ink">{currentItem.name}</h3>
                     <p className="text-xs text-slate-400 mt-1 line-clamp-2">{currentItem.description}</p>
                   </div>
                   <span className="text-xl font-extrabold text-cyan-400 font-mono">
@@ -340,11 +340,11 @@ export default function ShelfSwipePage() {
           ) : (
             <div className="h-[460px] glass-panel rounded-2xl flex flex-col items-center justify-center space-y-3 p-6 text-center">
               <CheckCircle2 className="w-10 h-10 text-emerald-400" />
-              <h4 className="text-sm font-bold text-white">{deck.length === 0 ? "No matching products found" : "You've explored the shelf!"}</h4>
+              <h4 className="text-sm font-bold text-ink">{deck.length === 0 ? "No matching products found" : "You've explored the shelf!"}</h4>
               <p className="text-xs text-slate-400">{deck.length === 0 ? "Try a broader search to browse the demo catalog." : "Search another term or reset the deck to keep discovering."}</p>
               <button
                 onClick={() => fetchDeck(query)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold"
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink rounded-lg text-xs font-semibold"
               >
                 Reset Swipe Deck
               </button>
@@ -356,7 +356,7 @@ export default function ShelfSwipePage() {
         <div className="lg:col-span-5 space-y-6">
           <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <h2 className="text-sm font-bold text-ink flex items-center gap-2">
                 <Lock className="w-4 h-4 text-cyan-400" />
                 PayPal Sandbox Instant Checkout
               </h2>
@@ -368,7 +368,7 @@ export default function ShelfSwipePage() {
                 <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs">
                   <div>
                     <span className="text-slate-400 block text-[11px]">Selected Item</span>
-                    <span className="font-semibold text-white">{currentItem.name}</span>
+                    <span className="font-semibold text-ink">{currentItem.name}</span>
                   </div>
                   <span className="font-mono font-bold text-cyan-300">${Number(currentItem.price).toFixed(2)}</span>
                 </div>
@@ -476,7 +476,7 @@ export default function ShelfSwipePage() {
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="glass-panel max-w-md w-full rounded-2xl p-6 border border-slate-800 space-y-5 animate-scaleUp">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-ink flex items-center gap-2">
                 <Store className="w-5 h-5 text-cyan-400" />
                 Load a ShelfSwipe Demo Catalog
               </h3>
@@ -492,7 +492,7 @@ export default function ShelfSwipePage() {
                   type="text"
                   value={shopName}
                   onChange={(e) => setShopName(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-ink"
                   required
                 />
               </div>
@@ -503,7 +503,7 @@ export default function ShelfSwipePage() {
                   type="url"
                   value={shopUrl}
                   onChange={(e) => setShopUrl(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white"
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-ink"
                   required
                 />
               </div>

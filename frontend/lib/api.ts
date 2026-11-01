@@ -389,6 +389,13 @@ export interface AIChatResponse {
   evidence_event_ids: string[];
 }
 
+export interface IncidentRecurrence {
+  window_days: number;
+  distinct_days_seen: number;
+  payments_in_window: number;
+  pattern_label: string | null;
+}
+
 export interface IncidentItem {
   id: string;
   title: string;
@@ -406,10 +413,35 @@ export interface IncidentItem {
   created_at: string;
   updated_at: string;
   affected_payments?: PaymentItem[];
+  recurrence?: IncidentRecurrence | null;
 }
 
 export interface IncidentListResponse {
   items: IncidentItem[];
+  total: number;
+}
+
+export interface DisputeItem {
+  id: string;
+  payment_id: string;
+  paypal_dispute_id: string;
+  reason: string;
+  status: string;
+  amount: string | number;
+  currency: string;
+  buyer_statement: string | null;
+  seller_response: string | null;
+  outcome_note: string | null;
+  is_simulated: boolean;
+  opened_at: string;
+  response_due_by: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DisputeListResponse {
+  items: DisputeItem[];
   total: number;
 }
 
@@ -720,6 +752,28 @@ export const api = {
       `/incidents/${encodeURIComponent(incidentId)}/report`,
       { method: "POST" }
     );
+  },
+
+  getDisputes(status?: string): Promise<DisputeListResponse> {
+    return request<DisputeListResponse>(`/disputes${toQuery({ status })}`);
+  },
+
+  getDisputesForPayment(paymentId: string): Promise<DisputeListResponse> {
+    return request<DisputeListResponse>(`/disputes/by-payment/${encodeURIComponent(paymentId)}`);
+  },
+
+  simulateDispute(body: { payment_id: string; reason: string; buyer_statement?: string }): Promise<DisputeItem> {
+    return request<DisputeItem>("/disputes/simulate", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  },
+
+  respondToDispute(disputeId: string, body: { seller_response: string; accept_liability: boolean }): Promise<DisputeItem> {
+    return request<DisputeItem>(`/disputes/${encodeURIComponent(disputeId)}/respond`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
   },
 
   getAnalytics(): Promise<AnalyticsData> {

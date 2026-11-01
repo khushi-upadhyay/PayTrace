@@ -153,6 +153,29 @@ export default function IncidentDetailPage() {
             {incident.root_cause || incident.ai_summary}
           </div>
         </div>
+
+        {incident.recurrence && (
+          <div className="space-y-2">
+            <span className="text-[10px] uppercase text-slate-400 tracking-wider">Pattern Over Time</span>
+            <div
+              className={`p-4 rounded-xl border text-xs leading-relaxed ${
+                incident.recurrence.pattern_label
+                  ? "bg-rose-950/30 border-rose-800/60 text-rose-200"
+                  : "bg-slate-900/60 border-slate-800 text-slate-300"
+              }`}
+            >
+              {incident.recurrence.pattern_label ||
+                `First seen this week — no recurrence yet in the last ${incident.recurrence.window_days} days.`}
+              <span className="block mt-1 text-[10px] text-slate-500">
+                {incident.recurrence.payments_in_window} matching payment
+                {incident.recurrence.payments_in_window === 1 ? "" : "s"} across{" "}
+                {incident.recurrence.distinct_days_seen} day
+                {incident.recurrence.distinct_days_seen === 1 ? "" : "s"} in the last{" "}
+                {incident.recurrence.window_days} days.
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Generated Report View if available */}

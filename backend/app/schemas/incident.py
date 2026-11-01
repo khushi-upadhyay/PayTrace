@@ -4,6 +4,12 @@ from datetime import datetime
 from decimal import Decimal
 from app.schemas.payment import PaymentResponse
 
+class IncidentRecurrence(BaseModel):
+    window_days: int
+    distinct_days_seen: int
+    payments_in_window: int
+    pattern_label: Optional[str] = None
+
 class IncidentResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -22,6 +28,7 @@ class IncidentResponse(BaseModel):
     ai_summary: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+    recurrence: Optional[IncidentRecurrence] = None
 
 class IncidentDetailResponse(IncidentResponse):
     affected_payments: List[PaymentResponse] = []

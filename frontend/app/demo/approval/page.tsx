@@ -39,7 +39,7 @@ export default function DemoApprovalPage({ searchParams }: DemoApprovalProps) {
         <AlertTriangle className="w-6 h-6 text-amber-400" />
       </div>
       <div className="space-y-2">
-        <h1 className="text-xl font-bold text-white">Simulated Buyer Approval</h1>
+        <h1 className="text-xl font-bold text-ink">Simulated Buyer Approval</h1>
         <p className="text-sm text-slate-300">This credential-free demo does not contact PayPal or move money. Continue to mark the sample order approved, or cancel it.</p>
         {orderId && <p className="text-xs text-slate-500 font-mono">Order: {orderId}</p>}
       </div>
