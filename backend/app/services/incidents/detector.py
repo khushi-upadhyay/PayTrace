@@ -90,4 +90,49 @@ class IncidentDetector:
         db.commit()
         return incidents
 
+    @staticmethod
+    def compute_recurrence(db: Session, incident: Incident, window_days: int = 7) -> Dict[str, Any]:
+        """
+        Counts how many distinct days, in the trailing `window_days`, saw at least one
+        payment matching this incident's own detection rule. Grounded directly in the
+        Payment table (not guessed) so the figure is accurate even though a single
+        Incident row is reused/updated in place rather than recreated per occurrence.
+        """
+        rule = incident.detection_rule
+        cutoff = utc_now() - timedelta(days=window_days)
+
+        if rule == "CAPTURE_TIMEOUT_SPIKE":
+            status_filter = Payment.status == "CAPTURE_UNCERTAIN"
+        elif rule == "CAPTURE_DENIAL_RATE_HIGH":
+            status_filter = Payment.status.in_(["DENIED", "CAPTURE_FAILED"])
+        else:
+            return {
+                "window_days": window_days,
+                "distinct_days_seen": 0,
+                "payments_in_window": 0,
+                "pattern_label": None,
+            }
+
+        rows = (
+            db.query(Payment.created_at)
+            .filter(status_filter, Payment.created_at >= cutoff)
+            .all()
+        )
+        distinct_days = sorted({r[0].date() for r in rows})
+        count = len(distinct_days)
+
+        if count <= 1:
+            label = None
+        elif count == 2:
+            label = f"Also occurred on {distinct_days[0].isoformat()} — 2nd time in the last {window_days} days."
+        else:
+            label = f"Recurring pattern: this is the {count}th distinct day this has happened in the last {window_days} days."
+
+        return {
+            "window_days": window_days,
+            "distinct_days_seen": count,
+            "payments_in_window": len(rows),
+            "pattern_label": label,
+        }
+
 incident_detector = IncidentDetector()

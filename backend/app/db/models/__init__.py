@@ -8,6 +8,7 @@ from app.db.models.ai_investigation import AIInvestigation
 from app.db.models.approval_ticket import ApprovalTicket
 from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction
 from app.db.models.user import User
+from app.db.models.dispute import Dispute
 
 __all__ = [
     "Base",
@@ -23,4 +24,5 @@ __all__ = [
     "ShelfProduct",
     "SwipeAction",
     "User",
+    "Dispute",
 ]

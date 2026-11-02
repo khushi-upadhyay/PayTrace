@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, PaymentItem, AIInvestigationData } from "@/lib/api";
 import {
   Brain,
@@ -26,6 +26,13 @@ export default function InvestigateHubPage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
+  const chatThreadEndRef = useRef<HTMLDivElement | null>(null);
+
+  // The chat thread is a fixed-height scrollable box; without this, new
+  // messages render below the visible fold and the chat looks dead.
+  useEffect(() => {
+    chatThreadEndRef.current?.scrollIntoView({ block: "nearest" });
+  }, [chatMessages, chatLoading]);
 
   useEffect(() => {
     api.getPayments({ page_size: 30 }).then((res) => {
@@ -313,6 +320,7 @@ export default function InvestigateHubPage() {
                     Consulting payment records...
                   </div>
                 )}
+                <div ref={chatThreadEndRef} />
               </div>
 
               <form onSubmit={handleSendChat} className="flex gap-2 pt-2 border-t border-slate-800">

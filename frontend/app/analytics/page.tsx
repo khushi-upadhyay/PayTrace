@@ -158,7 +158,7 @@ export default function AnalyticsPage() {
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                 <XAxis type="number" stroke="var(--chart-axis)" fontSize={11} />
-                <YAxis type="category" dataKey="category" stroke="var(--chart-axis)" fontSize={10} width={100} />
+                <YAxis type="category" dataKey="category" stroke="var(--chart-axis)" fontSize={10} width={170} />
                 <Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", borderColor: "var(--chart-tooltip-border)", borderRadius: "8px", fontSize: "12px" }} />
                 <Bar dataKey="count" fill="#0b73c2" name="Occurrences" radius={[0, 4, 4, 0]}>
                   {analytics.failure_categories.map((entry, index) => (

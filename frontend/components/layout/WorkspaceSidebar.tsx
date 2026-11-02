@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Activity, BadgeCheck, BarChart3, CircleAlert, CreditCard,
-  LayoutDashboard, MonitorPlay, Settings, ShoppingBag, Sparkles,
+  LayoutDashboard, MonitorPlay, Scale, Settings, ShoppingBag, Sparkles,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
@@ -13,6 +13,7 @@ const ITEMS = [
   { href: "/payments", label: "Payments", icon: CreditCard },
   { href: "/sessions", label: "Session Replay", icon: MonitorPlay },
   { href: "/incidents", label: "Incidents", icon: CircleAlert },
+  { href: "/disputes", label: "Disputes", icon: Scale },
   { href: "/investigate", label: "AI Investigator", icon: Sparkles },
   { href: "/approvals", label: "Approvals", icon: BadgeCheck },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },

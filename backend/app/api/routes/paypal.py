@@ -321,6 +321,28 @@ async def capture_order(
             details={"message": "Provider order was already completed; local state was reconciled without another capture request."},
         )
 
+    # CAPTURE_UNCERTAIN means a prior capture attempt may or may not have gone through
+    # at PayPal. The block above already checked the provider and it did NOT report
+    # COMPLETED (still APPROVED) — so this is not a fresh order being captured for the
+    # first time, it's an operator checking on an already-ambiguous one. Report back
+    # without mutating anything. Falling through from here would re-run this payment
+    # through the normal capture path below and actually issue a second real capture —
+    # exactly the blind-retry double-charge this status exists to prevent.
+    if payment.status == "CAPTURE_UNCERTAIN" and not req.simulate_timeout:
+        return OrderCaptureResponse(
+            payment_id=payment.id,
+            paypal_order_id=order_id,
+            paypal_capture_id=payment.paypal_capture_id,
+            status=payment.status,
+            failure_code=payment.failure_code,
+            failure_reason=payment.failure_reason,
+            reconciliation_required=True,
+            details={
+                "message": f"PayPal order status is still '{provider_status}', not COMPLETED. "
+                           "No new capture was attempted; local state unchanged.",
+            },
+        )
+
     # Record buyer approval event prior to capture if not already marked APPROVED
     if payment.status != "APPROVED":
         lifecycle_engine.record_event(
@@ -334,8 +356,12 @@ async def capture_order(
         )
         lifecycle_engine.transition_status(payment, "APPROVED")
 
-    # CRITICAL SCENARIO: Simulated backend timeout before receiving response
-    if req.simulate_timeout or payment.failure_code == "timeout_before_response":
+    # CRITICAL SCENARIO: Simulated backend timeout before receiving response.
+    # Compared case-insensitively: this same field gets overwritten to the uppercase
+    # "TIMEOUT_BEFORE_RESPONSE" constant a few lines below once this branch has run
+    # once, so a lowercase-only comparison stops matching on any later request for the
+    # same payment and would otherwise let it silently fall through into a real capture.
+    if req.simulate_timeout or (payment.failure_code or "").upper() == "TIMEOUT_BEFORE_RESPONSE":
         simulated_capture_id = f"MOCK-CAP-{uuid.uuid4().hex[:10].upper()}"
         payment.paypal_capture_id = simulated_capture_id
         lifecycle_engine.transition_status(

@@ -13,6 +13,7 @@ import {
   Activity,
   Layers,
   FileText,
+  Repeat,
 } from "lucide-react";
 
 export default function IncidentsPage() {
@@ -108,6 +109,13 @@ export default function IncidentsPage() {
                   <p className="text-xs text-slate-300 leading-relaxed max-w-3xl">
                     {inc.ai_summary || inc.root_cause}
                   </p>
+
+                  {inc.recurrence?.pattern_label && (
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-rose-300 bg-rose-950/40 border border-rose-800/60 rounded-lg px-2.5 py-1.5 w-fit">
+                      <Repeat className="w-3.5 h-3.5 shrink-0" />
+                      {inc.recurrence.pattern_label}
+                    </div>
+                  )}
                 </div>
 
                 {/* Right: Stats & Inspect Button */}
