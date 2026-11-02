@@ -39,3 +39,47 @@ class ShelfSwipeCheckoutRequest(BaseModel):
     quantity: int = 1
     session_id: Optional[str] = None
     simulate_scenario: Optional[str] = None # e.g. "timeout_before_response"
+
+class ShelfCartItemSchema(BaseModel):
+    product_id: str
+    name: str
+    price: float
+    currency: str = "USD"
+    quantity: int
+    image_url: Optional[str] = None
+    line_total: float
+
+class ShelfCartResponse(BaseModel):
+    buyer_ref: str
+    items: List[ShelfCartItemSchema]
+    total: float
+
+class ShelfChatMessage(BaseModel):
+    role: str # "user" or "assistant"
+    content: str
+
+class ShelfChatRequest(BaseModel):
+    buyer_ref: str
+    message: str
+    session_id: Optional[str] = None
+    messages: List[ShelfChatMessage] = []
+
+class ShelfCheckoutResult(BaseModel):
+    payment_id: str
+    paypal_order_id: str
+    approval_url: Optional[str] = None
+    amount: float
+    currency: str
+    is_mock: bool
+
+class ShelfChatResponse(BaseModel):
+    response: str
+    cart: List[ShelfCartItemSchema]
+    cart_total: float
+    actions_taken: List[str] = []
+    checkout: Optional[ShelfCheckoutResult] = None
+
+class ShelfCartCheckoutRequest(BaseModel):
+    buyer_ref: str
+    session_id: Optional[str] = None
+    simulate_scenario: Optional[str] = None

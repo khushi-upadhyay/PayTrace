@@ -1,29 +1,32 @@
 import uuid
 import logging
-import re
-import httpx
 from decimal import Decimal
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user, get_db
 from app.db.models.user import User
-from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction
-from app.db.models.payment import Payment
+from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction, ShelfCartItem
 from app.schemas.shelfswipe import (
     SellerOnboardRequest,
     ShelfProductSchema,
     ShelfProductDeckResponse,
     SwipeRecordRequest,
     ShelfSwipeCheckoutRequest,
+    ShelfCartItemSchema,
+    ShelfCartResponse,
+    ShelfChatRequest,
+    ShelfChatResponse,
+    ShelfCheckoutResult,
+    ShelfCartCheckoutRequest,
 )
-from app.services.lifecycle.engine import lifecycle_engine
-from app.services.paypal.mock_sandbox import mock_paypal
-from app.services.paypal.client import (
-    paypal_client,
-    safe_paypal_error_diagnostics,
-    validate_created_order_amount,
+from app.services.shelfswipe.catalog import (
+    search_catalog,
+    create_multi_item_order,
+    get_cart_snapshot,
+    InsufficientStockError,
 )
+from app.agents.shelf_agent import shelf_agent
 from app.core.config import settings
 
 router = APIRouter(prefix="/shelfswipe", tags=["ShelfSwipe"])
@@ -183,45 +186,18 @@ def get_swipe_deck(
     if count == 0:
         seed_demo_catalog(db)
 
-    # Fetch buyer's swipe history to adapt deck ranking
+    # Fetch buyer's liked categories (via shared catalog ranking) to annotate the deck
     liked_swipes = db.query(SwipeAction).filter(
         SwipeAction.buyer_ref == buyer_ref,
         SwipeAction.direction == "right"
     ).all()
     liked_product_ids = [s.product_id for s in liked_swipes]
-
-    # Find liked categories
     liked_categories = set()
     if liked_product_ids:
         liked_prods = db.query(ShelfProduct.category).filter(ShelfProduct.id.in_(liked_product_ids)).all()
         liked_categories = {c[0] for c in liked_prods}
 
-    products = db.query(ShelfProduct).filter(ShelfProduct.status == "live", ShelfProduct.stock > 0).all()
-    stop_words = {"the", "and", "for", "with", "under", "nearby", "from"}
-    query_terms = {
-        term for term in re.findall(r"[a-z0-9]+", query.lower())
-        if len(term) > 2 and term not in stop_words
-    }
-
-    def searchable_text(product: ShelfProduct) -> str:
-        return " ".join((product.name, product.category, product.description, product.why_matches or "")).lower()
-
-    if query_terms:
-        products = [
-            product for product in products
-            if query_terms.intersection(re.findall(r"[a-z0-9]+", searchable_text(product)))
-        ]
-
-    # Dynamic Ranking: Boost items in liked categories or matching query keywords
-    def rank_score(p: ShelfProduct):
-        score = 0
-        if p.category in liked_categories:
-            score += 50 # Boost based on prior swipe learning
-        product_terms = set(re.findall(r"[a-z0-9]+", searchable_text(p)))
-        score += 30 * len(query_terms.intersection(product_terms))
-        return score
-
-    ranked = sorted(products, key=rank_score, reverse=True)
+    ranked = search_catalog(db, query, buyer_ref=buyer_ref)
 
     deck_items = [
         ShelfProductSchema(
@@ -268,89 +244,91 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
 @router.post("/checkout")
 async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
     """
-    Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
+    Seamless PayPal Checkout for a single ShelfSwipe item, wired with PayTrace's lifecycle and recovery engine.
     """
     prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
     if not prod:
         raise HTTPException(status_code=404, detail="Product not found")
-    if prod.stock < req.quantity:
-        raise HTTPException(status_code=400, detail="Insufficient stock")
 
-    payment_id = str(uuid.uuid4())
-    total_amount = Decimal(str(prod.price)) * req.quantity
-    is_mock = not settings.is_paypal_configured
-
-    paypal_order_id = ""
-    approval_url = None
-
-    if settings.is_paypal_configured:
-        try:
-            order_data = await paypal_client.create_order(
-                amount=total_amount,
-                currency=prod.currency,
-                custom_id=payment_id,
-                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
-                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
-            )
-            if prod.currency != "USD":
-                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
-            validate_created_order_amount(order_data, total_amount, prod.currency)
-            paypal_order_id = order_data["id"]
-            for link in order_data.get("links", []):
-                if link.get("rel") == "approve":
-                    approval_url = link.get("href")
-        except Exception as exc:
-            diagnostics = (
-                safe_paypal_error_diagnostics(exc)
-                if isinstance(exc, httpx.HTTPStatusError)
-                else {"http_status": None, "error_type": type(exc).__name__}
-            )
-            diagnostics.update({"requested_amount": f"{total_amount:.2f}", "requested_currency": prod.currency})
-            logger.error("ShelfSwipe PayPal order creation failed", extra={"paypal_diagnostics": diagnostics})
-            raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
-
-    if is_mock:
-        order_data = mock_paypal.create_order(
-            amount=total_amount,
-            currency=prod.currency,
-            custom_id=payment_id,
+    try:
+        result = await create_multi_item_order(
+            db,
+            buyer_ref=req.buyer_ref,
+            items=[(prod, req.quantity)],
+            session_id=req.session_id,
+            simulate_scenario=req.simulate_scenario,
         )
-        paypal_order_id = order_data["id"]
-        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
+    except InsufficientStockError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.error("ShelfSwipe single-item checkout failed", extra={"error": str(exc)})
+        raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
 
-    # Register in PayTrace unified payment ledger
-    payment = Payment(
-        id=payment_id,
-        paypal_order_id=paypal_order_id,
-        customer_ref=req.buyer_ref,
-        session_id=req.session_id,
-        amount=total_amount,
-        currency=prod.currency,
-        status="CREATED",
-        actor="human",
-        source_mode="SIMULATED" if is_mock else f"PAYPAL_{settings.paypal_mode.upper()}",
-        failure_code=req.simulate_scenario,
-    )
-    db.add(payment)
+    return {**result, "product_name": prod.name}
 
-    lifecycle_engine.record_event(
+
+@router.get("/cart", response_model=ShelfCartResponse)
+def get_cart(buyer_ref: str = Query(...), db: Session = Depends(get_db)):
+    """Returns the buyer's current in-progress cart, built up via the shopping assistant."""
+    return ShelfCartResponse(**get_cart_snapshot(db, buyer_ref))
+
+
+@router.post("/chat", response_model=ShelfChatResponse)
+async def shelf_chat(req: ShelfChatRequest, db: Session = Depends(get_db)):
+    """
+    Conversational shopping assistant: one prompt can name multiple products,
+    which the agent resolves, adds to the cart, and can check out on request.
+    """
+    count = db.query(ShelfProduct).count()
+    if count == 0:
+        seed_demo_catalog(db)
+
+    result = await shelf_agent.chat(
         db=db,
-        payment=payment,
-        event_type="CHECKOUT_ORDER_CREATED",
-        source="SHELVESWIPE_APP",
-        status="SUCCESS",
-        paypal_order_id=paypal_order_id,
-        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": prod.seller_id},
-        is_simulated=is_mock,
+        buyer_ref=req.buyer_ref,
+        message=req.message,
+        messages=[m.model_dump() for m in req.messages],
+        session_id=req.session_id,
     )
+    checkout = ShelfCheckoutResult(**result["checkout"]) if result.get("checkout") else None
+    return ShelfChatResponse(
+        response=result["response"],
+        cart=result["cart"],
+        cart_total=result["cart_total"],
+        actions_taken=result["actions_taken"],
+        checkout=checkout,
+    )
+
+
+@router.post("/checkout/cart")
+async def checkout_cart(req: ShelfCartCheckoutRequest, db: Session = Depends(get_db)):
+    """Checks out everything currently in the buyer's cart as a single multi-item PayPal order."""
+    cart_rows = (
+        db.query(ShelfCartItem, ShelfProduct)
+        .join(ShelfProduct, ShelfCartItem.product_id == ShelfProduct.id)
+        .filter(ShelfCartItem.buyer_ref == req.buyer_ref)
+        .all()
+    )
+    if not cart_rows:
+        raise HTTPException(status_code=400, detail="Cart is empty")
+
+    items = [(product, cart_item.quantity) for cart_item, product in cart_rows]
+    try:
+        result = await create_multi_item_order(
+            db,
+            buyer_ref=req.buyer_ref,
+            items=items,
+            session_id=req.session_id,
+            simulate_scenario=req.simulate_scenario,
+        )
+    except InsufficientStockError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        logger.error("ShelfSwipe cart checkout failed", extra={"error": str(exc)})
+        raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
+
+    for cart_item, _ in cart_rows:
+        db.delete(cart_item)
     db.commit()
 
-    return {
-        "payment_id": payment_id,
-        "paypal_order_id": paypal_order_id,
-        "approval_url": approval_url,
-        "amount": float(total_amount),
-        "currency": prod.currency,
-        "product_name": prod.name,
-        "is_mock": is_mock,
-    }
+    return result

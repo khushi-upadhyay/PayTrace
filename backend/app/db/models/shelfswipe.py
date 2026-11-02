@@ -48,3 +48,33 @@ class SwipeAction(Base):
     product_id: Mapped[str] = mapped_column(String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), index=True)
     direction: Mapped[str] = mapped_column(String(16)) # right (liked), left (disliked)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+
+
+class ShelfCartItem(Base):
+    """A buyer's in-progress cart, built up conversationally via the shopping assistant."""
+    __tablename__ = "shelfswipe_cart_items"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    buyer_ref: Mapped[str] = mapped_column(String(64), index=True)
+    product_id: Mapped[str] = mapped_column(String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), index=True)
+    quantity: Mapped[int] = mapped_column(Integer, default=1)
+    added_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+
+    product: Mapped["ShelfProduct"] = relationship("ShelfProduct")
+
+    __table_args__ = (
+        Index("ix_shelfswipe_cart_buyer_product", "buyer_ref", "product_id", unique=True),
+    )
+
+
+class ShelfOrderItem(Base):
+    """Line-item snapshot of a multi-product ShelfSwipe order, linked to the unified Payment ledger."""
+    __tablename__ = "shelfswipe_order_items"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    payment_id: Mapped[str] = mapped_column(String(36), ForeignKey("payments.id", ondelete="CASCADE"), index=True)
+    product_id: Mapped[str] = mapped_column(String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), index=True)
+    quantity: Mapped[int] = mapped_column(Integer, default=1)
+    unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
+    name_snapshot: Mapped[str] = mapped_column(String(256))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)

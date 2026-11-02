@@ -214,13 +214,22 @@ export default function ShelfSwipePage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setSellerModal(true)}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-slate-200 text-xs font-semibold transition-all shadow-sm"
-        >
-          <Store className="w-4 h-4 text-cyan-400" />
-          Onboard Local Shop
-        </button>
+        <div className="flex items-center gap-2.5">
+          <Link
+            href="/shelfswipe/assistant"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-slate-200 text-xs font-semibold transition-all shadow-sm"
+          >
+            <Sparkles className="w-4 h-4 text-cyan-400" />
+            Try the AI Shopping Assistant
+          </Link>
+          <button
+            onClick={() => setSellerModal(true)}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-slate-200 text-xs font-semibold transition-all shadow-sm"
+          >
+            <Store className="w-4 h-4 text-cyan-400" />
+            Onboard Local Shop
+          </button>
+        </div>
       </div>
 
       <div className="px-4 py-2.5 rounded-lg bg-slate-900/70 border border-slate-800 text-[11px] text-slate-400">
