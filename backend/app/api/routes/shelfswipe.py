@@ -1,35 +1,192 @@
-import uuid
 import logging
 import re
-import httpx
+import uuid
 from decimal import Decimal
-from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import Any, Dict, List, Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from app.api.dependencies import get_current_user, get_db
-from app.db.models.user import User
-from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction
+from app.api.dependencies import get_db
+from app.core.config import settings
 from app.db.models.payment import Payment
+from app.db.models.shelfswipe import (
+    SSSeller,
+    SSShop,
+    SSProduct,
+    Seller,
+    ShelfProduct,
+    SwipeAction,
+)
 from app.schemas.shelfswipe import (
-    SellerOnboardRequest,
+    ShelfSwipeOnboardRequest,
+    ShelfSwipeOnboardResponse,
+    ShelfSwipeDraftResponse,
+    ShelfSwipeDraftProductItem,
     ShelfProductSchema,
     ShelfProductDeckResponse,
     SwipeRecordRequest,
     ShelfSwipeCheckoutRequest,
 )
 from app.services.lifecycle.engine import lifecycle_engine
-from app.services.paypal.mock_sandbox import mock_paypal
 from app.services.paypal.client import (
     paypal_client,
     safe_paypal_error_diagnostics,
     validate_created_order_amount,
 )
-from app.core.config import settings
+from app.services.paypal.mock_sandbox import mock_paypal
+from app.services.shelfswipe import mcp_client
+from app.services.shelfswipe.importer import (
+    import_shop,
+    ConsentRequiredError,
+)
+from app.services.shelfswipe.mcp_client import McpClientError
 
-router = APIRouter(prefix="/shelfswipe", tags=["ShelfSwipe"])
-logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/shelfswipe", tags=["shelfswipe"])
+logger = logging.getLogger("paytrace.shelfswipe")
 
-# Curated seed catalog for instant onboarding demo
+
+# =========================================================
+# Day 1 ShelfSwipe Feature Endpoints
+# =========================================================
+
+@router.get("/demo-shops", response_model=List[Dict[str, Any]])
+def get_demo_shops():
+    """
+    Returns available fixture demo shops from the ShelfSwipe MCP server.
+    """
+    try:
+        return mcp_client.list_shops()
+    except McpClientError as exc:
+        logger.error(f"Failed to fetch demo shops from MCP server: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"ShelfSwipe MCP client error: {str(exc)}",
+        )
+
+
+@router.post(
+    "/sellers/onboard",
+    response_model=ShelfSwipeOnboardResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def onboard_seller(
+    req: ShelfSwipeOnboardRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Onboards a merchant shop via MCP catalog extraction.
+    Creates or updates seller, shop, extraction job, and imports products as drafts.
+    """
+    try:
+        result = import_shop(
+            db=db,
+            shop_url=req.shop_url,
+            consent=req.consent,
+            seller_name=req.seller_name,
+        )
+        return ShelfSwipeOnboardResponse(
+            seller_id=str(result.seller_id),
+            shop_id=str(result.shop_id),
+            job_id=str(result.job_id),
+            products_created=result.products_created,
+            products_skipped=result.products_skipped,
+        )
+    except ConsentRequiredError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(exc),
+        )
+    except McpClientError as exc:
+        logger.error(f"MCP client error during onboard: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"MCP client error: {str(exc)}",
+        )
+    except ValidationError as exc:
+        logger.error(f"Schema validation error during onboard: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Catalog schema validation error: {str(exc)}",
+        )
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.error(f"Unexpected error during onboarding: {exc}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Onboarding error: {str(exc)}",
+        )
+
+
+@router.get(
+    "/sellers/{seller_id}/draft",
+    response_model=ShelfSwipeDraftResponse,
+)
+def get_seller_draft(
+    seller_id: str,
+    db: Session = Depends(get_db),
+):
+    """
+    Returns the seller's shop plus its products currently in 'draft' status,
+    including review flags, made-up demo coordinates, and numeric price.
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop associated with seller '{seller_id}'.",
+        )
+
+    draft_products = (
+        db.query(SSProduct)
+        .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
+        .order_by(SSProduct.created_at.asc())
+        .all()
+    )
+
+    product_items = [
+        ShelfSwipeDraftProductItem(
+            id=str(p.id),
+            external_id=p.external_id,
+            name=p.name,
+            price=float(p.price),
+            currency=p.currency,
+            image_url=p.image_url,
+            description=p.description,
+            category=p.category,
+            tags=p.tags or [],
+            stock=p.stock,
+            status=p.status,
+            review_flags=p.review_flags or [],
+        )
+        for p in draft_products
+    ]
+
+    return ShelfSwipeDraftResponse(
+        seller_id=str(seller.id),
+        shop_id=str(shop.id),
+        name=shop.name,
+        description=shop.description,
+        latitude=shop.latitude,
+        longitude=shop.longitude,
+        pickup_notes=shop.pickup_notes,
+        is_demo=shop.is_demo,
+        products=product_items,
+    )
+
+
+# =========================================================
+# Legacy Compatibility Endpoints (retained for test_shelfswipe)
+# =========================================================
+
 DEMO_CATALOG = [
     {
         "name": "Handmade Organic Lavender Candle",
@@ -115,58 +272,6 @@ def seed_demo_catalog(db: Session) -> None:
             ))
     db.commit()
 
-@router.post("/onboard")
-def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    """Loads the curated demo catalog without accessing an external merchant site."""
-    seller = db.query(Seller).filter(Seller.source_url == req.shop_url).first()
-    if not seller:
-        seller = Seller(
-            id=str(uuid.uuid4()),
-            name=req.shop_name,
-            contact_email="owner@artisan-local.dev",
-            source_url=req.shop_url,
-        )
-        db.add(seller)
-        db.flush()
-
-        for item in DEMO_CATALOG:
-            prod = ShelfProduct(
-                id=str(uuid.uuid4()),
-                seller_id=seller.id,
-                name=item["name"],
-                price=Decimal(str(item["price"])),
-                currency="USD",
-                image_url=item["image_url"],
-                description=item["description"],
-                category=item["category"],
-                stock=item["stock"],
-                status="live",
-                source="demo",
-                why_matches=item["why_matches"],
-            )
-            db.add(prod)
-        db.commit()
-
-    products = db.query(ShelfProduct).filter(ShelfProduct.seller_id == seller.id).all()
-    return {
-        "status": "demo_loaded",
-        "is_demo": True,
-        "seller_id": seller.id,
-        "seller_name": seller.name,
-        "products_count": len(products),
-        "products": [
-            {
-                "id": p.id,
-                "name": p.name,
-                "price": float(p.price),
-                "category": p.category,
-                "stock": p.stock,
-                "image_url": p.image_url,
-                "why_matches": p.why_matches,
-            }
-            for p in products
-        ]
-    }
 
 @router.get("/deck", response_model=ShelfProductDeckResponse)
 def get_swipe_deck(
@@ -178,19 +283,16 @@ def get_swipe_deck(
     Returns a deterministic, search-filtered demo deck.
     Swiping right on categories pushes similar items to the top.
     """
-    # Check if any products exist, if not, auto-seed
     count = db.query(ShelfProduct).count()
     if count == 0:
         seed_demo_catalog(db)
 
-    # Fetch buyer's swipe history to adapt deck ranking
     liked_swipes = db.query(SwipeAction).filter(
         SwipeAction.buyer_ref == buyer_ref,
         SwipeAction.direction == "right"
     ).all()
     liked_product_ids = [s.product_id for s in liked_swipes]
 
-    # Find liked categories
     liked_categories = set()
     if liked_product_ids:
         liked_prods = db.query(ShelfProduct.category).filter(ShelfProduct.id.in_(liked_product_ids)).all()
@@ -212,11 +314,10 @@ def get_swipe_deck(
             if query_terms.intersection(re.findall(r"[a-z0-9]+", searchable_text(product)))
         ]
 
-    # Dynamic Ranking: Boost items in liked categories or matching query keywords
     def rank_score(p: ShelfProduct):
         score = 0
         if p.category in liked_categories:
-            score += 50 # Boost based on prior swipe learning
+            score += 50
         product_terms = set(re.findall(r"[a-z0-9]+", searchable_text(p)))
         score += 30 * len(query_terms.intersection(product_terms))
         return score
@@ -251,6 +352,7 @@ def get_swipe_deck(
         query=query,
         refinements_applied=refinements,
     )
+
 
 @router.post("/swipe")
 def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
