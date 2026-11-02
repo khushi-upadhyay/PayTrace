@@ -1,0 +1,1695 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "01M0MPB4JZ5C5T2F2QH95DQE7W",
+      "title": "Meisen Matcha Bowl Set",
+      "description": {
+        "plain": "A comprehensive matcha ritual set designed for a traditional tea experience. This set includes a stunning red ceramic bowl crafted in the Minoyaki pottery style with a glossy finish and a black interior, providing a beautiful contrast for the vibrant green tea. It is accompanied by a handcrafted 100-prong bamboo whisk (chasen) for creating a smooth, frothy foam, and a matching red ceramic whisk holder to maintain the whisk's shape. The set is completed with 1 oz of premium first-harvest organic Japanese ceremonial-grade matcha powder, known for its delicate sweetness and umami notes."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3999,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5699,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "pGemaHZ:0FQp:01M0FHMXMFBVE80J6XFC1XF0H8",
+          "title": "Red Matcha Bowl, Bamboo Matcha Whisk, Whisk Holder And Organic Japanese Matcha Set",
+          "description": {
+            "plain": "A comprehensive matcha ritual set designed for a traditional tea experience. This set includes a stunning red ceramic bowl crafted in the Minoyaki pottery style with a glossy finish and a black interior, providing a beautiful contrast for the vibrant green tea. It is accompanied by a handcrafted 100-prong bamboo whisk (chasen) for creating a smooth, frothy foam, and a matching red ceramic whisk holder to maintain the whisk's shape. The set is completed with 1 oz of premium first-harvest organic Japanese ceremonial-grade matcha powder, known for its delicate sweetness and umami notes."
+          },
+          "price": {
+            "amount": 3999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/pGemaHZ-0FQp-public_ucp?o=01M0FHMXMFBVE80J6XFC1XF0H8",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ddb6da6b-daf8-455c-9f0c-90f1d1962648"
+            }
+          ]
+        },
+        {
+          "id": "L2Bs2Qx:0FQp:01M0FMYDWWQ1ZS56JGR6CXMS70",
+          "title": "Red Ceramic Meisen Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "This handcrafted Japanese matcha tea starter set features a stunning red ceramic Meisen bowl made using traditional Minoyaki pottery techniques. The bowl is designed with a wavy rim and a textured exterior, providing an ergonomic grip and an ideal shape for whisking. The set is complemented by a deluxe 100-prong bamboo whisk, designed to create a rich crema and froth, and a ceramic whisk holder that maintains the whisk's shape and extends its lifespan. Lead-free and microwave safe, this set blends 1,400 years of Japanese artistry with modern functionality for an authentic tea ceremony experience."
+          },
+          "price": {
+            "amount": 5699,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/L2Bs2Qx-0FQp-public_ucp?o=01M0FMYDWWQ1ZS56JGR6CXMS70",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/fb05f4ab-9e30-4e76-b7c6-1bc309891b2d"
+            }
+          ]
+        },
+        {
+          "id": "agPiJEf:0FQp:01M0J7K3H9VPA4RY0SP0W2QSJ6",
+          "title": "Black Ceramic Meisen Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "This authentic Japanese tea set features a handcrafted Black Ceramic Meisen Matcha Bowl created using time-honored Minoyaki pottery techniques. The bowl is characterized by a distinctive ribbed texture with vertical ridges and a wavy rim, providing both an organic feel and an enhanced grip. The set is completed with a deluxe handcrafted bamboo whisk (chasen) featuring 100 fine prongs for creating smooth, frothy matcha, and a matching ceramic whisk holder designed to maintain the whisk's shape and prolong its life by allowing it to air dry naturally."
+          },
+          "price": {
+            "amount": 5699,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/agPiJEf-0FQp-public_ucp?o=01M0J7K3H9VPA4RY0SP0W2QSJ6",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f21ff03d-72da-4ebc-be94-9f3480a0d140"
+            }
+          ]
+        },
+        {
+          "id": "zspURY5:0FQp:01M0J5ZC2EQAEQV38FDBN2EMMN",
+          "title": "White Ceramic Meisen Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "This handcrafted Ceramic Matcha Tea Starter Set blends traditional Japanese artistry with functional design. The set features a white Meisen matcha bowl created using historic Minoyaki pottery techniques, ensuring each piece is unique with its own artisanal glaze and texture. To ensure a perfect brew, it includes a deluxe 100-prong bamboo whisk for creating a rich, creamy froth and a matching ceramic whisk holder to maintain the whisk's shape and longevity."
+          },
+          "price": {
+            "amount": 5699,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/zspURY5-0FQp-public_ucp?o=01M0J5ZC2EQAEQV38FDBN2EMMN",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/5445619e-7acf-4247-ab8f-6f5ea3727978"
+            }
+          ]
+        },
+        {
+          "id": "257ukSH:0FQp:01M0J3ER30GE5BYEJ0NQT5BZMQ",
+          "title": "Meisen Red Matcha Bowl",
+          "description": {
+            "plain": "The Meisen Red Matcha Bowl is a handcrafted ceramic vessel designed for the traditional preparation and serving of matcha. Created by the Meisen-gama kiln, it features a sophisticated vertical shaved shape designed to fit comfortably in the hand. The bowl is glazed in a striking iron red cinnabar finish and showcases a textured exterior with a wavy rim and subtle green speckles. Reflecting the timeless art of Minoyaki craftsmanship from the Tono Gifu Prefecture, this bowl blends historical Japanese pottery traditions with modern practical use."
+          },
+          "price": {
+            "amount": 4499,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/257ukSH-0FQp-public_ucp?o=01M0J3ER30GE5BYEJ0NQT5BZMQ",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f2ae78a8-1557-4918-af81-8edfa4582d83"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/ddb6da6b-daf8-455c-9f0c-90f1d1962648",
+          "alt_text": "Meisen Matcha Bowl Set"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "pGemaHZ",
+              "label": "Red"
+            },
+            {
+              "id": "agPiJEf",
+              "label": "Black"
+            },
+            {
+              "id": "zspURY5",
+              "label": "White"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes a Minoyaki style red ceramic matcha bowl with black interior",
+          "Handcrafted 100-prong bamboo whisk (chasen) for frothy tea",
+          "Matching red ceramic whisk holder to preserve whisk shape",
+          "1 oz of first-harvest organic ceremonial-grade Japanese matcha",
+          "USDA and JAS certified organic matcha powder",
+          "Bowl dimensions: 3 inches height and 4.5 inches diameter",
+          "Chemical-free, eco-friendly bamboo whisk"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Red"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:G2nDLYa",
+      "title": "Iguchi Deep Sea Clay Matcha Bowl, Bamboo Matcha Whisk, Whisk Holder and Organic Japanese Matcha Set",
+      "description": {
+        "plain": "The Iguchi Deep Sea Clay Set is an elegant and functional matcha starter kit designed for both traditional tea ceremonies and modern matcha lattes. This set features a beautifully handcrafted Minoyaki pottery bowl with a stunning hand-brushed green and light blue glaze, a 100-prong bamboo whisk (chasen) for creating a smooth crema, and a ceramic whisk holder to maintain the whisk's shape. It also includes 1 oz of premium, first-harvest ceremonial grade organic Japanese matcha tea, known for its vibrant green color and delicate umami flavor. This durable, lead-free, and cadmium-free set combines historical Japanese craftsmanship with practical everyday use."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6699,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6699,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "G2nDLYa:0FQp:01M0FJAYH2E9Y8KEPGJ8XK5H5Y",
+          "title": "Iguchi Deep Sea Clay Matcha Bowl, Bamboo Matcha Whisk, Whisk Holder And Organic Japanese Matcha Set",
+          "description": {
+            "plain": "The Iguchi Deep Sea Clay Set is an elegant and functional matcha starter kit designed for both traditional tea ceremonies and modern matcha lattes. This set features a beautifully handcrafted Minoyaki pottery bowl with a stunning hand-brushed green and light blue glaze, a 100-prong bamboo whisk (chasen) for creating a smooth crema, and a ceramic whisk holder to maintain the whisk's shape. It also includes 1 oz of premium, first-harvest ceremonial grade organic Japanese matcha tea, known for its vibrant green color and delicate umami flavor. This durable, lead-free, and cadmium-free set combines historical Japanese craftsmanship with practical everyday use."
+          },
+          "price": {
+            "amount": 6699,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/G2nDLYa-0FQp-public_ucp?o=01M0FJAYH2E9Y8KEPGJ8XK5H5Y",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/8c08cdeb-e3de-4b2d-9d0e-78430fd37d80"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/8c08cdeb-e3de-4b2d-9d0e-78430fd37d80",
+          "alt_text": "Iguchi Deep Sea Clay Matcha Bowl, Bamboo Matcha Whisk, Whisk Holder and Organic Japanese Matcha Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Hand-brushed glaze using traditional Minoyaki pottery techniques",
+          "Includes 100-prong bamboo whisk for professional frothing",
+          "Includes ceramic whisk holder to prolong whisk life",
+          "Microwave-safe and free of lead and cadmium",
+          "Ergonomic rounded bowl design for effortless whisking",
+          "Includes 1 oz of premium first-harvest ceremonial grade organic Japanese matcha tea",
+          "Bowl dimensions: 3 inches in height and 4.5 inches in diameter"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:robYitE",
+      "title": "Matcha Bowl and Whisk Set",
+      "description": {
+        "plain": "This complete matcha starter set brings the 1,400-year-old artistry of Japanese Minoyaki pottery into your home. The set features a handcrafted ceramic bowl with a luxurious black crystal exterior glaze and a vibrant teal interior. To ensure a traditional tea ceremony experience, it includes a 100-prong bamboo whisk (chasen) for creating a smooth, frothy crema and a dedicated ceramic whisk holder to maintain the tool's shape and longevity. The set is completed with 1 oz of premium ceremonial grade organic Japanese matcha, harvested from the first growth for a sweet, umami flavor without bitterness. Safe for microwave use and free from lead and cadmium, this durable set is both a functional tool for daily rituals and an elegant gift."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5699,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5699,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "robYitE:0FQp:01M0J4YSBPGAVT85XCJ4WP06Y8",
+          "title": "Blue And Black Ceramic Matcha Bowl, Bamboo Matcha Whisk, Whisk Holder And Organic Japanese Matcha Set",
+          "description": {
+            "plain": "This complete matcha starter set brings the 1,400-year-old artistry of Japanese Minoyaki pottery into your home. The set features a handcrafted ceramic bowl with a luxurious black crystal exterior glaze and a vibrant teal interior. To ensure a traditional tea ceremony experience, it includes a 100-prong bamboo whisk (chasen) for creating a smooth, frothy crema and a dedicated ceramic whisk holder to maintain the tool's shape and longevity. The set is completed with 1 oz of premium ceremonial grade organic Japanese matcha, harvested from the first growth for a sweet, umami flavor without bitterness. Safe for microwave use and free from lead and cadmium, this durable set is both a functional tool for daily rituals and an elegant gift."
+          },
+          "price": {
+            "amount": 5699,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/robYitE-0FQp-public_ucp?o=01M0J4YSBPGAVT85XCJ4WP06Y8",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/1fbb5d4a-b8ba-440a-b091-c30e09eecff5"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/1fbb5d4a-b8ba-440a-b091-c30e09eecff5",
+          "alt_text": "Matcha Bowl and Whisk Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted using traditional Japanese Minoyaki pottery techniques",
+          "Includes 100-prong bamboo matcha whisk (chasen)",
+          "Includes ceramic whisk holder for air-drying and shape maintenance",
+          "Contains 1 oz of premium ceremonial grade organic Japanese matcha tea",
+          "Lead and cadmium free",
+          "Microwave-safe ceramic bowl",
+          "Bowl dimensions: 5.1 inches diameter and 3.5 inches height"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:OgHRHqd",
+      "title": "Handcrafted Mino Ware Ceramic Mug",
+      "description": {
+        "plain": "Experience the rich tradition of Japanese pottery with this set of two handcrafted Mino ware ceramic mugs. Originating from the renowned kilns of Gifu Prefecture, these 8 oz (240 ml) vessels blend ancient techniques with a modern, artisanal aesthetic. Each mug features a striking contrast: a deep, speckled blue glaze reminiscent of the evening sky paired with a bold, natural sand-toned horizontal stripe. Due to the reactive glazing process and handmade nature, every mug possesses a unique pattern, making your set truly one-of-a-kind. With dimensions of 4.5 inches wide, 3.15 inches deep, and 3.35 inches high, they are perfectly sized for a comforting hold while enjoying tea, coffee, or matcha."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "OgHRHqd:0FQp:01KBP9K1D9PGV23RAXPT3PDN4S",
+          "title": "Handcrafted Mino Ware Ceramic Mug From Japan, 8 Oz (240 Ml) - Set Of 2 Mugs",
+          "description": {
+            "plain": "Experience the rich tradition of Japanese pottery with this set of two handcrafted Mino ware ceramic mugs. Originating from the renowned kilns of Gifu Prefecture, these 8 oz (240 ml) vessels blend ancient techniques with a modern, artisanal aesthetic. Each mug features a striking contrast: a deep, speckled blue glaze reminiscent of the evening sky paired with a bold, natural sand-toned horizontal stripe. Due to the reactive glazing process and handmade nature, every mug possesses a unique pattern, making your set truly one-of-a-kind. With dimensions of 4.5 inches wide, 3.15 inches deep, and 3.35 inches high, they are perfectly sized for a comforting hold while enjoying tea, coffee, or matcha."
+          },
+          "price": {
+            "amount": 7000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/OgHRHqd-0FQp-public_ucp?o=01KBP9K1D9PGV23RAXPT3PDN4S",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/OgHRHqd"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/OgHRHqd",
+          "alt_text": "Handcrafted Mino Ware Ceramic Mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted Mino Ware ceramic",
+          "Set of 2 mugs",
+          "8 oz (240 ml) capacity",
+          "Deep blue and natural sand-toned stripe design",
+          "Unique reactive glaze pattern on each piece",
+          "Dimensions: 4.5 in wide x 3.15 in depth x 3.35 in height",
+          "Hand washing recommended"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:yFK2rzz",
+      "title": "Matcha Bowl Set",
+      "description": {
+        "plain": "Experience the mindful elegance of a traditional Japanese tea ceremony at home with this handcrafted matcha set. This comprehensive kit includes a white ceramic matcha bowl featuring a practical spout for easy pouring, a traditional bamboo whisk (chasen) with 100 fine prongs for creating a perfect frothy crema, and a ceramic whisk holder to maintain the whisk's shape and longevity. Handcrafted in Japan using traditional Minoyaki pottery techniques, the bowl combines 1,400 years of history with modern functionality, making it ideal for both traditional tea and daily matcha lattes."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6199,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6199,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "yFK2rzz:0FQp:01M0J4855A8SQX64PK89WFXZE4",
+          "title": "White Ceramic Matcha Bowl With Spout, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "Experience the mindful elegance of a traditional Japanese tea ceremony at home with this handcrafted matcha set. This comprehensive kit includes a white ceramic matcha bowl featuring a practical spout for easy pouring, a traditional bamboo whisk (chasen) with 100 fine prongs for creating a perfect frothy crema, and a ceramic whisk holder to maintain the whisk's shape and longevity. Handcrafted in Japan using traditional Minoyaki pottery techniques, the bowl combines 1,400 years of history with modern functionality, making it ideal for both traditional tea and daily matcha lattes."
+          },
+          "price": {
+            "amount": 6199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/yFK2rzz-0FQp-public_ucp?o=01M0J4855A8SQX64PK89WFXZE4",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/20149fdb-68ef-42d4-9ad6-d7f5dce24116"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/20149fdb-68ef-42d4-9ad6-d7f5dce24116",
+          "alt_text": "Matcha Bowl Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted in Japan using traditional Minoyaki pottery techniques",
+          "Includes ceramic matcha bowl with integrated pouring spout",
+          "Traditional bamboo whisk (chasen) with 100 fine prongs for optimal frothing",
+          "Includes a ceramic whisk holder to help the whisk air dry and maintain its shape",
+          "Bowl dimensions: 3.5 inches high and 5.5 inches in diameter",
+          "Ergonomic design for comfortable gripping and effortless whisking"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:aXfE74l",
+      "title": "Coffee Mug with Base",
+      "description": {
+        "plain": "Discover the perfect fusion of functionality and style with our vintage ceramic coffee mug. Meticulously crafted for those who appreciate the finer things in life this mug offers a novel triangular cone design poised on a sturdy base making it a standout addition to any table setting. Sized at a generous 3.5x3.7 inches with a 200ml capacity it s ideal for the robust flavor of freshly brewed coffee the serene ritual of matcha or for savoring decadent desserts. From the first light of dawn to the end of a long day the versatile nature of this mug invites you to enjoy a variety of beverages and treats. Whether it’s a steaming latte an aromatic Americano or an inviting scoop of gelato this mug adapts to every craving with elegance and ease. Quality is at the forefront of our design. Made with premium health-conscious ceramics it s a mug that assures every sip is safe and satisfying. The polished glaze not only provides a radiant sheen but also promises longevity and resilience against daily wear. It’s a hassle-free addition to your kitchen as it cleans effortlessly and retains its luster over time. Packaged in a distinctive gift box it s the ideal present for Christmas birthdays or any special occasion. With our product you re not just offering a mug; you re giving the gift of a delightful experience with every use. And should it not meet your expectations rest assured with our money-back guarantee. Step into a world where every drink is a celebration of life s moments. Choose our ceramic coffee mug where every detail is curated for your ultimate enjoyment."
+      },
+      "price_range": {
+        "min": {
+          "amount": 1999,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 1999,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "aXfE74l:0FQp:01M0J5W2VBQ3XZ57BR60MD0S8M",
+          "title": "Blue Coffee Mug With Base",
+          "description": {
+            "plain": "Discover the perfect fusion of functionality and style with our vintage ceramic coffee mug. Meticulously crafted for those who appreciate the finer things in life this mug offers a novel triangular cone design poised on a sturdy base making it a standout addition to any table setting. Sized at a generous 3.5x3.7 inches with a 200ml capacity it s ideal for the robust flavor of freshly brewed coffee the serene ritual of matcha or for savoring decadent desserts. From the first light of dawn to the end of a long day the versatile nature of this mug invites you to enjoy a variety of beverages and treats. Whether it’s a steaming latte an aromatic Americano or an inviting scoop of gelato this mug adapts to every craving with elegance and ease. Quality is at the forefront of our design. Made with premium health-conscious ceramics it s a mug that assures every sip is safe and satisfying. The polished glaze not only provides a radiant sheen but also promises longevity and resilience against daily wear. It’s a hassle-free addition to your kitchen as it cleans effortlessly and retains its luster over time. Packaged in a distinctive gift box it s the ideal present for Christmas birthdays or any special occasion. With our product you re not just offering a mug; you re giving the gift of a delightful experience with every use. And should it not meet your expectations rest assured with our money-back guarantee. Step into a world where every drink is a celebration of life s moments. Choose our ceramic coffee mug where every detail is curated for your ultimate enjoyment."
+          },
+          "price": {
+            "amount": 1999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/aXfE74l-0FQp-public_ucp?o=01M0J5W2VBQ3XZ57BR60MD0S8M",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/662df1b1-d427-43bb-86ff-acdd5a53f945"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/662df1b1-d427-43bb-86ff-acdd5a53f945",
+          "alt_text": "Coffee Mug with Base"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Triangular cone design with sturdy base",
+          "Premium health-conscious ceramics",
+          "Polished glaze for longevity and radiance",
+          "Easy to clean",
+          "Includes gift box packaging",
+          "Suitable for coffee, tea, matcha, or desserts",
+          "Handcrafted ceramic artistry",
+          "Includes matching square base/holder",
+          "200ml (6.8 oz) capacity"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:fdahOp3",
+      "title": "Handcrafted Mino Ware Ceramic Mug from Japan",
+      "description": {
+        "plain": "Experience the rich tradition of Japanese pottery with this set of four exquisitely handcrafted ceramic mugs, featuring authentic Mino ware craftsmanship originating from Gifu Prefecture. Each mug showcases a striking aesthetic with a deep, speckled indigo blue glaze contrasting beautifully against a raw, sand-toned horizontal stripe that highlights its handmade origins. Due to the reactive nature of the glaze and the artisan creation process, every piece possesses a unique finish, making your set truly one-of-a-kind. Designed for daily enjoyment, these mugs comfortably hold 8 ounces (240 ml), perfect for savoring tea, coffee, or other beverages."
+      },
+      "price_range": {
+        "min": {
+          "amount": 12000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 12000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "fdahOp3:0FQp:01KBPCM509YYZJ3N2R9DWF884J",
+          "title": "Handcrafted Mino Ware Ceramic Mug From Japan, 8 Oz (240 Ml) - Set Of 4 Mugs",
+          "description": {
+            "plain": "Experience the rich tradition of Japanese pottery with this set of four exquisitely handcrafted ceramic mugs, featuring authentic Mino ware craftsmanship originating from Gifu Prefecture. Each mug showcases a striking aesthetic with a deep, speckled indigo blue glaze contrasting beautifully against a raw, sand-toned horizontal stripe that highlights its handmade origins. Due to the reactive nature of the glaze and the artisan creation process, every piece possesses a unique finish, making your set truly one-of-a-kind. Designed for daily enjoyment, these mugs comfortably hold 8 ounces (240 ml), perfect for savoring tea, coffee, or other beverages."
+          },
+          "price": {
+            "amount": 12000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/fdahOp3-0FQp-public_ucp?o=01KBPCM509YYZJ3N2R9DWF884J",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/bf54e900-b50a-4316-a08c-5808df54aeda"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/bf54e900-b50a-4316-a08c-5808df54aeda",
+          "alt_text": "Handcrafted Mino Ware Ceramic Mug from Japan"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Authentic Mino ware ceramic craftsmanship from Japan",
+          "Set includes 4 mugs",
+          "Capacity of 8 oz (240 ml)",
+          "Features a two-tone design: deep blue speckled glaze and a natural sand-toned stripe",
+          "Unique glazing pattern on each mug due to reactive firing process",
+          "Handmade construction; hand washing recommended"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:drUewsW",
+      "title": "Japanese Matcha Tea Bowl Set",
+      "description": {
+        "plain": "Elevate your morning ritual with this authentic True Ceremonial Bundle from Aprika Life. This comprehensive set includes a handcrafted Japanese ceramic bowl featuring a striking blue and brown glaze inspired by nature and created using traditional Minoyaki pottery techniques. To ensure a perfect brew, the set comes with a traditional bamboo whisk (chasen) with 100 fine prongs and a matching ceramic holder to maintain the whisk's shape and longevity. Completing the experience is a 1 oz tin of premium First-Harvest Ceremonial Grade Organic Japanese Matcha, known for its vibrant green color and smooth, umami flavor profile."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7199,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7199,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "drUewsW:0FQp:01KRPC5YP9X4MGQEFWFCSV99K3",
+          "title": "Japanese Matcha Tea Bowl Blue & Brown Glaze, Bamboo Matcha Whisk, Whisk Holder And Organic Japanese Matcha Set",
+          "description": {
+            "plain": "Elevate your morning ritual with this authentic True Ceremonial Bundle from Aprika Life. This comprehensive set includes a handcrafted Japanese ceramic bowl featuring a striking blue and brown glaze inspired by nature and created using traditional Minoyaki pottery techniques. To ensure a perfect brew, the set comes with a traditional bamboo whisk (chasen) with 100 fine prongs and a matching ceramic holder to maintain the whisk's shape and longevity. Completing the experience is a 1 oz tin of premium First-Harvest Ceremonial Grade Organic Japanese Matcha, known for its vibrant green color and smooth, umami flavor profile."
+          },
+          "price": {
+            "amount": 7199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/drUewsW-0FQp-public_ucp?o=01KRPC5YP9X4MGQEFWFCSV99K3",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/b40671f7-a57f-4574-9d14-1a7074b6e636"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/b40671f7-a57f-4574-9d14-1a7074b6e636",
+          "alt_text": "Japanese Matcha Tea Bowl Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted using traditional Minoyaki pottery techniques",
+          "14 oz ceramic bowl (4.33\" diameter x 2.95\" height)",
+          "100-prong bamboo matcha whisk (chasen)",
+          "Includes ceramic whisk holder for air drying and shape maintenance",
+          "Includes 1 oz of First-Harvest Ceremonial Grade Organic Japanese Matcha"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:4z4vQNm",
+      "title": "Coffee Mug with Base",
+      "description": {
+        "plain": "A distinctive and elegantly shaped conical coffee mug in soft pink, paired with a sturdy earthy beige stone base. Inspired by vintage forms and the mindful process of brewing, this handcrafted ceramic cup features a wide mouth to enhance the aroma of your beverage and a tapered bottom for a comfortable grip. With a 6.8 oz (200ml) capacity, it is perfect for espresso, tea, matcha, or small desserts. Each piece is uniquely handcrafted, ensuring a personal touch to your daily routine."
+      },
+      "price_range": {
+        "min": {
+          "amount": 1999,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 1999,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "4z4vQNm:0FQp:01M0J6QJS8E8QV8NPKVCTJXRRX",
+          "title": "Pink Coffee Mug With Base",
+          "description": {
+            "plain": "A distinctive and elegantly shaped conical coffee mug in soft pink, paired with a sturdy earthy beige stone base. Inspired by vintage forms and the mindful process of brewing, this handcrafted ceramic cup features a wide mouth to enhance the aroma of your beverage and a tapered bottom for a comfortable grip. With a 6.8 oz (200ml) capacity, it is perfect for espresso, tea, matcha, or small desserts. Each piece is uniquely handcrafted, ensuring a personal touch to your daily routine."
+          },
+          "price": {
+            "amount": 1999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/4z4vQNm-0FQp-public_ucp?o=01M0J6QJS8E8QV8NPKVCTJXRRX",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/47db0738-2e05-4eda-b171-ea60662456b7"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/47db0738-2e05-4eda-b171-ea60662456b7",
+          "alt_text": "Coffee Mug with Base"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted ceramic construction",
+          "Unique conical/triangular shape for ergonomic grip",
+          "Includes a solid square stone base to prevent tipping",
+          "Wide mouth design to enhance aromatic experience",
+          "Capacity of 6.8 oz (200ml)",
+          "Non-toxic materials",
+          "Dishwasher safe (hand washing recommended)",
+          "Gift-ready packaging"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:dgigDLW",
+      "title": "Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set",
+      "description": {
+        "plain": "A professionally crafted Japanese teaware set featuring a ceramic matcha bowl adorned with pink sakura (cherry blossom) flowers, a traditional 100-prong bamboo whisk (chasen), and a ceramic whisk holder. Each bowl is handcrafted in Japan using Minoyaki pottery techniques, ensuring a unique design and high quality. This set is designed for both traditional tea ceremonies and daily matcha latte preparation."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6099,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6099,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "dgigDLW:0FQp:01M0FJBH6N57SX8Q2D2S8H1TA8",
+          "title": "Pink Sakura Flowers Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "A professionally crafted Japanese teaware set featuring a ceramic matcha bowl adorned with pink sakura (cherry blossom) flowers, a traditional 100-prong bamboo whisk (chasen), and a ceramic whisk holder. Each bowl is handcrafted in Japan using Minoyaki pottery techniques, ensuring a unique design and high quality. This set is designed for both traditional tea ceremonies and daily matcha latte preparation."
+          },
+          "price": {
+            "amount": 6099,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/dgigDLW-0FQp-public_ucp?o=01M0FJBH6N57SX8Q2D2S8H1TA8",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/272decb2-8980-4e6f-9f6f-9cb9f4230df9"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/272decb2-8980-4e6f-9f6f-9cb9f4230df9",
+          "alt_text": "Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted in Japan using Minoyaki pottery techniques",
+          "Ceramic matcha bowl holds 16 oz",
+          "Bamboo whisk features 100 fine prongs for a smooth, frothy blend",
+          "Includes a ceramic whisk holder to maintain whisk shape and air dry naturally",
+          "Bowl measures 2.95\" in height and 4.53\" in diameter",
+          "Ergonomic design for comfortable grip"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:uRe7edf",
+      "title": "Kohiki Pink Sakura Ceramic Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set",
+      "description": {
+        "plain": "Elevate your daily matcha ritual with this exquisite Kohiki Pink Sakura Matcha Set. This handcrafted set includes a beautiful beige ceramic matcha bowl adorned with delicate pink sakura floral designs, a traditional 100-prong bamboo whisk (chasen) for creating the perfect frothy crema, and a ceramic whisk holder to maintain the whisk's shape. Each piece is artisan-made in Japan using traditional Minoyaki pottery techniques, blending timeless craftsmanship with functional elegance. Perfect for both traditional Usucha ceremonies and modern matcha lattes."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5799,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5799,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "uRe7edf:0FQp:01M0FNRB189BATHV6MGHHF5G4P",
+          "title": "Kohiki Pink Sakura Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "Elevate your daily matcha ritual with this exquisite Kohiki Pink Sakura Matcha Set. This handcrafted set includes a beautiful beige ceramic matcha bowl adorned with delicate pink sakura floral designs, a traditional 100-prong bamboo whisk (chasen) for creating the perfect frothy crema, and a ceramic whisk holder to maintain the whisk's shape. Each piece is artisan-made in Japan using traditional Minoyaki pottery techniques, blending timeless craftsmanship with functional elegance. Perfect for both traditional Usucha ceremonies and modern matcha lattes."
+          },
+          "price": {
+            "amount": 5799,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/uRe7edf-0FQp-public_ucp?o=01M0FNRB189BATHV6MGHHF5G4P",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/2434f7f9-f4a1-4117-a032-86a2f4d4a854"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/2434f7f9-f4a1-4117-a032-86a2f4d4a854",
+          "alt_text": "Kohiki Pink Sakura Ceramic Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted in Japan using Minoyaki pottery techniques",
+          "Includes ceramic matcha bowl, 100-prong bamboo whisk, and ceramic whisk holder",
+          "Bowl features a delicate pink sakura floral design",
+          "Ergonomic design for smooth whisking and comfortable grip",
+          "Whisk holder helps prolong whisk life and maintain shape",
+          "Lead and cadmium-free, food-safe materials"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Pq1BVfF",
+      "title": "Matcha Bowl Set",
+      "description": {
+        "plain": "This skillfully crafted matcha set provides everything needed for a traditional home tea ceremony. It includes a high-quality ceramic chawan (bowl) with a rich blue glaze and a golden-brown rim, a handcrafted 100-prong bamboo whisk (chasen) for creating smooth froth, and a matching blue ceramic whisk holder to maintain the whisk's shape while air drying. The set also includes a 1 oz pack of ceremonial grade organic matcha. The ceramic components are lead and cadmium-free, adding a touch of serene beauty and authenticity to your daily matcha ritual."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Pq1BVfF:0FQp:01M0FP98HQJHYEW3R24BRGGA8N",
+          "title": "Blue Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "This skillfully crafted matcha set provides everything needed for a traditional home tea ceremony. It includes a high-quality ceramic chawan (bowl) with a rich blue glaze and a golden-brown rim, a handcrafted 100-prong bamboo whisk (chasen) for creating smooth froth, and a matching blue ceramic whisk holder to maintain the whisk's shape while air drying. The set also includes a 1 oz pack of ceremonial grade organic matcha. The ceramic components are lead and cadmium-free, adding a touch of serene beauty and authenticity to your daily matcha ritual."
+          },
+          "price": {
+            "amount": 3900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Pq1BVfF-0FQp-public_ucp?o=01M0FP98HQJHYEW3R24BRGGA8N",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/39d32b99-a60c-48c2-826f-f0222295c6f4"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/39d32b99-a60c-48c2-826f-f0222295c6f4",
+          "alt_text": "Matcha Bowl Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes ceramic matcha bowl (chawan), bamboo whisk (chasen), and ceramic whisk holder",
+          "Bamboo whisk features 100 fine prongs for effortless whisking",
+          "Ceramic bowl has a 17-ounce capacity and measures 4.5 inches in diameter",
+          "Whisk holder helps prolong whisk life by allowing it to air dry naturally",
+          "Lead and cadmium-free, food-safe materials",
+          "Includes a 1 oz pack of ceremonial organic matcha",
+          "Microwave-safe ceramic bowl"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:XwKvKAM",
+      "title": "Japanese Pink Sakura Ceramic Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set",
+      "description": {
+        "plain": "Elevate your daily matcha ritual with this exquisite three-piece set, featuring a handcrafted Minoyaki-style ceramic bowl adorned with a traditional pink sakura floral pattern. The set includes a premium 100-prong golden bamboo whisk (chasen) for creating perfect, creamy froth, and a specialized ceramic whisk holder designed to maintain the whisk's shape and ensure proper air drying. Each piece is a blend of timeless Japanese artistry and modern functionality, making it ideal for both formal tea ceremonies and cozy morning matcha lattes."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5799,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5799,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "XwKvKAM:0FQp:01M0FN8XMJF3B2HFKZJHCQ5ADG",
+          "title": "Japanese Pink Sakura Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "Elevate your daily matcha ritual with this exquisite three-piece set, featuring a handcrafted Minoyaki-style ceramic bowl adorned with a traditional pink sakura floral pattern. The set includes a premium 100-prong golden bamboo whisk (chasen) for creating perfect, creamy froth, and a specialized ceramic whisk holder designed to maintain the whisk's shape and ensure proper air drying. Each piece is a blend of timeless Japanese artistry and modern functionality, making it ideal for both formal tea ceremonies and cozy morning matcha lattes."
+          },
+          "price": {
+            "amount": 5799,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/XwKvKAM-0FQp-public_ucp?o=01M0FN8XMJF3B2HFKZJHCQ5ADG",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/b9c057f4-7997-4420-957a-4b7a561829f3"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/b9c057f4-7997-4420-957a-4b7a561829f3",
+          "alt_text": "Japanese Pink Sakura Ceramic Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted Minoyaki Style: Each ceramic bowl is individually handcrafted and glazed using traditional Japanese Minoyaki pottery techniques from Gifu Prefecture.",
+          "Authentic 100-Prong Bamboo Whisk: Includes a high-quality golden bamboo chasen with 100 fine prongs, optimized for creating a smooth, thick crema.",
+          "Smart Whisk Holder: Features a dedicated ceramic stand that allows the bamboo whisk to air dry naturally, preserving the integrity and shape of the prongs.",
+          "Ergonomic & Functional Design: The bowl is sized at 5.1 inches in diameter and 3.5 inches in height, specifically shaped for easy whisking without spilling.",
+          "Safe & Durable: The ceramic bowl is lead-free, cadmium-free, food-safe, and microwave-safe, while the bamboo is eco-friendly and free from preservatives."
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:LCTPLt2",
+      "title": "Kohiki White Clay Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set",
+      "description": {
+        "plain": "A complete Ceramic Matcha Tea Starter Set handcrafted in Japan using traditional Minoyaki pottery techniques. This aesthetically pleasing set includes a durable white clay matcha bowl with a specialized White Kohiki glaze, a 100-prong bamboo whisk designed to create a rich crema and froth, and a matching ceramic whisk holder to maintain the whisk's shape and ensure proper air-drying. The bowl's ergonomic and rounded design is ideal for both traditional tea ceremonies and daily matcha latte preparation."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5199,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5199,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "LCTPLt2:0FQp:01M0FHZG2YVC6BGAG34RS053R5",
+          "title": "White Kohiki Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "A complete Ceramic Matcha Tea Starter Set handcrafted in Japan using traditional Minoyaki pottery techniques. This aesthetically pleasing set includes a durable white clay matcha bowl with a specialized White Kohiki glaze, a 100-prong bamboo whisk designed to create a rich crema and froth, and a matching ceramic whisk holder to maintain the whisk's shape and ensure proper air-drying. The bowl's ergonomic and rounded design is ideal for both traditional tea ceremonies and daily matcha latte preparation."
+          },
+          "price": {
+            "amount": 5199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/LCTPLt2-0FQp-public_ucp?o=01M0FHZG2YVC6BGAG34RS053R5",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/aaebbcb5-4f8b-4fa3-b531-01dc88cdefb2"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/aaebbcb5-4f8b-4fa3-b531-01dc88cdefb2",
+          "alt_text": "Kohiki White Clay Matcha Bowl, Bamboo Matcha Whisk and Whisk Holder Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted in Japan using traditional Minoyaki pottery techniques",
+          "Includes a white ceramic bowl with White Kohiki Glaze",
+          "Includes a 100-prong bamboo whisk for optimal frothing",
+          "Includes a ceramic whisk holder to extend whisk lifespan",
+          "Bowl measures 4.72 inches in diameter and 2.95 inches tall"
+        ]
+      }
+    },
+    {
+      "id": "01M0MPASYHD4JW9CCNNEETJKH9",
+      "title": "Ceramic Matcha Bowl With Spout and Whisk Set",
+      "description": {
+        "plain": "This handcrafted Japanese Ceramic Matcha Tea Starter Set is designed for both traditional tea ceremonies and daily matcha lattes. The set includes a blue spouted ceramic bowl with a handle, created by artisans using traditional Minoyaki pottery techniques to ensure a mess-free experience. It is paired with a 100-prong bamboo whisk for achieving a creamy froth and a ceramic whisk holder to maintain the whisk's shape and longevity through proper air drying. Each bowl is unique due to its individual hand-glazing process."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4999,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6199,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Ht7vuC0:0FQp:01M0J4N9V3P3CYS3QW760K3ZZS",
+          "title": "Spouted Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "This handcrafted Japanese Ceramic Matcha Tea Starter Set is designed for both traditional tea ceremonies and daily matcha lattes. The set includes a blue spouted ceramic bowl with a handle, created by artisans using traditional Minoyaki pottery techniques to ensure a mess-free experience. It is paired with a 100-prong bamboo whisk for achieving a creamy froth and a ceramic whisk holder to maintain the whisk's shape and longevity through proper air drying. Each bowl is unique due to its individual hand-glazing process."
+          },
+          "price": {
+            "amount": 6199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Ht7vuC0-0FQp-public_ucp?o=01M0J4N9V3P3CYS3QW760K3ZZS",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/0510ddb0-c93c-43b2-8d9e-8b1a6c03f183"
+            }
+          ]
+        },
+        {
+          "id": "CGUP9Yg:0FQp:01M0J4YX73V7BY2KZ5XYSBVMGH",
+          "title": "Dark Grey Flowers Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "This artistic matcha teaware set combines traditional Japanese craftsmanship with modern functionality. Handcrafted in Japan using historic Minoyaki pottery techniques, the set features a dark grey ceramic bowl adorned with delicate pink floral designs, a 100-prong bamboo whisk (chasen) for creating a smooth, frothy texture, and a ceramic whisk holder to maintain the whisk's shape and longevity. Ideal for both traditional tea ceremonies and daily matcha lattes."
+          },
+          "price": {
+            "amount": 5499,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/CGUP9Yg-0FQp-public_ucp?o=01M0J4YX73V7BY2KZ5XYSBVMGH",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/4a25b996-c625-49c6-a959-84e0ceb366f2"
+            }
+          ]
+        },
+        {
+          "id": "nSXzNR0:0FQp:01KXGKBHAZP90YHH41KRYS476T",
+          "title": "Gray With Flowers Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "This exquisite matcha bowl set, featuring a serene gray glaze adorned with delicate pink and purple Japanese flowers, brings a touch of traditional artistry to your tea ritual. Handcrafted by skilled artisans using the Minoyaki pottery technique, this set includes a ceramic bowl, a 100-prong bamboo whisk (chasen), and a smart whisk holder designed to maintain the whisk's integrity and shape. The bowl's wide base facilitates effortless whisking for a smooth, frothy matcha, while its food-safe, lead-free, and cadmium-free composition ensures a healthy and authentic experience. Perfect for both beginners and enthusiasts, this set also makes a thoughtful and elegant gift."
+          },
+          "price": {
+            "amount": 4999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/nSXzNR0-0FQp-public_ucp?o=01KXGKBHAZP90YHH41KRYS476T",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/613f2121-cc67-40c5-b61a-93cf815578d7"
+            }
+          ]
+        },
+        {
+          "id": "1XrrNTG:0FQp:01M0J5ZXGXEG6S2EHJ8ZY0HEK5",
+          "title": "Black Flowers Ceramic Matcha Bowl With Spout, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "Experience the mindful elegance of a traditional Japanese tea ceremony with this handcrafted matcha set. The set features a black ceramic matcha bowl meticulously crafted in Japan using traditional Minoyaki pottery techniques, adorned with a delicate pink and white floral design and a convenient spout for easy pouring. Complementing the bowl is a professional-grade bamboo whisk (chasen) with 100 fine prongs to create a smooth, frothy matcha crema, and a matching ceramic whisk holder designed to maintain the whisk's shape and prolong its life. This elegant set blends century-old artistry with modern functionality, making it an ideal choice for daily rituals or a thoughtful housewarming gift."
+          },
+          "price": {
+            "amount": 6199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/1XrrNTG-0FQp-public_ucp?o=01M0J5ZXGXEG6S2EHJ8ZY0HEK5",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/9366ed9c-23e4-40ea-8eff-1d17d37507e0"
+            }
+          ]
+        },
+        {
+          "id": "FnSOtxP:0FQp:01M0J48E705H5J7XWYQEWKA93P",
+          "title": "Black Flowers Ceramic Matcha Bowl With Spout",
+          "description": {
+            "plain": "Experience the mindful elegance of a traditional Japanese tea ceremony with this handcrafted ceramic matcha bowl. Featuring a sophisticated matte black finish adorned with delicate floral designs, this bowl is crafted using traditional Minoyaki pottery techniques in Japan. It includes a graceful spout for easy pouring and an ergonomic handle for a comfortable grip. Perfectly sized for both traditional usucha (thin tea) and modern matcha lattes, this durable clay bowl combines 1,400 years of pottery history with functional daily use."
+          },
+          "price": {
+            "amount": 4999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/FnSOtxP-0FQp-public_ucp?o=01M0J48E705H5J7XWYQEWKA93P",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/54eb4eb3-2591-48c4-aed8-508dddfa94e7"
+            }
+          ]
+        },
+        {
+          "id": "abEvwCC:0FQp:01M0J6H3A4X4ZPF8TMCSSEQ8S9",
+          "title": "Green Flowers Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "A charming and artistic matcha teaware set inspired by traditional Japanese pottery. This set includes a handcrafted 16 oz white ceramic bowl adorned with a green floral pattern, crafted using historical Minoyaki pottery techniques. It is paired with a traditional 100-prong bamboo whisk (chasen) and a ceramic whisk holder designed to help the whisk air dry and maintain its shape. Ideal for both traditional tea ceremonies and daily matcha latte rituals."
+          },
+          "price": {
+            "amount": 6199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/abEvwCC-0FQp-public_ucp?o=01M0J6H3A4X4ZPF8TMCSSEQ8S9",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/4aa22667-e010-4440-83f1-2bb2955e115a"
+            }
+          ]
+        },
+        {
+          "id": "RvPCIen:0FQp:01M0JDMXW16CZW1XKT5CVPN8X1",
+          "title": "Black With Flowers Set",
+          "description": {
+            "plain": "This Ceramic Matcha Tea Starter Set is a blend of traditional Japanese artistry and functionality. The set features a handcrafted ceramic matcha bowl created using historic Minoyaki pottery techniques, adorned with a beautiful black glaze and a traditional Yuzen floral pattern. To ensure a perfect ceremonial tea experience, it includes a deluxe bamboo matcha whisk with 100 prongs for creating rich froth and a ceramic whisk holder to maintain the whisk's shape and longevity. The bowl's rounded shape is optimized for effortless whisking, and its lead-free, food-safe construction ensures a safe and elegant tea preparation."
+          },
+          "price": {
+            "amount": 5299,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/RvPCIen-0FQp-public_ucp?o=01M0JDMXW16CZW1XKT5CVPN8X1",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/810af348-8652-4aaa-a133-ab432318c8a6"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/0510ddb0-c93c-43b2-8d9e-8b1a6c03f183",
+          "alt_text": "Ceramic Matcha Bowl With Spout and Whisk Set"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "1XrrNTG",
+              "label": "Black Flowers"
+            },
+            {
+              "id": "Ht7vuC0",
+              "label": "Green Flowers"
+            },
+            {
+              "id": "CGUP9Yg",
+              "label": "Dark Grey Flowers"
+            },
+            {
+              "id": "nSXzNR0",
+              "label": "Gray Flowers"
+            }
+          ]
+        },
+        {
+          "name": "Configuration",
+          "values": [
+            {
+              "id": "Ht7vuC0",
+              "label": "Bowl with Whisk and Holder"
+            },
+            {
+              "id": "FnSOtxP",
+              "label": "Bowl Only"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes blue spouted ceramic bowl, bamboo whisk, and ceramic whisk holder",
+          "Handcrafted in Japan using traditional Minoyaki pottery techniques",
+          "Bowl features a spout and handle for mess-free pouring",
+          "Bamboo whisk with 100 prongs for superior frothing",
+          "Ceramic holder helps whisk air dry and maintain shape",
+          "Bowl dimensions: 4.5 inches diameter and 3 inches tall"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Configuration",
+          "label": "Bowl with Whisk and Holder"
+        },
+        {
+          "name": "Color",
+          "label": "Green Flowers"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:LDmZQKu",
+      "title": "Kaneni Matcha Set",
+      "description": {
+        "plain": "The Kaneni White Ceramic Matcha Set is a functional and artistic collection designed for the traditional Japanese tea ritual. Each set is handcrafted by skilled artisans in Japan using time-honored Minoyaki pottery techniques, ensuring a unique design for every bowl. The set includes a textured white ceramic bowl with brown speckles, a traditional bamboo whisk (chasen) with 100 fine prongs for creating a rich froth, and a ceramic whisk holder to maintain the prongs' shape and allow for natural air drying. Perfect for both traditional usucha (thin tea) and modern matcha lattes, this set combines 1,400 years of pottery history with an ergonomic design for a comfortable daily experience."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5199,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5199,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "LDmZQKu:0FQp:01M0FK2P8CGWD70AZEAV5HRJAX",
+          "title": "Kaneni White Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "The Kaneni White Ceramic Matcha Set is a functional and artistic collection designed for the traditional Japanese tea ritual. Each set is handcrafted by skilled artisans in Japan using time-honored Minoyaki pottery techniques, ensuring a unique design for every bowl. The set includes a textured white ceramic bowl with brown speckles, a traditional bamboo whisk (chasen) with 100 fine prongs for creating a rich froth, and a ceramic whisk holder to maintain the prongs' shape and allow for natural air drying. Perfect for both traditional usucha (thin tea) and modern matcha lattes, this set combines 1,400 years of pottery history with an ergonomic design for a comfortable daily experience."
+          },
+          "price": {
+            "amount": 5199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/LDmZQKu-0FQp-public_ucp?o=01M0FK2P8CGWD70AZEAV5HRJAX",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/e7a834db-15de-4bf8-9a17-7c235c87b956"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/e7a834db-15de-4bf8-9a17-7c235c87b956",
+          "alt_text": "Kaneni Matcha Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted in Japan using Minoyaki pottery techniques",
+          "Includes ceramic matcha bowl, 100-prong bamboo whisk, and ceramic whisk holder",
+          "Ergonomic rounded bowl design for effortless whisking",
+          "Whisk holder helps preserve whisk shape and prolongs its life",
+          "Bowl dimensions: 3 inches height, 4.5 inches diameter"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:0hKPdwS",
+      "title": "Japanese Pink Sakura Ceramic Matcha Bowl",
+      "description": {
+        "plain": "A handcrafted white clay ceramic matcha bowl featuring a traditional Japanese pink sakura floral pattern. Crafted in Japan using traditional Minoyaki pottery techniques, this bowl is designed for both traditional tea ceremonies and daily matcha lattes. Each piece is individually glazed, making it unique, and is lead and cadmium-free for safety."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4599,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 4599,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "0hKPdwS:0FQp:01M0J6NSR8NQ1JK7R1Y55HRWBA",
+          "title": "Japanese Pink Sakura Ceramic Matcha Bowl",
+          "description": {
+            "plain": "A handcrafted white clay ceramic matcha bowl featuring a traditional Japanese pink sakura floral pattern. Crafted in Japan using traditional Minoyaki pottery techniques, this bowl is designed for both traditional tea ceremonies and daily matcha lattes. Each piece is individually glazed, making it unique, and is lead and cadmium-free for safety."
+          },
+          "price": {
+            "amount": 4599,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/0hKPdwS-0FQp-public_ucp?o=01M0J6NSR8NQ1JK7R1Y55HRWBA",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c44b0372-a0e1-47ee-be0e-f5ad4a385fb9"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/c44b0372-a0e1-47ee-be0e-f5ad4a385fb9",
+          "alt_text": "Japanese Pink Sakura Ceramic Matcha Bowl"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted using traditional Minoyaki pottery techniques from Gifu Prefecture, Japan",
+          "Lead and cadmium-free, food-safe white clay ceramic",
+          "Individually handcrafted and glazed for a unique design",
+          "Ergonomic rounded shape for effortless whisking",
+          "Suitable for traditional Usucha (thin tea) and matcha lattes"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:3R01pzN",
+      "title": "Kaneni Gold Crystal Ceramic Matcha Bowl Set",
+      "description": {
+        "plain": "The Kaneni Gold Crystal Ceramic Matcha Set is a handcrafted collection designed to elevate your daily matcha ritual. This set features a dark ceramic bowl crafted using traditional Japanese Minoyaki pottery techniques, known for its distinctive texture and artistic appeal. The set is completed with a traditional 100-prong bamboo whisk (chasen) for creating a smooth, frothy foam and a ceramic whisk holder to help the bamboo air dry naturally, preserving its shape and longevity. Combining ancient craftsmanship with functional design, this set is ideal for both traditional tea ceremonies and modern matcha lattes."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5199,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5199,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "3R01pzN:0FQp:01M0FP9KY12C4FTN4BMVGH0GJB",
+          "title": "Kaneni Gold Crystal Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "The Kaneni Gold Crystal Ceramic Matcha Set is a handcrafted collection designed to elevate your daily matcha ritual. This set features a dark ceramic bowl crafted using traditional Japanese Minoyaki pottery techniques, known for its distinctive texture and artistic appeal. The set is completed with a traditional 100-prong bamboo whisk (chasen) for creating a smooth, frothy foam and a ceramic whisk holder to help the bamboo air dry naturally, preserving its shape and longevity. Combining ancient craftsmanship with functional design, this set is ideal for both traditional tea ceremonies and modern matcha lattes."
+          },
+          "price": {
+            "amount": 5199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/3R01pzN-0FQp-public_ucp?o=01M0FP9KY12C4FTN4BMVGH0GJB",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/2b977197-3576-44fe-a669-131be6866a8a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/2b977197-3576-44fe-a669-131be6866a8a",
+          "alt_text": "Kaneni Gold Crystal Ceramic Matcha Bowl Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted using traditional Japanese Minoyaki pottery techniques",
+          "Includes a 100-prong bamboo whisk (chasen) for optimal frothing",
+          "Features a ceramic whisk holder to maintain prongs' integrity and shape",
+          "Bowl capacity is 16 oz",
+          "Bowl dimensions: 4.92\" diameter and 2.95\" height",
+          "Ergonomic design for a comfortable grip during whisking"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:bbF12u4",
+      "title": "Blue Matcha Bowl with Spout",
+      "description": {
+        "plain": "Experience the art of matcha preparation with this Japanese handcrafted blue matcha bowl, featuring an integrated spout and handle for mess-free pouring. This piece reflects centuries of pottery tradition, specifically referencing the renowned Minoyaki style from Tono Gifu Prefecture, which flourished during the Azuchi Momoyama period. Its unique, rich, dark blue glaze with subtle texture contrasts beautifully with the natural clay base, making it both a functional tool and a decorative item perfect for gifting."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4999,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 4999,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "bbF12u4:0FQp:01KBP7RFFV9JM3A2NATP1D7FK6",
+          "title": "Blue Matcha Bowl With Spout",
+          "description": {
+            "plain": "Experience the art of matcha preparation with this Japanese handcrafted blue matcha bowl, featuring an integrated spout and handle for mess-free pouring. This piece reflects centuries of pottery tradition, specifically referencing the renowned Minoyaki style from Tono Gifu Prefecture, which flourished during the Azuchi Momoyama period. Its unique, rich, dark blue glaze with subtle texture contrasts beautifully with the natural clay base, making it both a functional tool and a decorative item perfect for gifting."
+          },
+          "price": {
+            "amount": 4999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/bbF12u4-0FQp-public_ucp?o=01KBP7RFFV9JM3A2NATP1D7FK6",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/bbF12u4"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/bbF12u4",
+          "alt_text": "Blue Matcha Bowl with Spout"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted in Japan",
+          "Features a spout and handle for easy pouring",
+          "Dimensions: 5.5 inches in diameter and 3.5 inches tall",
+          "Represents the historical Minoyaki pottery style",
+          "Ideal for perfecting the matcha experience",
+          "Handcrafted Japanese pottery (Minoyaki tradition)",
+          "Features an integrated spout for mess-free pouring",
+          "Includes a handle for secure grip",
+          "Features a distinctive blue glaze transitioning to an earth-tone base"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:6DLrpp8",
+      "title": "Matcha Set",
+      "description": {
+        "plain": "Elevate your tea ritual with this sophisticated matcha set from Aprika Life. The set features a handcrafted ceramic Chawan bowl in a deep, moody dark navy blue glaze, designed for both beauty and efficiency with a 17-ounce capacity. It is accompanied by a traditional bamboo chasen whisk with 100 fine prongs for creating a smooth, frothy foam, and a matching ceramic whisk holder to maintain the whisk's shape and prolong its life. This comprehensive kit provides everything needed for an authentic Japanese tea experience at home."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5199,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5199,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "6DLrpp8:0FQp:01M0J791C7W6WR1XDAQJG2AENW",
+          "title": "Dark Navy Blue Ceramic Matcha Bowl, Bamboo Matcha Whisk And Whisk Holder Set",
+          "description": {
+            "plain": "Elevate your tea ritual with this sophisticated matcha set from Aprika Life. The set features a handcrafted ceramic Chawan bowl in a deep, moody dark navy blue glaze, designed for both beauty and efficiency with a 17-ounce capacity. It is accompanied by a traditional bamboo chasen whisk with 100 fine prongs for creating a smooth, frothy foam, and a matching ceramic whisk holder to maintain the whisk's shape and prolong its life. This comprehensive kit provides everything needed for an authentic Japanese tea experience at home."
+          },
+          "price": {
+            "amount": 5199,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/6DLrpp8-0FQp-public_ucp?o=01M0J791C7W6WR1XDAQJG2AENW",
+          "seller": {
+            "id": "0FQp",
+            "domain": "aprikamatcha.com",
+            "url": "https://aprikamatcha.com",
+            "name": "Aprika"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a036b42b-ef3e-4168-acf2-f08d1eef7a69"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/a036b42b-ef3e-4168-acf2-f08d1eef7a69",
+          "alt_text": "Matcha Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted ceramic bowl with a 17-ounce capacity",
+          "Traditional bamboo whisk (chasen) with 100 fine prongs",
+          "Includes a ceramic whisk holder to preserve whisk shape",
+          "Lead and cadmium-free, food-safe materials",
+          "Microwave-safe ceramic bowl",
+          "Eco-friendly golden bamboo whisk free from preservatives"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOjY3ODE4MWVhMWQxNmRhZjIiLCAib2Zmc2V0IjogMjB9"
+  },
+  "messages": []
+}

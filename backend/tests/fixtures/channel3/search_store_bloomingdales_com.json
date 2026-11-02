@@ -1,0 +1,1430 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "canonical_product_id:vNdqlNo",
+      "title": "The Triple Play skincare set",
+      "description": {
+        "plain": "A comprehensive 3-piece men's grooming set from Jack Black designed for daily skincare. The kit includes a Daily-use face wash (88 ml) with sage leaf and aloe vera for deep cleansing, a Double-Action face moisturizer (251 ml) providing hydration and SPF 20 protection, and a multi-use cleansing lotion (88 ml) for face, hair, and body. These pH-balanced, paraben, and sulfate-free formulas are not tested on animals and are made in the U.S."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "vNdqlNo:DyQi:01M61GHYVFM1KQXNPT9ZT9NWD4",
+          "title": "Jack Black The Triple Play Moisturizer & Cleansers Gift Set ($75 Value)",
+          "description": {
+            "plain": "The Triple Play set by Jack Black is a trio of bestselling skincare products designed to keep skin cleansed, hydrated, and protected. The set includes Pure Clean Daily Facial Cleanser (3 fl. oz.), Double-Duty Face Moisturizer SPF 20 (8.5 fl. oz.), and All-Over Wash (3 fl. oz.)."
+          },
+          "price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/vNdqlNo-DyQi-public_ucp?o=01M61GHYVFM1KQXNPT9ZT9NWD4",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/bd279f8b-d65f-46d9-a3b3-de5aa2353e23"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/bd279f8b-d65f-46d9-a3b3-de5aa2353e23",
+          "alt_text": "The Triple Play skincare set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes Pure Clean Daily Facial Cleanser (3 oz.)",
+          "Includes Double-Duty Face Moisturizer (8.5 oz.) with Broad Spectrum SPF 20",
+          "Includes All-Over Wash for Face, Hair & Body (3 oz.)",
+          "A $75 value",
+          "Made in USA"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:UUFaAgP",
+      "title": "The Foundational Serum, Moisturizer, + Treatment Skincare Gift Set",
+      "description": {
+        "plain": "WHAT IT IS U Beauty The Foundational set is a high-performance skincare trio designed to streamline your routine for visibly brighter, smoother, and firmer-looking skin. 3 x 0.5 oz. Made in Italy. THREE-PIECE SET INCLUDES • RESURFACING Compound • THE SUPER Hydrator • THE SCULPT Neck + Décolleté Concentrate HOW TO USE IT 1. Apply 2 3 pumps of the RESURFACING Compound to dry skin after cleansing, gently massaging all over the face. Use in the morning, evening, or both. 2. Allow skin to fully dry and seal it in with 2 3 pumps of THE SUPER Hydrator. Apply as desired throughout the day for an added boost of hydration. 3. Apply THE SCULPT Neck + Décolleté Concentrate onto clean, dry skin on the neck, massaging gently in an upward motion from décolleté up to the jawline morning and evening."
+      },
+      "price_range": {
+        "min": {
+          "amount": 17200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 17200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "UUFaAgP:DyQi:01M41EVCM138T68FJARJQ5FNNN",
+          "title": "The Foundational Serum, Moisturizer, + Treatment Skincare Gift Set - U Beauty",
+          "description": {
+            "plain": "WHAT IT IS U Beauty The Foundational set is a high-performance skincare trio designed to streamline your routine for visibly brighter, smoother, and firmer-looking skin. 3 x 0.5 oz. Made in Italy. THREE-PIECE SET INCLUDES • RESURFACING Compound • THE SUPER Hydrator • THE SCULPT Neck + Décolleté Concentrate HOW TO USE IT 1. Apply 2 3 pumps of the RESURFACING Compound to dry skin after cleansing, gently massaging all over the face. Use in the morning, evening, or both. 2. Allow skin to fully dry and seal it in with 2 3 pumps of THE SUPER Hydrator. Apply as desired throughout the day for an added boost of hydration. 3. Apply THE SCULPT Neck + Décolleté Concentrate onto clean, dry skin on the neck, massaging gently in an upward motion from décolleté up to the jawline morning and evening."
+          },
+          "price": {
+            "amount": 17200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/UUFaAgP-DyQi-public_ucp?o=01M41EVCM138T68FJARJQ5FNNN",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/076c4855-cdc5-448d-94fb-8f2ebb417ee5"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/076c4855-cdc5-448d-94fb-8f2ebb417ee5",
+          "alt_text": "The Foundational Serum, Moisturizer, + Treatment Skincare Gift Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Contains three high-performance bestsellers: Resurfacing Compound, The SUPER Hydrator, and The SCULPT Neck + Décolleté Concentrate",
+          "Powered by proprietary SIREN Capsule Technology™ for adaptive delivery",
+          "Resurfacing Compound focuses on reducing pore size and improving skin texture",
+          "The SUPER Hydrator provides deep hydration (28% increase in 15 minutes)",
+          "The SCULPT concentrate improves skin elasticity on the neck and décolleté",
+          "Free of parabens, formaldehydes, phthalates, mineral oil, and sulfates",
+          "Provides up to 48 hours of multilevel hydration",
+          "Targets texture, pores, discoloration, and fine lines",
+          "Cruelty-free (not tested on animals)",
+          "Targeted contouring effects for face to décolleté"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:EECx6RL",
+      "title": "Coastal Indoor/Outdoor Area Rug",
+      "description": {
+        "plain": "This handwoven indoor/outdoor rug features a contemporary yet transitional style with a textured chevron design in marled blue and ecru. Crafted from durable, performance polyester yarns, it is designed to be sun-, rain-, dog-, and child-proof, making it ideal for open-air living. The flatweave construction offers a classic herringbone rhythm, and the material is hosed-down and scrubbable for easy maintenance."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "EECx6RL:DyQi:01M358HHWNTC8NCHNNAA0Q3057",
+          "title": "Da1336 Coastal Indoor/outdoor Area Rug, 5'0\"x8'0\"",
+          "description": {
+            "plain": "This handwoven indoor/outdoor rug features a contemporary yet transitional style with a textured chevron design in marled blue and ecru. Crafted from durable, performance polyester yarns, it is designed to be sun-, rain-, dog-, and child-proof, making it ideal for open-air living. The flatweave construction offers a classic herringbone rhythm, and the material is hosed-down and scrubbable for easy maintenance."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/EECx6RL-DyQi-public_ucp?o=01M358HHWNTC8NCHNNAA0Q3057",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/eb9f4638-0364-4368-9eaa-ac12359e722f"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/eb9f4638-0364-4368-9eaa-ac12359e722f",
+          "alt_text": "Coastal Indoor/Outdoor Area Rug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Reversible",
+          "Stain Resistant",
+          "Pet Friendly",
+          "Handwoven",
+          "Washable and scrubbable",
+          "Eco-friendly (made from recycled plastic bottles)",
+          "Indoor/Outdoor",
+          "Weather-resistant",
+          "Flatweave",
+          "Sun-, rain-, dog- and child-proof performance yarns"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:AatvSJk",
+      "title": "The Super Hydrator",
+      "description": {
+        "plain": "This luxurious and intuitive moisturizer from U Beauty deeply hydrates and resolves compromised barrier function where skin is most parched. Powered by U Beauty's proprietary HYDRA-SIREN Capsule, it effectively transports water to the deeper layers of the skin. Advanced hydration is immediate, while the five unique types of hyaluronic acid continue to hydrate throughout the day. SIRENS neutralize free radicals as they arise, expediting visible skin repair. Anti-aging ingredients provide a radiant glow, resulting in groundbreaking, long-lasting hydration. It is clean, hypoallergenic, cruelty-free, gluten-free, and non-GMO. Tested for safe use on all skin types and tones, and around the eyes. Dermatologically tested for sensitivity. Made in Italy."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "AatvSJk:DyQi:01M3TCEPMDT21ZG8WPTY10FYEV",
+          "title": "U Beauty The Super Hydrator 1.7 Oz",
+          "description": {
+            "plain": "This luxurious and intuitive moisturizer from U Beauty deeply hydrates and resolves compromised barrier function where skin is most parched. Powered by U Beauty's proprietary HYDRA-SIREN Capsule, it effectively transports water to the deeper layers of the skin. Advanced hydration is immediate, while the five unique types of hyaluronic acid continue to hydrate throughout the day. SIRENS neutralize free radicals as they arise, expediting visible skin repair. Anti-aging ingredients provide a radiant glow, resulting in groundbreaking, long-lasting hydration. It is clean, hypoallergenic, cruelty-free, gluten-free, and non-GMO. Tested for safe use on all skin types and tones, and around the eyes. Dermatologically tested for sensitivity. Made in Italy."
+          },
+          "price": {
+            "amount": 6800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/AatvSJk-DyQi-public_ucp?o=01M3TCEPMDT21ZG8WPTY10FYEV",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/89530c92-0655-4ec4-8bfa-121ee1ec36b1"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/89530c92-0655-4ec4-8bfa-121ee1ec36b1",
+          "alt_text": "The Super Hydrator"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "HYDRA-SIREN Capsule",
+          "five unique types of hyaluronic acid",
+          "SIRENS neutralize free radicals",
+          "anti-aging ingredients",
+          "Clean",
+          "Hypoallergenic",
+          "Cruelty-Free",
+          "Gluten-Free",
+          "Non-GMO",
+          "Tested for safe use on all skin types and skin tones"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:aL8SasG",
+      "title": "Radiant Reveal Brightening Serum",
+      "description": {
+        "plain": "The Rose Inc Radiant Reveal Brightening Serum is a powerful hydrating serum designed to instantly brighten the complexion and reveal healthy-looking skin without clogging pores. Its lightweight, fast-absorbing formula contains a blend of Squalane to soothe and moisturize, sea fennel extract to encourage luminosity, and Vitamin C to combat dullness and provide antioxidant protection. It is suitable for all skin types and specifically targets dryness, dullness, and a weak skin barrier, leaving the skin plumped and with a more even tone."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "aL8SasG:DyQi:01M39QDMRQQZ1QNDCQ4TF6S6RH",
+          "title": "Radiant Reveal Brightening Serum",
+          "description": {
+            "plain": "The Rose Inc Radiant Reveal Brightening Serum is a powerful hydrating serum designed to instantly brighten the complexion and reveal healthy-looking skin without clogging pores. Its lightweight, fast-absorbing formula contains a blend of Squalane to soothe and moisturize, sea fennel extract to encourage luminosity, and Vitamin C to combat dullness and provide antioxidant protection. It is suitable for all skin types and specifically targets dryness, dullness, and a weak skin barrier, leaving the skin plumped and with a more even tone."
+          },
+          "price": {
+            "amount": 7400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/aL8SasG-DyQi-public_ucp?o=01M39QDMRQQZ1QNDCQ4TF6S6RH",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/e6430cd4-ee18-4269-8e45-546a37dc23b4"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/e6430cd4-ee18-4269-8e45-546a37dc23b4",
+          "alt_text": "Radiant Reveal Brightening Serum"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Brightens and hydrates for a luminous complexion",
+          "Lightweight, quick-absorbing formula",
+          "Softens and plumps the skin",
+          "Creates a smooth, light-reflecting finish",
+          "Vegan and Cruelty-free",
+          "Non-pore clogging",
+          "Contains vitamin C and luminosity-enhancing ingredients",
+          "Includes Squalane to soothe and moisturize the complexion",
+          "Sea fennel extract helps brighten and encourage luminosity",
+          "Clinically shown to increase hydration by 70% and improve the skin barrier"
+        ]
+      }
+    },
+    {
+      "id": "01M0QFAKFGQANF0WEM1KV80YRN",
+      "title": "Ultra Hydrating Serum",
+      "description": {
+        "plain": "Ultra Hydrating Serum is a lightweight, water-binding emulsion designed to combat dehydration, aging, and skin discomfort for all skin types. Featuring an unprecedented 7-molecular weight Hyaluronic Acid complex and a ceramide blend, it works to penetrate multiple layers of the skin to plump, hydrate, and smooth away fine lines. This serum scientifically balances oil and water to repair the skin's natural barrier, reduce trans-epidermal water loss, and leave the complexion looking more supple and less dull."
+      },
+      "price_range": {
+        "min": {
+          "amount": 9500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 9500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "G2ua3rs:DyQi:01M5467BCWAQBRAV1EHPTGRV18",
+          "title": "Ultra Hydrating Serum",
+          "description": {
+            "plain": "Ultra Hydrating Serum is a lightweight, water-binding emulsion designed to combat dehydration, aging, and skin discomfort for all skin types. Featuring an unprecedented 7-molecular weight Hyaluronic Acid complex and a ceramide blend, it works to penetrate multiple layers of the skin to plump, hydrate, and smooth away fine lines. This serum scientifically balances oil and water to repair the skin's natural barrier, reduce trans-epidermal water loss, and leave the complexion looking more supple and less dull."
+          },
+          "price": {
+            "amount": 9500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/G2ua3rs-DyQi-public_ucp?o=01M5467BCWAQBRAV1EHPTGRV18",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d77b6788-f3ab-4bfd-a8e4-41859d859b4a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/d77b6788-f3ab-4bfd-a8e4-41859d859b4a",
+          "alt_text": "Ultra Hydrating Serum"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Contains 7 molecular weight Hyaluronic Acid for multi-layer hydration",
+          "Infused with a Ceramide Complex to repair the skin's natural barrier function",
+          "Features Olive Extract to promote epidermal barrier repair and reduce wrinkle depth",
+          "Includes Disodium Acetyl Glucosamine Phosphate to plump and smooth skin appearance",
+          "Lightweight emulsion that balances oil and water for healthy skin",
+          "Clinically shown to improve skin moisture and the appearance of fine lines and wrinkles",
+          "Suitable for all skin types, including oily and combination skin",
+          "Suitable for all skin types, including sensitive or post-procedure skin",
+          "Combines oils and water actives to nourish and protect skin",
+          "Combats dehydration, aging, and skin discomfort"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:5W0rnYV",
+      "title": "Supershine Hydration & Shine Gift Set",
+      "description": {
+        "plain": "The ORIBE Supershine Hydration & Shine Gift Set is a luxurious hair care bundle designed to hydrate, smooth, and provide mirror-like shine. This set features a travel-size Supershine Hydrating Shampoo (2.5 oz.) and Conditioner (1.7 oz.), alongside a full-size Mirror Rinse Glass Hair Treatment (5.9 oz.). The shampoo and conditioner utilize a Cranberry Complex to nourish and protect the hair from moisture loss, while the Mirror Rinse employs Glass Hair Technology to smooth the cuticle for immediate, luminous shine. Together, they work to leave hair soft, detangled, and clinically smoother."
+      },
+      "price_range": {
+        "min": {
+          "amount": 8200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 8200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "5W0rnYV:DyQi:01M3YYBAYV32R5S0GRC50H5VRW",
+          "title": "Oribe Supershine Hydration & Shine Gift Set ($103 Value)",
+          "description": {
+            "plain": "The ORIBE Supershine Hydration & Shine Gift Set is a luxurious hair care bundle designed to hydrate, smooth, and provide mirror-like shine. This set features a travel-size Supershine Hydrating Shampoo (2.5 oz.) and Conditioner (1.7 oz.), alongside a full-size Mirror Rinse Glass Hair Treatment (5.9 oz.). The shampoo and conditioner utilize a Cranberry Complex to nourish and protect the hair from moisture loss, while the Mirror Rinse employs Glass Hair Technology to smooth the cuticle for immediate, luminous shine. Together, they work to leave hair soft, detangled, and clinically smoother."
+          },
+          "price": {
+            "amount": 8200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/5W0rnYV-DyQi-public_ucp?o=01M3YYBAYV32R5S0GRC50H5VRW",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/3d198f13-f561-40c2-b69d-747560ba7972"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/3d198f13-f561-40c2-b69d-747560ba7972",
+          "alt_text": "Supershine Hydration & Shine Gift Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes Supershine Hydrating Shampoo (2.5 oz.)",
+          "Includes Supershine Hydrating Conditioner (1.7 oz.)",
+          "Includes Mirror Rinse Glass Hair Treatment (5.9 oz.)",
+          "Designed to hydrate, smooth, and provide mirror-shine",
+          "Clinical results show shine lasts through 15 washes",
+          "Hair is 2.9 times smoother when used as a system"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:iu4B2zF",
+      "title": "Television Perfect Hair Conditioner",
+      "description": {
+        "plain": "R+Co Television Perfect Hair Conditioner is a nourishing hair treatment designed to provide body, shine, and smoothness for a camera-ready look. Formulated with juniper berry extract to maintain scalp moisture and detoxify follicles, and glycerin to help hair retain essential hydration, it strengthens and softens without weighing hair down. This 1.7 oz. conditioner is ideal for those seeking healthy, voluminous hair with a professional finish."
+      },
+      "price_range": {
+        "min": {
+          "amount": 1800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 1800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "iu4B2zF:DyQi:01M42VX5Q0JZF2GRXQ7P71E3B3",
+          "title": "R+co Television Perfect Hair Conditioner 1.7 Oz.",
+          "description": {
+            "plain": "R+Co Television Perfect Hair Conditioner is a nourishing hair treatment designed to provide body, shine, and smoothness for a camera-ready look. Formulated with juniper berry extract to maintain scalp moisture and detoxify follicles, and glycerin to help hair retain essential hydration, it strengthens and softens without weighing hair down. This 1.7 oz. conditioner is ideal for those seeking healthy, voluminous hair with a professional finish."
+          },
+          "price": {
+            "amount": 1800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/iu4B2zF-DyQi-public_ucp?o=01M42VX5Q0JZF2GRXQ7P71E3B3",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/10d64658-fa92-46cc-ac12-6af6f94129df"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/10d64658-fa92-46cc-ac12-6af6f94129df",
+          "alt_text": "Television Perfect Hair Conditioner"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Provides body, shine, strengthening, softening, and smoothing",
+          "Paraben-free",
+          "Organic",
+          "Good for dullness and dry & flaky scalp",
+          "Contains juniper berry extract to maintain moisture balance and detoxify hair follicles",
+          "Contains glycerin as a naturally occurring humectant to retain moisture",
+          "Suitable for anyone wanting healthy, camera-ready hair"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:5oyxqPj",
+      "title": "Monoi Body Glow",
+      "description": {
+        "plain": "The NARS Monoi Body Glow from the Tahiti Bronze Collection is a luxurious multi-purpose beauty oil designed to soothe and moisturize the skin. Infused with Monoï de Tahiti oil—a blend of pure coconut extract and tiare flower buds—it provides the skin with essential nutrients and a delicate, natural tropical fragrance. This shimmering oil features rich chocolate tones to give the skin a radiant, bronzed glow."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "5oyxqPj:DyQi:01M41JA3M3M0JRPGGZGT78QS5P",
+          "title": "Nars Monoi Body Glow, Tahiti Bronze Collection 2.5 Oz.",
+          "description": {
+            "plain": "The NARS Monoi Body Glow from the Tahiti Bronze Collection is a luxurious multi-purpose beauty oil designed to soothe and moisturize the skin. Infused with Monoï de Tahiti oil—a blend of pure coconut extract and tiare flower buds—it provides the skin with essential nutrients and a delicate, natural tropical fragrance. This shimmering oil features rich chocolate tones to give the skin a radiant, bronzed glow."
+          },
+          "price": {
+            "amount": 6200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/5oyxqPj-DyQi-public_ucp?o=01M41JA3M3M0JRPGGZGT78QS5P",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/08370f44-6d0e-456f-b76f-be993fdeb257"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/08370f44-6d0e-456f-b76f-be993fdeb257",
+          "alt_text": "Monoi Body Glow"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Provides a radiant bronze glow.",
+          "Moisturizes skin.",
+          "Imparts a subtle tropical fragrance.",
+          "paraben free",
+          "Multi-purpose beauty oil",
+          "Soothes and moisturizes skin",
+          "Rich chocolate shimmer for a natural glow",
+          "Contains Monoï de Tahiti oil (coconut extract and tiare flower)"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:9slCySW",
+      "title": "The Basics Skincare Bundle (3 Pieces)",
+      "description": {
+        "plain": "The Basics Skincare Bundle from EllaOla is a comprehensive three-piece baby care set designed for gentle cleansing and hydration. Developed in collaboration with Harvard pediatric dermatologists, this set includes a Superfood Baby Shampoo & Body Wash (10.1 fl. oz.), a Hydrating Baby Lotion (7.8 fl. oz.), and a Moisturizing Baby Face Cream (1.7 fl. oz.). The products are formulated without fragrance, essential oils, or parabens, making them suitable for a baby's delicate skin. The set features clean white packaging with gold accents and a soft pink patterned design."
+      },
+      "price_range": {
+        "min": {
+          "amount": 9500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 9500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "9slCySW:DyQi:01M565XFYRNXWE5FXTFWT56044",
+          "title": "Ellaola The Basics 3-piece Skincare Bundle",
+          "description": {
+            "plain": "The Basics Skincare Bundle from EllaOla is a comprehensive three-piece baby care set designed for gentle cleansing and hydration. Developed in collaboration with Harvard pediatric dermatologists, this set includes a Superfood Baby Shampoo & Body Wash (10.1 fl. oz.), a Hydrating Baby Lotion (7.8 fl. oz.), and a Moisturizing Baby Face Cream (1.7 fl. oz.). The products are formulated without fragrance, essential oils, or parabens, making them suitable for a baby's delicate skin. The set features clean white packaging with gold accents and a soft pink patterned design."
+          },
+          "price": {
+            "amount": 9500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/9slCySW-DyQi-public_ucp?o=01M565XFYRNXWE5FXTFWT56044",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/4c5f0ae6-9ed7-45d2-b25e-fe7ad93b582a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/4c5f0ae6-9ed7-45d2-b25e-fe7ad93b582a",
+          "alt_text": "The Basics Skincare Bundle (3 Pieces)"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Pediatrician developed",
+          "Tear-free shampoo and body wash",
+          "Plant-based lotion blend (marine algae, coconut water, jojoba oil, and squalane)",
+          "Enriched with 14-plus essential vitamins and minerals",
+          "Made in the USA",
+          "Instant and long-lasting hydration lotion",
+          "Deeply nourishing, extra-rich face cream",
+          "Formulated without fragrance, essential oils or parabens",
+          "Developed with Harvard pediatric dermatologists",
+          "3-Piece Skincare Bundle"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:2iQVb9m",
+      "title": "Magnolia Hand Wash",
+      "description": {
+        "plain": "A luxurious hand and body wash featuring a floral fragrance described as creamy, luminous, and rain-kissed. The scent profile blends magnolia blossoms with pear, citrus, white peony, and orange blossom, grounded by ambrette, tonka, and blonde cedar. Formulated with silk amino acids, chamomile honey, and sweet almond oil, it provides a rich, silky lather that cleanses while caring for dry skin."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3040,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3040,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "2iQVb9m:DyQi:01M56RHF8Z7RK19VPCJCE0P46A",
+          "title": "Magnolia Bloom Hand & Body Wash",
+          "description": {
+            "plain": "A luxurious hand and body wash featuring a floral fragrance described as creamy, luminous, and rain-kissed. The scent profile blends magnolia blossoms with pear, citrus, white peony, and orange blossom, grounded by ambrette, tonka, and blonde cedar. Formulated with silk amino acids, chamomile honey, and sweet almond oil, it provides a rich, silky lather that cleanses while caring for dry skin."
+          },
+          "price": {
+            "amount": 3040,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 3800,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/2iQVb9m-DyQi-public_ucp?o=01M56RHF8Z7RK19VPCJCE0P46A",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d54b11dc-8a70-46d4-bae4-9ee37a49dcbc"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/d54b11dc-8a70-46d4-bae4-9ee37a49dcbc",
+          "alt_text": "Magnolia Hand Wash"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 3800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3800,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Enriched with silk amino acids, chamomile honey, and sweet almond oil to care for dry skin",
+          "Floral fragrance with notes of magnolia, pear, citrus, and white peony",
+          "Rich, silky lather for clean and soft hands",
+          "Capacity: 10oz/296ml",
+          "Hand wash"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:HG5Pazr",
+      "title": "Refreshing Remedies Skincare Set",
+      "description": {
+        "plain": "The Kiehl's Since 1851 Facial Fuel Skincare Gift Set is an energizing skincare collection designed for men. This set includes full-size versions of the Facial Fuel Cleanser (8.4 oz.), a gel face wash that removes dirt and oil without drying the skin, and the Facial Fuel Moisturizer (6.8 oz.), which uses vitamin Cg and caffeine to revive dull, fatigued skin. Suitable for all skin types, this set focuses on cleansing and moisturization to provide a refreshed and revitalized appearance."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "HG5Pazr:DyQi:01M33G9ACDPQPSJTJW958452JN",
+          "title": "Kiehl's Since 1851 Facial Fuel Skincare Gift Set ($80 Value)",
+          "description": {
+            "plain": "The Kiehl's Since 1851 Facial Fuel Skincare Gift Set is an energizing skincare collection designed for men. This set includes full-size versions of the Facial Fuel Cleanser (8.4 oz.), a gel face wash that removes dirt and oil without drying the skin, and the Facial Fuel Moisturizer (6.8 oz.), which uses vitamin Cg and caffeine to revive dull, fatigued skin. Suitable for all skin types, this set focuses on cleansing and moisturization to provide a refreshed and revitalized appearance."
+          },
+          "price": {
+            "amount": 5500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/HG5Pazr-DyQi-public_ucp?o=01M33G9ACDPQPSJTJW958452JN",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/327efc90-60e2-4c76-bbb2-a5ceb98fc964"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/327efc90-60e2-4c76-bbb2-a5ceb98fc964",
+          "alt_text": "Refreshing Remedies Skincare Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes full size Facial Fuel Cleanser (8.4 oz.)",
+          "Includes full size Facial Fuel Moisturizer (6.8 oz.)",
+          "Facial Fuel Cleanser effectively removes debris, dirt and oil with a non-drying cleanse",
+          "Facial Fuel Moisturizer formulated with vitamin Cg and caffeine to re-energize fatigued skin",
+          "Suitable for all skin types",
+          "Made in USA",
+          "Cleanses, reduces dullness, and hydrates skin",
+          "Formulated for men's unique skin needs"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:smn4wHb",
+      "title": "Tahoe TAH-3703 Area Rug Collection",
+      "description": {
+        "plain": "The Tahoe Handmade Rug by Surya is a masterpiece of simplicity and comfort, designed to bring brightness and a modern feel to any room. Hand-woven with durability in mind, it features a no-pile design that provides a classic look and long-lasting quality. This versatile piece is crafted from a wool face and cotton warp, making it an ideal addition to a nursery, playroom, or any living space."
+      },
+      "price_range": {
+        "min": {
+          "amount": 78000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 78000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "smn4wHb:DyQi:01M2TJ6FD5RJJ6ZJJ207P73SNR",
+          "title": "Surya Tahoe Tah-3703 White 5' X 8' Area Rug",
+          "description": {
+            "plain": "The Tahoe Handmade Rug by Surya is a masterpiece of simplicity and comfort, designed to bring brightness and a modern feel to any room. Hand-woven with durability in mind, it features a no-pile design that provides a classic look and long-lasting quality. This versatile piece is crafted from a wool face and cotton warp, making it an ideal addition to a nursery, playroom, or any living space."
+          },
+          "price": {
+            "amount": 78000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 156000,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/smn4wHb-DyQi-public_ucp?o=01M2TJ6FD5RJJ6ZJJ207P73SNR",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/79fa03e1-9095-4804-a9a8-358390315ec3"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/79fa03e1-9095-4804-a9a8-358390315ec3",
+          "alt_text": "Tahoe TAH-3703 Area Rug Collection"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 156000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 156000,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Hand-woven",
+          "No-pile design",
+          "Face: 100% Wool",
+          "Warp: 100% Cotton",
+          "Thickness: 0.98\"",
+          "Made in India",
+          "Non-machine washable",
+          "Pile height: .88\"",
+          "Subtle striped design",
+          "Textural knobby ground"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:LVzKmqc",
+      "title": "Regenerating Shampoo with Prickly Pear Oil",
+      "description": {
+        "plain": "A gel-textured regenerating shampoo enriched with prickly pear oil, designed to gently cleanse and deeply nourish dry and damaged hair. It removes impurities while revitalizing strands, leaving hair strengthened, smooth, and with a glossy luminosity."
+      },
+      "price_range": {
+        "min": {
+          "amount": 1500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 1500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "LVzKmqc:DyQi:01M39PDVYW93BHVZ10SHT7MP3P",
+          "title": "Christophe Robin Regenerating Shampoo With Prickly Pear Oil",
+          "description": {
+            "plain": "A gel-textured regenerating shampoo enriched with prickly pear oil, designed to gently cleanse and deeply nourish dry and damaged hair. It removes impurities while revitalizing strands, leaving hair strengthened, smooth, and with a glossy luminosity."
+          },
+          "price": {
+            "amount": 1500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/LVzKmqc-DyQi-public_ucp?o=01M39PDVYW93BHVZ10SHT7MP3P",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/6a97f5a8-c38e-419d-a619-732c604de481"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/6a97f5a8-c38e-419d-a619-732c604de481",
+          "alt_text": "Regenerating Shampoo with Prickly Pear Oil"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Deeply nourishes and gently cleanses hair",
+          "Revitalizes, regenerates and strengthens strands",
+          "Gel-textured formula with generous foam",
+          "Leaves hair shinier and silky smooth"
+        ]
+      }
+    },
+    {
+      "id": "01KS9P0T9CXPRXDPWJ4ZJS66QE",
+      "title": "Racer Strap Maxi Dress",
+      "description": {
+        "plain": "A streamlined racer strap maxi dress in a subtle bistre colorway, crafted from a cotton-spandex blend with peruvian manufacturing details. The piece is a final sale item available in limited sizes, intended as a standalone dress within Helmut Lang's women's clothing line."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7440,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7440,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "fZFmkZu:DyQi:01M3DAG3KVDZJN8MT7BJZP88ZJ",
+          "title": "Racer Strap Maxi Dress",
+          "description": {
+            "plain": "A streamlined racer strap maxi dress in a subtle bistre colorway, crafted from a cotton-spandex blend with peruvian manufacturing details. The piece is a final sale item available in limited sizes, intended as a standalone dress within Helmut Lang's women's clothing line."
+          },
+          "price": {
+            "amount": 7440,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 24800,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/fZFmkZu-DyQi-public_ucp?o=01M3DAG3KVDZJN8MT7BJZP88ZJ",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/daa0b6a8-7948-4167-ada2-bbb37285669c"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/daa0b6a8-7948-4167-ada2-bbb37285669c",
+          "alt_text": "Racer Strap Maxi Dress"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 24800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 24800,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Scoop neck",
+          "Racer straps",
+          "Pullover style",
+          "Maxi silhouette",
+          "Relaxed fit",
+          "Hits above ankle"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Cbrzuxt",
+      "title": "Mojave Ghost Body Cream",
+      "description": {
+        "plain": "BYREDO Mojave Ghost Body Cream is a luxurious, scented body moisturizer inspired by the rare ghost flower of the Mojave desert. This cream features a complex fragrance profile with top notes of ambrette and Jamaican nesberry, a heart of violet, sandalwood, and magnolia, and a base of chantilly musk, crisp amber, and cedarwood. Made in France, it provides a creamy application designed for hydration and layering with the matching Mojave Ghost perfume."
+      },
+      "price_range": {
+        "min": {
+          "amount": 10500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 10500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Cbrzuxt:DyQi:01M3FFVCF3H3HB996CHPKH4AVT",
+          "title": "Mojave Ghost Body Cream 200 Ml Hydrating Luxury",
+          "description": {
+            "plain": "BYREDO Mojave Ghost Body Cream is a luxurious, scented body moisturizer inspired by the rare ghost flower of the Mojave desert. This cream features a complex fragrance profile with top notes of ambrette and Jamaican nesberry, a heart of violet, sandalwood, and magnolia, and a base of chantilly musk, crisp amber, and cedarwood. Made in France, it provides a creamy application designed for hydration and layering with the matching Mojave Ghost perfume."
+          },
+          "price": {
+            "amount": 10500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Cbrzuxt-DyQi-public_ucp?o=01M3FFVCF3H3HB996CHPKH4AVT",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f033f9f2-7923-4dfc-b44d-7099e930f204"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/f033f9f2-7923-4dfc-b44d-7099e930f204",
+          "alt_text": "Mojave Ghost Body Cream"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "body cream",
+          "Mojave Ghost fragrance",
+          "hydrating",
+          "rich texture",
+          "Enriched with Shea Butter",
+          "Suitable for most skin types",
+          "Leaves skin soft, smooth, conditioned and lightly fragranced",
+          "Top Notes: Ambrette, Jamaican Nesberry",
+          "Heart Notes: Violet, Sandalwood, Magnolia",
+          "Base Notes: Chantilly Musk, Crisp Amber, Cedar Wood"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:a4tgc0H",
+      "title": "Huxley - Secret of Sahara - Body Wash ; Moroccan Gardener (New version)",
+      "description": {
+        "plain": "A gentle body wash designed to cleanse dry skin while providing moisture. It features cactus fermented water and a fragrance reminiscent of a Moroccan garden, leaving the skin feeling refreshed and hydrated."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "a4tgc0H:DyQi:01M4JM3V1Q31R98PYV36H1YZ8Z",
+          "title": "Huxley - Secret Of Sahara - Body Wash ; Moroccan Gardener (new Version) - 300ml",
+          "description": {
+            "plain": "The Huxley Moroccan Gardener Body Wash is a gentle, plant-based, sulfate-free cleanser designed to hydrate and balance the skin. It features a rich and silky gel texture that creates a soft lather, ensuring the skin's moisture barrier remains intact. Infused with botanical oils such as certified-organic Sahara prickly pear cactus seed oil, avocado oil, and baobab seed oil, it cleanses while nourishing. The product is highlighted by its iconic Moroccan Gardener fragrance, described as a blend of chilly mist, floral green, and soft musk. It is suitable for all skin types, particularly dry and sensitive skin, and is free from parabens, phthalates, SLS, and PEGs."
+          },
+          "price": {
+            "amount": 3500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/a4tgc0H-DyQi-public_ucp?o=01M4JM3V1Q31R98PYV36H1YZ8Z",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/77b0314f-a8a4-4275-bdc0-6d4811f36f1c"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/77b0314f-a8a4-4275-bdc0-6d4811f36f1c",
+          "alt_text": "Huxley - Secret of Sahara - Body Wash ; Moroccan Gardener (New version)"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Plant-based Hydrating Body Cleanser + Aromatherapy",
+          "Sulfate-free surfactants",
+          "Suitable for all skin types, especially dry and sensitive skin",
+          "Paraben-free, Phthalate-free, SLS-free, and PEG-free",
+          "Cruelty-free",
+          "Contains cactus fermented water",
+          "Fragrance inspired by Moroccan gardens"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:r3UTxhR",
+      "title": "Acai + Passionfruit Lightweight Hydration Hair Mask",
+      "description": {
+        "plain": "The Briogeo Superfoods Acai + Passionfruit Lightweight Hydration Hair Mask is a nutrient-rich treatment designed specifically for fine to medium hair. Formulated with antioxidants, acai extract, and passionfruit oil, this mask provides intense hydration and improves smoothness without weighing down hair or sacrificing volume. It is recommended for weekly use in place of conditioner to leave hair feeling softer, fuller, and refreshed."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "r3UTxhR:DyQi:01M3SG2NMT35J1GM9YYD1JEDA8",
+          "title": "Briogeo Superfoods Acai + Passionfruit Lightweight Hydration Hair Mask 240ml",
+          "description": {
+            "plain": "The Briogeo Superfoods Acai + Passionfruit Lightweight Hydration Hair Mask is a nutrient-rich treatment designed specifically for fine to medium hair. Formulated with antioxidants, acai extract, and passionfruit oil, this mask provides intense hydration and improves smoothness without weighing down hair or sacrificing volume. It is recommended for weekly use in place of conditioner to leave hair feeling softer, fuller, and refreshed."
+          },
+          "price": {
+            "amount": 3900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/r3UTxhR-DyQi-public_ucp?o=01M3SG2NMT35J1GM9YYD1JEDA8",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/6d78e3e9-9217-4f41-9f06-3ef9184d9dff"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/6d78e3e9-9217-4f41-9f06-3ef9184d9dff",
+          "alt_text": "Acai + Passionfruit Lightweight Hydration Hair Mask"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "lightweight hydration",
+          "acai",
+          "passionfruit",
+          "Deeply hydrates fine strands without weighing hair down",
+          "Antioxidant-rich ingredients to improve smoothness",
+          "Acai Extract protects strands from environmental aggressors",
+          "Passionfruit Oil boosts moisture and adds shine",
+          "Suitable for fine to medium hair types",
+          "Lightweight, nutrient-rich formula",
+          "Packed with vitamins and antioxidants"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:7xJsdGW",
+      "title": "Energizing morning ritual - Discovery set",
+      "description": {
+        "plain": "The Energizing morning ritual Discovery set by Diptyque is a comprehensive skincare sequence designed to awaken the body and senses. Inspired by ancient bathing traditions, this French-made set includes a Le Matin classic candle to set the atmosphere, a nurturing cleansing gel (60ml), a comforting moisturising lotion (60ml), and a perfecting satin oil (30ml). Together, these products work in sequence to cleanse, moisturize, and illuminate the skin, preparing the user for the day with a sensorial and invigorating experience."
+      },
+      "price_range": {
+        "min": {
+          "amount": 9200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 9200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "7xJsdGW:DyQi:01M655H3YSQ078NW5255DK2EFF",
+          "title": "Diptyque Energising Morning Ritual Discovery Set",
+          "description": {
+            "plain": "The Diptyque Energising Morning Ritual Discovery Set is a curated beauty collection designed to awaken the senses and prepare the body for the day. This four-piece set includes a Le Matin Candle for atmospheric scent, a Nurturing Cleansing Gel for body and hair, a Comforting Moisturising Lotion for the body, and a Perfecting Satin Oil for body and hair. Made in France and suitable for all skin types, this ritual focuses on revitalizing the skin and mind through a multi-step morning routine."
+          },
+          "price": {
+            "amount": 9200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/7xJsdGW-DyQi-public_ucp?o=01M655H3YSQ078NW5255DK2EFF",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/8e803389-31f6-437f-8191-f3d30061a85b"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/8e803389-31f6-437f-8191-f3d30061a85b",
+          "alt_text": "Energizing morning ritual - Discovery set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Complete morning ritual set",
+          "Includes Le Matin Candle (1.2 oz.)",
+          "Includes Nurturing Cleansing Gel (2 oz.)",
+          "Includes Comforting Moisturizing Lotion (2 oz.)",
+          "Includes Perfecting Satin Oil (1 oz.)",
+          "Comes with a Drawstring Pouch",
+          "Made in France",
+          "Suitable for all skin types",
+          "Inspired by ancient bathing traditions",
+          "Features natural ingredients and fragrance"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:3ABnHtp",
+      "title": "Armani Stronger With You Intensely Eau de Parfum Gift Set",
+      "description": {
+        "plain": "Embrace a rich heart of warming woods with the Stronger With You Intensely gift set from Armani. This woody fragrance with fougère accents is inspired by the excitement of new love, featuring a warm vanilla heart enhanced by vibrant notes of amber wood and pink pepper. The unique bottle cap is a romantic tribute to the rings worn by Giorgio Armani and his partner, Sergio Galeotti."
+      },
+      "price_range": {
+        "min": {
+          "amount": 13300,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 13300,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "3ABnHtp:DyQi:01M4P1H1X31AAST0MP8FXX968N",
+          "title": "Emporio Armani Stronger With You Intensely Eau De Parfum Gift Set",
+          "description": {
+            "plain": "This Armani 2-Piece fragrance set features Stronger With You Intensely Eau de Parfum, a warm and addictive scent for the contemporary man. This fougere fragrance combines an ambery, spicy edge with key notes of pink pepper essence, lavender essence, and vanilla essence. The set includes a full-size 3.4 oz bottle and a travel-size 0.5 oz bottle."
+          },
+          "price": {
+            "amount": 13300,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/3ABnHtp-DyQi-public_ucp?o=01M4P1H1X31AAST0MP8FXX968N",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/cb9cc986-4339-4a4d-9cda-2ea427ac1fd1"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/cb9cc986-4339-4a4d-9cda-2ea427ac1fd1",
+          "alt_text": "Armani Stronger With You Intensely Eau de Parfum Gift Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Top notes: Pink Pepper",
+          "Middle notes: Lavender",
+          "Base notes: Amber Wood, Vanilla",
+          "Fragrance Family: Fougère Woody",
+          "Includes 3.4 oz and 0.5 oz Eau de Parfum bottles",
+          "Warm and addictive scent with ambery, spicy edge"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOmQ2NDAxOWVlMzE5MmMwYjUiLCAib2Zmc2V0IjogMjB9"
+  },
+  "messages": []
+}

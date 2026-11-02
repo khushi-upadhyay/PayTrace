@@ -69,6 +69,7 @@ class SSShop(Base):
     latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     pickup_notes: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    source_domain: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     is_demo: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now
@@ -107,6 +108,8 @@ class SSProduct(Base):
     stock: Mapped[int] = mapped_column(Integer, default=0)
     status: Mapped[str] = mapped_column(String(32), default="draft")  # draft, live
     source: Mapped[str] = mapped_column(String(32), default="demo")   # scraped, manual, demo
+    source_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    provider_ref: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     review_flags: Mapped[List[str]] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now

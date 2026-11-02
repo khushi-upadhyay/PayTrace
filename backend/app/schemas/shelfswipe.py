@@ -19,6 +19,9 @@ class McpProductSchema(BaseModel):
     image_url: Optional[str] = None
     stock: Optional[int] = 0
     tags: List[str] = Field(default_factory=list)
+    source_url: Optional[str] = None
+    provider_ref: Optional[str] = None
+    source: str = "demo"
 
 
 class McpShopCatalogSchema(BaseModel):
@@ -30,6 +33,8 @@ class McpShopCatalogSchema(BaseModel):
     contact_email: Optional[str] = None
     description: Optional[str] = ""
     products: List[McpProductSchema] = Field(default_factory=list)
+    source_domain: Optional[str] = None
+    source: str = "demo"
 
 
 # ---------------------------------------------------------
@@ -40,6 +45,9 @@ class ShelfSwipeOnboardRequest(BaseModel):
     shop_url: str
     consent: bool
     seller_name: Optional[str] = None
+    provider: str = "fixture"
+    product_urls: Optional[List[str]] = None
+    ownership_attested: bool = False
 
 
 class ShelfSwipeOnboardResponse(BaseModel):
@@ -62,6 +70,9 @@ class ShelfSwipeDraftProductItem(BaseModel):
     tags: List[str] = Field(default_factory=list)
     stock: int
     status: str
+    data_source: str = "demo"
+    source_url: Optional[str] = None
+    provider_ref: Optional[str] = None
     review_flags: List[str] = Field(default_factory=list)
 
 
@@ -75,6 +86,46 @@ class ShelfSwipeDraftResponse(BaseModel):
     pickup_notes: Optional[str] = None
     is_demo: bool = True
     products: List[ShelfSwipeDraftProductItem] = Field(default_factory=list)
+
+
+class ProductPatchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: Optional[str] = None
+    price: Optional[Decimal] = Field(default=None, ge=0)
+    description: Optional[str] = None
+    category: Optional[str] = None
+    tags: Optional[List[str]] = None
+    image_url: Optional[str] = None
+    stock: Optional[int] = Field(default=None, ge=0)
+
+
+class ShopPatchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    pickup_notes: Optional[str] = None
+    latitude: Optional[float] = Field(default=None, ge=-90.0, le=90.0)
+    longitude: Optional[float] = Field(default=None, ge=-180.0, le=180.0)
+
+
+class ApproveItem(BaseModel):
+    product_id: str
+    confirmed_stock: int = Field(ge=0)
+
+
+class ApproveRequest(BaseModel):
+    items: List[ApproveItem]
+
+
+class ApproveRejectedItem(BaseModel):
+    id: str
+    reason: str
+
+
+class ApproveResponse(BaseModel):
+    approved: List[str]
+    rejected: List[ApproveRejectedItem]
+    still_draft_count: int
 
 
 # ---------------------------------------------------------

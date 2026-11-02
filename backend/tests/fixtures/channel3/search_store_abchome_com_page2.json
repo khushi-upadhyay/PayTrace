@@ -1,0 +1,1322 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "01KS60YE3565XDZ9C2PBQFEVTK",
+      "title": "Giza 45 Percale",
+      "description": {
+        "plain": "The Giza Percale Duvet by Sferra is a luxurious, year-round duvet cover crafted from 100% Giza 45 cotton. Renowned for its long staple fibers, the fabric provides a cool, crisp sleeping experience with exceptional smoothness and enduring strength. This duvet cover is designed with Italian craftsmanship and sophistication, available in classic White and Ivory colorways to complement various bedding styles."
+      },
+      "price_range": {
+        "min": {
+          "amount": 168800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 168800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "7sKv82a:AUIg:01M2RDMXHBNG0YQQ639G15GQQ0",
+          "title": "Giza 45 Percale Duvet Cover",
+          "description": {
+            "plain": "The Giza Percale Duvet by Sferra is a luxurious, year-round duvet cover crafted from 100% Giza 45 cotton. Renowned for its long staple fibers, the fabric provides a cool, crisp sleeping experience with exceptional smoothness and enduring strength. This duvet cover is designed with Italian craftsmanship and sophistication, available in classic White and Ivory colorways to complement various bedding styles."
+          },
+          "price": {
+            "amount": 168800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/7sKv82a-AUIg-public_ucp?o=01M2RDMXHBNG0YQQ639G15GQQ0",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/0535c2b3-6430-402c-929a-2d4241a222d8"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/0535c2b3-6430-402c-929a-2d4241a222d8",
+          "alt_text": "Giza 45 Percale"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Fabrication: Percale",
+          "Fiber: 100% Giza 45 Egyptian Cotton",
+          "Feel: Light & Airy, Extremely Soft, Matte",
+          "Weight: Ultralight",
+          "Origin: Italy",
+          "Duvet Cover",
+          "Long staple fibers for smooth yarn and enduring strength",
+          "Year-round duvet cover",
+          "Cool, crisp sleeping experience",
+          "Italian craftsmanship"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Q5HBuCB",
+      "title": "Dune Bowl",
+      "description": {
+        "plain": "The Dune Bowl, part of the Dune Tableware Collection, is a sculptural porcelain piece designed by Kelly Wearstler. It serves as an elegant nod to ancient pottery, featuring a combination of matte and glossy finishes to create striking volumes. This versatile bowl can be used as a standalone accent or mixed and matched with other porcelain pieces from the collection to create a unique dinnerware set."
+      },
+      "price_range": {
+        "min": {
+          "amount": 20000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 20000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Q5HBuCB:AUIg:01M2QS1E8TC3Y81RA6KBEGN2C1",
+          "title": "Dune Bowl",
+          "description": {
+            "plain": "The Dune Bowl, part of the Dune Tableware Collection, is a sculptural porcelain piece designed by Kelly Wearstler. It serves as an elegant nod to ancient pottery, featuring a combination of matte and glossy finishes to create striking volumes. This versatile bowl can be used as a standalone accent or mixed and matched with other porcelain pieces from the collection to create a unique dinnerware set."
+          },
+          "price": {
+            "amount": 20000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Q5HBuCB-AUIg-public_ucp?o=01M2QS1E8TC3Y81RA6KBEGN2C1",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/265ac2cd-2475-403e-9dc9-a198a154c871"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/265ac2cd-2475-403e-9dc9-a198a154c871",
+          "alt_text": "Dune Bowl"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Combination of matte and glossy finishes",
+          "Sculptural shape inspired by ancient pottery",
+          "Dishwasher safe",
+          "Sculptural porcelain shape"
+        ]
+      }
+    },
+    {
+      "id": "01M0YHBR2ZNKY7HEMQSJ5GC9K7",
+      "title": "Plaid Watamu in Wool Blend Zig Zag",
+      "description": {
+        "plain": "Add a touch of Missoni's iconic style to your home with the Watamu Throw. This luxurious throw features a vibrant zigzag pattern in a multicolor palette, perfect for adding a pop of color and texture to any living space. Crafted from a blend of wool and polyamide, it offers both warmth and durability, making it an ideal accent piece for your sofa or bed. The fringed edges add a classic finishing touch."
+      },
+      "price_range": {
+        "min": {
+          "amount": 38300,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 53000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "TvqxPMC:AUIg:01KQWNNMD6EMA5JE85129Z4XPZ",
+          "title": "Plaid Watamu 130x190 Cm In Wool Blend Zig Zag",
+          "description": {
+            "plain": "Add a touch of Missoni's iconic style to your home with the Watamu Throw. This luxurious throw features a vibrant zigzag pattern in a multicolor palette, perfect for adding a pop of color and texture to any living space. Crafted from a blend of wool and polyamide, it offers both warmth and durability, making it an ideal accent piece for your sofa or bed. The fringed edges add a classic finishing touch."
+          },
+          "price": {
+            "amount": 53000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/TvqxPMC-AUIg-public_ucp?o=01KQWNNMD6EMA5JE85129Z4XPZ",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/3b8d8aaf-5be3-4075-aa9c-75e34aa2b445"
+            }
+          ]
+        },
+        {
+          "id": "P62TzHv:zv19:01M31GPMJBAS4GZ2B2CYA967MC",
+          "title": "Plaid Watamu 130x190 Cm In Wool Blend Zig Zag",
+          "description": {
+            "plain": "The Missoni Home Watamu throw is a luxurious, warm blanket crafted in Italy from a wool-polyamide blend. It features the brand's signature bold zigzag chevron pattern in a beige multicolour palette, bringing a striking graphic element and personality to any living space. The throw is finished with fringed edges for a textured, sophisticated look."
+          },
+          "price": {
+            "amount": 38300,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/P62TzHv-zv19-public_ucp?o=01M31GPMJBAS4GZ2B2CYA967MC",
+          "seller": {
+            "id": "zv19",
+            "domain": "finnishdesignshop.com",
+            "url": "https://www.finnishdesignshop.com",
+            "name": "Finnish Design Shop"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/fb0c9b67-15da-43cf-98fe-7a97e92d13c6"
+            }
+          ]
+        },
+        {
+          "id": "P62TzHv:PE3e:01M0TF0MMBFTMYBVFTZ4PWXQEB",
+          "title": "Plaid Watamu 130x190 Cm In Wool Blend Zig Zag",
+          "description": {
+            "plain": "The Missoni Home Watamu throw is a luxurious, warm blanket crafted in Italy from a wool-polyamide blend. It features the brand's signature bold zigzag chevron pattern in a beige multicolour palette, bringing a striking graphic element and personality to any living space. The throw is finished with fringed edges for a textured, sophisticated look."
+          },
+          "price": {
+            "amount": 53000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/P62TzHv-PE3e-public_ucp?o=01M0TF0MMBFTMYBVFTZ4PWXQEB",
+          "seller": {
+            "id": "PE3e",
+            "domain": "missoni.com",
+            "url": "https://www.missoni.com",
+            "name": "Missoni"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/fb0c9b67-15da-43cf-98fe-7a97e92d13c6"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/3b8d8aaf-5be3-4075-aa9c-75e34aa2b445",
+          "alt_text": "Plaid Watamu in Wool Blend Zig Zag"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "TvqxPMC",
+              "label": "Beige & Multicoloured"
+            },
+            {
+              "id": "P62TzHv",
+              "label": "Multicoloured"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "130x190 cm",
+          "Wool blend",
+          "Signature zig zag pattern",
+          "Decorative fringes",
+          "Made in Italy",
+          "Material: 80% Wool, 20% Polyamide",
+          "Weight: 5.0 lb",
+          "Care Instructions: Dry clean"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Beige & Multicoloured"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:g9aazHS",
+      "title": "MB5 Outdoor Ottoman",
+      "description": {
+        "plain": "Discover the MB5 Outdoor Ottoman by Heller. Designed in 2005 by Mario Bellini, this modern icon couples technological innovation with bold, minimalist form. The MB5 Outdoor Ottoman is crafted in self-cushioning polymer and intended for indoor-outdoor use. Try it poolside with the MB2 Outdoor Sofa. Made in the USA. Available in white and dark gray. It features a sleek, minimalist design and is constructed from durable polyethylene using Worry Free Plastics technology, making it suitable for both indoor and outdoor environments."
+      },
+      "price_range": {
+        "min": {
+          "amount": 37500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 37500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "g9aazHS:AUIg:01KBPCXFVFCHZ1D01RDDMWPNQK",
+          "title": "Heller Mb 5 Pouf Or Table By Mario Bellini In White Polyethylene",
+          "description": {
+            "plain": "Discover the MB5 Outdoor Ottoman by Heller. Designed in 2005 by Mario Bellini, this modern icon couples technological innovation with bold, minimalist form. The MB5 Outdoor Ottoman is crafted in self-cushioning polymer and intended for indoor-outdoor use. Try it poolside with the MB2 Outdoor Sofa. Made in the USA. Available in white and dark gray. It features a sleek, minimalist design and is constructed from durable polyethylene using Worry Free Plastics technology, making it suitable for both indoor and outdoor environments."
+          },
+          "price": {
+            "amount": 37500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/g9aazHS-AUIg-public_ucp?o=01KBPCXFVFCHZ1D01RDDMWPNQK",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/0bcc5b77-e062-4062-96d9-3564f7d44abc"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/0bcc5b77-e062-4062-96d9-3564f7d44abc",
+          "alt_text": "MB5 Outdoor Ottoman"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Versatile use as either a pouf or a table",
+          "Suitable for indoor and outdoor use",
+          "Designed by Mario Bellini",
+          "Multifunctional design: can be used as a pouf, coffee table, or stool",
+          "Made in the United States",
+          "Lightweight and durable",
+          "Fully recyclable at the end of its life cycle",
+          "Materialica Design Award (2003)",
+          "BIFMA certifications"
+        ]
+      }
+    },
+    {
+      "id": "01KS4T51M10454SK4R5RCNDF31",
+      "title": "Simple Terry Bath Mat",
+      "description": {
+        "plain": "Experience ultimate comfort and absorbency with the Simple Terry Bath Mat from Hawkins New York. Made from 100% cotton and Oeko-Tex Standard 100 certified, this plush bath mat is machine washable for easy care. Its thick, terry texture provides a soft and cozy feel, making it a luxurious addition to any bathroom."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "3fxqOqd:AUIg:01M2RE70YPZ5XQJDJYHNGKE5WC",
+          "title": "Simple Terry Bath Mat - White",
+          "description": {
+            "plain": "The Simple Terry Bath Mat by Hawkins New York is a practical and absorbent addition to any bathroom. Crafted from 100% cotton terry with a looped pile, it provides a soft underfoot experience and effective moisture trapping. Measuring 20\" x 32\", it is designed to fit seamlessly in front of tubs, showers, or sinks. The mat features finished edges to maintain its shape and comes in a variety of color options to coordinate with existing bathroom textiles."
+          },
+          "price": {
+            "amount": 6500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/3fxqOqd-AUIg-public_ucp?o=01M2RE70YPZ5XQJDJYHNGKE5WC",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/09b349b3-be6d-477e-9b5c-b094edc18f31"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/09b349b3-be6d-477e-9b5c-b094edc18f31",
+          "alt_text": "Simple Terry Bath Mat"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "100% cotton",
+          "Oeko-Tex Standard 100 certified",
+          "Machine washable",
+          "Looped pile for enhanced absorbency",
+          "Finished edges to maintain shape",
+          "Low-profile design"
+        ]
+      }
+    },
+    {
+      "id": "01M5V027YCDXJ8GBGGAMXB5ZTT",
+      "title": "Woven Storage Basket",
+      "description": {
+        "plain": "This Woven Basket Short from Hawkins New York is a versatile home accessory crafted by an artisan collective in Tanzania using traditional materials and techniques. Woven from natural grass, it features a rounded base and a squared top, making it ideal for use as a waste basket, laundry hamper, or a decorative plant cachepot. The basket comes in a natural tan color and measures 12\" W x 12\" H."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "x3ZRFYp:AUIg:01M2N6W20ZVJMM833ZRNGE6S6E",
+          "title": "Woven Storage Basket - Short",
+          "description": {
+            "plain": "This Woven Basket Short from Hawkins New York is a versatile home accessory crafted by an artisan collective in Tanzania using traditional materials and techniques. Woven from natural grass, it features a rounded base and a squared top, making it ideal for use as a waste basket, laundry hamper, or a decorative plant cachepot. The basket comes in a natural tan color and measures 12\" W x 12\" H."
+          },
+          "price": {
+            "amount": 7500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/x3ZRFYp-AUIg-public_ucp?o=01M2N6W20ZVJMM833ZRNGE6S6E",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a53cc14d-1ac3-42f9-bee7-7b16b4c991d2"
+            }
+          ]
+        },
+        {
+          "id": "KFb9DS4:NZi7:01KVZEW4346KY7GNZYQEN23RBH",
+          "title": "Woven Storage Basket",
+          "description": {
+            "plain": "Handmade in Tanzania from local natural grass, this woven storage basket from Hawkins New York is a versatile and stylish addition to any home. Available in two sizes, the tall basket is perfect for laundry or as a large indoor plant cachepot, while the small basket is ideal as a wastebasket or a smaller plant holder. Its natural, textured finish adds a touch of organic warmth to your decor."
+          },
+          "price": {
+            "amount": 7500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/KFb9DS4-NZi7-public_ucp?o=01KVZEW4346KY7GNZYQEN23RBH",
+          "seller": {
+            "id": "NZi7",
+            "domain": "hawkinsnewyork.com",
+            "url": "https://www.hawkinsnewyork.com",
+            "name": "HAWKINS NEW YORK"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/3e9ea926-0bc9-4612-ab20-2f37e61200c5"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/a53cc14d-1ac3-42f9-bee7-7b16b4c991d2",
+          "alt_text": "Woven Storage Basket"
+        }
+      ],
+      "options": [
+        {
+          "name": "Size",
+          "values": [
+            {
+              "label": "Short"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Material: Natural grass",
+          "Care: Wipe clean with a damp sponge",
+          "Shape: Trapezoid",
+          "Handmade from local natural grass in Tanzania",
+          "Square shape with rounded edges",
+          "Versatile use as a waste basket, laundry basket, or plant cachepot",
+          "Crafted in partnership with a small artisan collective in Tanzania",
+          "Woven with traditional local materials and techniques",
+          "Rounded base with a squared top"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:H4l3hI9",
+      "title": "Borealis Cube Pendant",
+      "description": {
+        "plain": "The Borealis Cube Pendant by Jamie Young Company combines clean, cubic geometry with the natural elegance of alabaster. Designed in a transitional style, this pendant features strong straight lines that emphasize the stone's soft white tone and subtle natural variation. When illuminated, the alabaster gently diffuses light to create a warm, calming glow, while the cubic shape maintains a crisp, modern aesthetic. As part of the Borealis Collection, it serves as a sculptural, stone-forward statement piece that is refined and sophisticated."
+      },
+      "price_range": {
+        "min": {
+          "amount": 82280,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 82280,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "H4l3hI9:AUIg:01M2JKP9PAR41CJZDHVGD4FESA",
+          "title": "Borealis Cube Pendant",
+          "description": {
+            "plain": "The Borealis Cube Pendant by Jamie Young Company combines clean, cubic geometry with the natural elegance of alabaster. Designed in a transitional style, this pendant features strong straight lines that emphasize the stone's soft white tone and subtle natural variation. When illuminated, the alabaster gently diffuses light to create a warm, calming glow, while the cubic shape maintains a crisp, modern aesthetic. As part of the Borealis Collection, it serves as a sculptural, stone-forward statement piece that is refined and sophisticated."
+          },
+          "price": {
+            "amount": 82280,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/H4l3hI9-AUIg-public_ucp?o=01M2JKP9PAR41CJZDHVGD4FESA",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/9c651ba0-3a62-4df6-95ab-1753d8baf36d"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/9c651ba0-3a62-4df6-95ab-1753d8baf36d",
+          "alt_text": "Borealis Cube Pendant"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted from natural alabaster stone with unique veining",
+          "Strong cubic design for a modern aesthetic",
+          "Includes 8' silver chain and 8' clear cord",
+          "Hardwire installation with a 5\" diameter silver canopy",
+          "Compatible with medium base (E-26) bulbs up to 60 watts",
+          "Imported",
+          "Soft white glow",
+          "1-WAY socket",
+          "Adjustable height for versatile placement",
+          "Dimmable compatible with low voltage electronic dimmers"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:5pgCXsT",
+      "title": "Vignelli Bench",
+      "description": {
+        "plain": "The Vignelli Bench, designed by Lella and Massimo Vignelli for Heller, is a minimalist, multi-purpose piece of furniture suitable for both indoor and outdoor environments. Characterized by its clean, sculptural silhouette, this durable and low-maintenance bench is molded as a hollow form, making it lightweight yet sturdy. For increased stability in outdoor settings, a concealed opening on the underside allows for the addition of sand to resist wind. It is made from a 100% recyclable recycled plastic polyethylene blend with Worry Free Plastics technology."
+      },
+      "price_range": {
+        "min": {
+          "amount": 80000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 80000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "5pgCXsT:AUIg:01KBPDG4305TAJNCW1MK51Q3NB",
+          "title": "Heller Outdoor Vignelli Small Bench — 48-inch Brown Indoor Outdoor",
+          "description": {
+            "plain": "The Vignelli Bench, designed by Lella and Massimo Vignelli for Heller, is a minimalist, multi-purpose piece of furniture suitable for both indoor and outdoor environments. Characterized by its clean, sculptural silhouette, this durable and low-maintenance bench is molded as a hollow form, making it lightweight yet sturdy. For increased stability in outdoor settings, a concealed opening on the underside allows for the addition of sand to resist wind. It is made from a 100% recyclable recycled plastic polyethylene blend with Worry Free Plastics technology."
+          },
+          "price": {
+            "amount": 80000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/5pgCXsT-AUIg-public_ucp?o=01KBPDG4305TAJNCW1MK51Q3NB",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/4d67a9cc-2012-4c50-bac4-dd69a12b4996"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/4d67a9cc-2012-4c50-bac4-dd69a12b4996",
+          "alt_text": "Vignelli Bench"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Modern minimalist design",
+          "Suitable for indoor and outdoor use",
+          "Durable construction",
+          "100% recyclable",
+          "Made in the USA",
+          "Low-maintenance",
+          "Hollow form for lightweight durability",
+          "Concealed opening for sand weighting",
+          "Striking, simple design",
+          "Constructed from recycled plastic polyethylene blend with Worry Free Plastics technology"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:OTwNls3",
+      "title": "Sahara Swatch",
+      "description": {
+        "plain": "The Sahara Swatch is a hand-loomed rug swatch crafted in India with a soft, ivory-toned palette and a textured pattern featuring raised ridges. Made from a blend of 60% wool and 40% polyester, this small sample piece brings durable warmth and subtle visual interest to any interior. Dimensions are compact, suitable for display or sample purposes, and weight is approximately 5.0 lb per the product data. Care is straightforward: vacuum regularly; professional care recommended for difficult stains. Country of origin listed as India. SKU 3054774."
+      },
+      "price_range": {
+        "min": {
+          "amount": 500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "OTwNls3:AUIg:01KFH4V64SPD80Y9CHFD3JDNWD",
+          "title": "Sahara Swatch",
+          "description": {
+            "plain": "The Sahara Swatch is a hand-loomed rug swatch crafted in India with a soft, ivory-toned palette and a textured pattern featuring raised ridges. Made from a blend of 60% wool and 40% polyester, this small sample piece brings durable warmth and subtle visual interest to any interior. Dimensions are compact, suitable for display or sample purposes, and weight is approximately 5.0 lb per the product data. Care is straightforward: vacuum regularly; professional care recommended for difficult stains. Country of origin listed as India. SKU 3054774."
+          },
+          "price": {
+            "amount": 500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/OTwNls3-AUIg-public_ucp?o=01KFH4V64SPD80Y9CHFD3JDNWD",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/490ca253-5f92-4ec5-9b43-037af052d407"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/490ca253-5f92-4ec5-9b43-037af052d407",
+          "alt_text": "Sahara Swatch"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Hand-loomed in the USA",
+          "Textured carpet with raised ridges",
+          "60% wool, 40% polyester",
+          "Lightweight rug swatch",
+          "Weight 5.0 lb",
+          "Hand-loomed in India",
+          "Ivory/neutral colorway (Agave)",
+          "Neutral dune color",
+          "Country of origin India",
+          "SKU 3054775"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:6JGhawv",
+      "title": "Shoreline Swatch",
+      "description": {
+        "plain": "The Shoreline Swatch is a high-quality floor covering sample featuring a distinctive geometric pattern, described as an intricate chevron or zigzag. This specific swatch is in the 'Tiki' colorway, which contributes to a sophisticated aesthetic. It is made from a durable and soft blend of wool and polypropylene, offering both comfort and resilience against wear. The rug material is manufactured in Belgium, known for precision textile production. While this is a swatch, the full product line offers an extensive range of sizes suitable for custom residential or commercial area rug applications."
+      },
+      "price_range": {
+        "min": {
+          "amount": 500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "6JGhawv:AUIg:01KBPA19G7S86J25KF3M9FK49A",
+          "title": "Shoreline Swatch - Tiki",
+          "description": {
+            "plain": "The Shoreline Swatch is a high-quality floor covering sample featuring a distinctive geometric pattern, described as an intricate chevron or zigzag. This specific swatch is in the 'Tiki' colorway, which contributes to a sophisticated aesthetic. It is made from a durable and soft blend of wool and polypropylene, offering both comfort and resilience against wear. The rug material is manufactured in Belgium, known for precision textile production. While this is a swatch, the full product line offers an extensive range of sizes suitable for custom residential or commercial area rug applications."
+          },
+          "price": {
+            "amount": 500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/6JGhawv-AUIg-public_ucp?o=01KBPA19G7S86J25KF3M9FK49A",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f6105400-52e8-4d5b-a2f7-c27fe0f88e87"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/f6105400-52e8-4d5b-a2f7-c27fe0f88e87",
+          "alt_text": "Shoreline Swatch"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Durable and stylish floor covering solution",
+          "Distinctive geometric pattern resembling chevron/zigzag",
+          "Blend of wool for softness and polypropylene for durability/stain resistance",
+          "Manufactured in Belgium",
+          "Available in a wide range of dimensions (1'x1' up to 13'2\" x 30')"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:vtbipOE",
+      "title": "Piecework Butter 1000-Piece Jigsaw Puzzle",
+      "description": {
+        "plain": "The Butter 1000 Piece Puzzle by Piecework is a decadent and nostalgic jigsaw puzzle that serves as an irreverent tribute to the art of indulgence. Featuring a joyful, food-themed design, this 1000-piece puzzle is crafted from high-quality art paper and a 100% recycled paper board. Once completed, the puzzle measures 19.25 x 26.6 inches."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 4000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "vtbipOE:AUIg:01M2JSM2GD9K2HFTHA48C9YEB8",
+          "title": "Butter 1000 Piece Puzzle",
+          "description": {
+            "plain": "The Butter 1000 Piece Puzzle by Piecework is a decadent and nostalgic jigsaw puzzle that serves as an irreverent tribute to the art of indulgence. Featuring a joyful, food-themed design, this 1000-piece puzzle is crafted from high-quality art paper and a 100% recycled paper board. Once completed, the puzzle measures 19.25 x 26.6 inches."
+          },
+          "price": {
+            "amount": 4000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/vtbipOE-AUIg-public_ucp?o=01M2JSM2GD9K2HFTHA48C9YEB8",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/aa92a4cf-3588-4f61-a5e5-f3e75a699ab9"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/aa92a4cf-3588-4f61-a5e5-f3e75a699ab9",
+          "alt_text": "Piecework Butter 1000-Piece Jigsaw Puzzle"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "1,000-piece photo puzzle",
+          "Creates a butter-themed photograph once completed",
+          "Measures 19.25\" X 26.6\" when fully assembled",
+          "Box dimensions: 8 x 10 x 1.8 inches",
+          "Crafted with 100% recycled paper board",
+          "High-quality art paper"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:DVqsWZ8",
+      "title": "Sandstone Pillow",
+      "description": {
+        "plain": "The Sandstone pillow is an earthy and grounded home accessory featuring a palette of soft neutrals and weathered mineral tones. Hand-woven in India from a blend of wild silk and merino wool, this tactile piece offers an understated yet sophisticated aesthetic. It features a knife-edge finish, a hidden zipper closure in the bottom seam, and includes a 90/10 feather and down insert."
+      },
+      "price_range": {
+        "min": {
+          "amount": 41700,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 41700,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "DVqsWZ8:AUIg:01M4BSA96CXTJEG1F65E82A07K",
+          "title": "Sandstone Cover + Insert",
+          "description": {
+            "plain": "The Sandstone pillow is an earthy and grounded home accessory featuring a palette of soft neutrals and weathered mineral tones. Hand-woven in India from a blend of wild silk and merino wool, this tactile piece offers an understated yet sophisticated aesthetic. It features a knife-edge finish, a hidden zipper closure in the bottom seam, and includes a 90/10 feather and down insert."
+          },
+          "price": {
+            "amount": 41700,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/DVqsWZ8-AUIg-public_ucp?o=01M4BSA96CXTJEG1F65E82A07K",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/79c353ff-36c1-4661-9be8-dd1938298f22"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/79c353ff-36c1-4661-9be8-dd1938298f22",
+          "alt_text": "Sandstone Pillow"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Hand-woven front in 55% wool and 45% raw silk",
+          "Backed in the same material as the front",
+          "Finished with a knife edge",
+          "Hidden zipper closure in the bottom seam",
+          "Includes a 90/10 feather and down insert",
+          "Made in India",
+          "Dry clean only"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:HFAebrl",
+      "title": "Harlow Bright Berry Basket",
+      "description": {
+        "plain": "The Be Home Harlow Bright Berry Basket is an artisanal, square-shaped storage container crafted in India. Made from iron with a vibrant enamel finish, it features long oval openings for ventilation and drainage, making it ideal for storing fruits or displaying decorative items. The basket is ethically produced in small batches and features a sophisticated design with a contrasting enamel outline."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "HFAebrl:AUIg:01M2QRCA411KTG5NP8X4DC8AVP",
+          "title": "Harlow Bright Berry Basket",
+          "description": {
+            "plain": "The Be Home Harlow Bright Berry Basket is an artisanal, square-shaped storage container crafted in India. Made from iron with a vibrant enamel finish, it features long oval openings for ventilation and drainage, making it ideal for storing fruits or displaying decorative items. The basket is ethically produced in small batches and features a sophisticated design with a contrasting enamel outline."
+          },
+          "price": {
+            "amount": 5800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/HFAebrl-AUIg-public_ucp?o=01M2QRCA411KTG5NP8X4DC8AVP",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/95eb3902-0113-4946-a5cb-4e6222b200f6"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/95eb3902-0113-4946-a5cb-4e6222b200f6",
+          "alt_text": "Harlow Bright Berry Basket"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Ethically crafted in small batches",
+          "Handcrafted in India",
+          "Designed with long oval openings for fruit storage or decorative display",
+          "Vibrant enamel outline",
+          "Features long oval openings for drainage and ventilation",
+          "Enamel finish"
+        ]
+      }
+    },
+    {
+      "id": "01KSKKR9GBKKA6EC3GP189FMAE",
+      "title": "Riverside Swatch",
+      "description": {
+        "plain": "This is a sample swatch of the Riverside rug, featuring a subtle, textured pattern in shades of Horizon. It is hand-loomed in India from a blend of 60% wool and 40% polyester, showcasing intricate craftsmanship and attention to detail. This swatch has dimensions of 1' x 1' and weighs 8.0 oz."
+      },
+      "price_range": {
+        "min": {
+          "amount": 500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "urOJe7b:AUIg:01KQY30MWD8WK4SCD8XAA2DHEK",
+          "title": "Riverside Swatch - Horizon",
+          "description": {
+            "plain": "This is a sample swatch of the Riverside rug, featuring a subtle, textured pattern in shades of Horizon. It is hand-loomed in India from a blend of 60% wool and 40% polyester, showcasing intricate craftsmanship and attention to detail. This swatch has dimensions of 1' x 1' and weighs 8.0 oz."
+          },
+          "price": {
+            "amount": 500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/urOJe7b-AUIg-public_ucp?o=01KQY30MWD8WK4SCD8XAA2DHEK",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/e65166d2-ed74-4e76-9c6a-f8566758fa74"
+            }
+          ]
+        },
+        {
+          "id": "jjiJpKh:AUIg:01KQY383SMS3GA9MCJM5CTQZ1W",
+          "title": "Riverside Swatch - Greige",
+          "description": {
+            "plain": "This is a sample swatch of the Riverside rug, featuring a subtle, textured pattern in shades of greige. Hand-loomed in India, it showcases intricate craftsmanship and attention to detail. Made of 60% wool and 40% polyester, this swatch provides a tactile representation of the rug's quality and luxurious feel."
+          },
+          "price": {
+            "amount": 500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/jjiJpKh-AUIg-public_ucp?o=01KQY383SMS3GA9MCJM5CTQZ1W",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c38c5a5f-d148-4336-9efe-30ac86e86730"
+            }
+          ]
+        },
+        {
+          "id": "tbwZYoi:AUIg:01KQYBHZVDNZDA0X56H89WJCYF",
+          "title": "Riverside Swatch - Natural",
+          "description": {
+            "plain": "This Riverside Swatch features a subtle, textured pattern in various shades of natural. Hand-loomed in India, it showcases intricate craftsmanship and attention to detail. Made from a blend of 60% wool and 40% polyester, this rug exudes quality and luxury, making it a perfect addition to any space."
+          },
+          "price": {
+            "amount": 500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/tbwZYoi-AUIg-public_ucp?o=01KQYBHZVDNZDA0X56H89WJCYF",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/b724bd60-a977-479a-a6d9-cf21c97de4b2"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/e65166d2-ed74-4e76-9c6a-f8566758fa74",
+          "alt_text": "Riverside Swatch"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "jjiJpKh",
+              "label": "Greige"
+            },
+            {
+              "id": "urOJe7b",
+              "label": "Horizon"
+            },
+            {
+              "id": "tbwZYoi",
+              "label": "Natural"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Hand-loomed in India",
+          "Subtle, textured pattern",
+          "60% Wool, 40% Polyester",
+          "Dimensions: 1' x 1'",
+          "Weight: 8.0 oz",
+          "Color: Horizon"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Horizon"
+        }
+      ]
+    },
+    {
+      "id": "01M5JTW285KKR6ZVFSCCRN536F",
+      "title": "Prospect Park Woven Jacquard Lumbar Pillow",
+      "description": {
+        "plain": "This lumbar pillow showcases the intricate 'Prospect Park' design, originally reproduced by Kevin O'Brien for the Brooklyn Museum. It features a complex, museum-worthy woven jacquard structure made from a blend of cotton, linen, and viscose fibers. The fabric is enhanced with a proprietary dye technique, resulting in unmatched layers of color and texture. It comes with a feather/down insert and an invisible zipper closure."
+      },
+      "price_range": {
+        "min": {
+          "amount": 146500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 146500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Tl9LT22:AUIg:01KBPCS50A6SN49YPCWBY8YFG0",
+          "title": "Prospect Park Woven Jacquard Lumbar Pillow Maize - 16\" X 36\"",
+          "description": {
+            "plain": "This lumbar pillow showcases the intricate 'Prospect Park' design, originally reproduced by Kevin O'Brien for the Brooklyn Museum. It features a complex, museum-worthy woven jacquard structure made from a blend of cotton, linen, and viscose fibers. The fabric is enhanced with a proprietary dye technique, resulting in unmatched layers of color and texture. It comes with a feather/down insert and an invisible zipper closure."
+          },
+          "price": {
+            "amount": 146500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Tl9LT22-AUIg-public_ucp?o=01KBPCS50A6SN49YPCWBY8YFG0",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/0fc17304-baf8-4b01-9eac-7fbc86012be0"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/0fc17304-baf8-4b01-9eac-7fbc86012be0",
+          "alt_text": "Prospect Park Woven Jacquard Lumbar Pillow"
+        }
+      ],
+      "options": [
+        {
+          "name": "Size",
+          "values": [
+            {
+              "label": "14\" x 20\""
+            },
+            {
+              "label": "16\" x 36\""
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Woven Jacquard construction",
+          "Inspired by historic textile reproduced for the Brooklyn Museum",
+          "Proprietary dye technique for intricate color and texture",
+          "Feather down insert",
+          "Invisible zipper closure",
+          "Made in the USA",
+          "Mid-size chain ring design",
+          "Features medium-thick handmade oval links",
+          "Classic on its own or suitable for stacking",
+          "Available in recycled 14K gold or sterling silver"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Material",
+          "label": "Gold"
+        }
+      ]
+    },
+    {
+      "id": "01M2QQK1CHZ3PZ7S57FEB9WC2K",
+      "title": "Piecework Puzzles - That's Amore",
+      "description": {
+        "plain": "A 1,000-piece jigsaw puzzle titled 'That's Amore', featuring a vibrant, Italian-inspired scene of pizzas and food on a checkered tablecloth. The product is a collaboration between Paul Smith and Getty Images, packaged in a distinctive orange and white checkered box. It is designed for photography lovers, design enthusiasts, and puzzle fans."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 4000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "MhrPJp3:AUIg:01M3D796B049P4A4H3ASXREQCE",
+          "title": "Piecework Puzzles - That's Amore",
+          "description": {
+            "plain": "This exquisite 1000-piece jigsaw puzzle, titled 'That's Amore,' is crafted from high-quality art paper and a recycled paper puzzle board, blending sustainability with a premium tactile experience. Featuring rich red hues and intricate details, it provides a rewarding challenge and a beautiful final display, making it an ideal addition to a game room or a thoughtful gift for puzzle enthusiasts."
+          },
+          "price": {
+            "amount": 4000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/MhrPJp3-AUIg-public_ucp?o=01M3D796B049P4A4H3ASXREQCE",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ecd6f210-c016-4891-8374-cc9c50e2b4eb"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/ecd6f210-c016-4891-8374-cc9c50e2b4eb",
+          "alt_text": "Piecework Puzzles - That's Amore"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "1000 piece puzzle",
+          "Italian-inspired charm",
+          "Features a delicious-looking Italian feast",
+          "Completed size: 19.25\" x 26.6\"",
+          "Box size: 8\" x 10\" x 1.8\"",
+          "Made with thick stock and high-quality art paper",
+          "Board is 100% recycled paper",
+          "Ribbon-cut pieces",
+          "Vibrant colors and satisfying tactile experience",
+          "Features rich, tomato-red tones and cinematic Italian abundance"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOjdmMjQzZTU1NDdiZmE2ODIiLCAib2Zmc2V0IjogNDB9"
+  },
+  "messages": []
+}

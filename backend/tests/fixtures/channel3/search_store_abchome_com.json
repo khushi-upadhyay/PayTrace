@@ -1,0 +1,1782 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "canonical_product_id:q5IHJb4",
+      "title": "Simple Waffle Bath Towel",
+      "description": {
+        "plain": "This bath towel from Hawkins New York features a textured waffle weave for enhanced absorbency and quick drying. Made from 100% cotton, it measures 32\" L x 59\" W and is machine washable for easy care. Its honeycomb texture allows it to lay flat and fold compactly, offering a modern look and feel for everyday use."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "q5IHJb4:AUIg:01KRZ4HQTNF0KG9AJH7JX2TW4S",
+          "title": "Simple Waffle Bath Towel",
+          "description": {
+            "plain": "This bath towel from Hawkins New York features a textured waffle weave for enhanced absorbency and quick drying. Made from 100% cotton, it measures 32\" L x 59\" W and is machine washable for easy care. Its honeycomb texture allows it to lay flat and fold compactly, offering a modern look and feel for everyday use."
+          },
+          "price": {
+            "amount": 5200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 6500,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/q5IHJb4-AUIg-public_ucp?o=01KRZ4HQTNF0KG9AJH7JX2TW4S",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f6233ff2-faab-4c54-b0ae-28335e9f8b6a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/f6233ff2-faab-4c54-b0ae-28335e9f8b6a",
+          "alt_text": "Simple Waffle Bath Towel"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 6500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6500,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Textured waffle weave",
+          "100% cotton construction",
+          "Measures 32\" L x 59\" W",
+          "Enhances surface area for quicker drying and effective water absorption",
+          "Low-profile honeycomb texture",
+          "Lays flat and folds compactly for easy storage",
+          "Neatly finished edges",
+          "Consistent weave",
+          "Steady absorbency",
+          "Clean, modern look"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:mrqefuP",
+      "title": "U Desk",
+      "description": {
+        "plain": "The Ethnicraft Oak U Desk is a minimalist workspace crafted from solid oak. Featuring a sleek design with clean lines, this desk is handcrafted in Serbia and includes integrated cable management in the desktop for a tidy workspace. Its robust construction ensures durability while providing a sophisticated, professional look suitable for home or office environments."
+      },
+      "price_range": {
+        "min": {
+          "amount": 124900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 124900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "mrqefuP:AUIg:01M5ZKRTZ9GBBHYPKGHT9PG3SS",
+          "title": "U Desk - Varnished Oak - Black - Rectangular - With Cable Management",
+          "description": {
+            "plain": "The Ethnicraft Oak U Desk is a minimalist workspace crafted from solid oak. Featuring a sleek design with clean lines, this desk is handcrafted in Serbia and includes integrated cable management in the desktop for a tidy workspace. Its robust construction ensures durability while providing a sophisticated, professional look suitable for home or office environments."
+          },
+          "price": {
+            "amount": 124900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 249900,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/mrqefuP-AUIg-public_ucp?o=01M5ZKRTZ9GBBHYPKGHT9PG3SS",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/5554b37f-ecd0-4e89-b836-c0ba08c42746"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/5554b37f-ecd0-4e89-b836-c0ba08c42746",
+          "alt_text": "U Desk"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 249900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 249900,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Integrated cable management possibility in desktop",
+          "Made from solid oak",
+          "Varnish finish",
+          "Minimalist rectangular design",
+          "Indoor use only",
+          "Handcrafted in Serbia"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:iaV0uq5",
+      "title": "U Desk",
+      "description": {
+        "plain": "The U desk is a solid and dependable office desk crafted from solid oak with a varnish finish. Its minimalist, rectangular design provides a sturdy yet elegant workspace that encourages creativity and personalization. The desk features an integrated cable management system in the desktop to keep workspaces tidy, though power circles and metal cable trays are sold separately. As a hand-created piece, each desk possesses unique characteristics in the wood grain."
+      },
+      "price_range": {
+        "min": {
+          "amount": 275900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 275900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "iaV0uq5:AUIg:01M5ZKRHM132ATTHYJP9FF55GD",
+          "title": "U Desk - Varnished Oak - Rectangular - With Cable Management",
+          "description": {
+            "plain": "The U desk is a solid and dependable office desk crafted from solid oak with a varnish finish. Its minimalist, rectangular design provides a sturdy yet elegant workspace that encourages creativity and personalization. The desk features an integrated cable management system in the desktop to keep workspaces tidy, though power circles and metal cable trays are sold separately. As a hand-created piece, each desk possesses unique characteristics in the wood grain."
+          },
+          "price": {
+            "amount": 275900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/iaV0uq5-AUIg-public_ucp?o=01M5ZKRHM132ATTHYJP9FF55GD",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/2f54c23b-e45a-4fd7-9653-7e02af52b2d6"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/2f54c23b-e45a-4fd7-9653-7e02af52b2d6",
+          "alt_text": "U Desk"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Integrated cable management possibility in desktop",
+          "Hand-created unique design",
+          "Designed for indoor use",
+          "Crafted from solid wood for a durable design",
+          "Arrives fully assembled and ready to use",
+          "Scandinavian minimalist design",
+          "Optional Power Circles and Metal Cable Trays available",
+          "Sustainably and ethically sourced materials",
+          "Varnish finish",
+          "Handcrafted in Serbia"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:aBq5isq",
+      "title": "Jute Blend Rug",
+      "description": {
+        "plain": "A durable and texturally rich area rug crafted from a blend of 60% jute and 40% cotton. It features a flatweave construction, giving it a low profile ideal for high-traffic areas. The design is contemporary, showcasing a natural brown base color overlaid with a striking, repeating geometric pattern resembling stylized hourglass or bowtie shapes in a dark contrasting color. This rug is handcrafted in India and is suitable for modern, casual, or transitional decor styles."
+      },
+      "price_range": {
+        "min": {
+          "amount": 16000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 16000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "aBq5isq:AUIg:01KBPABHH3AJS2137RM3JX5K8V",
+          "title": "Contemporary Jute Blend Rug - 9' X 12'/brown",
+          "description": {
+            "plain": "A durable and texturally rich area rug crafted from a blend of 60% jute and 40% cotton. It features a flatweave construction, giving it a low profile ideal for high-traffic areas. The design is contemporary, showcasing a natural brown base color overlaid with a striking, repeating geometric pattern resembling stylized hourglass or bowtie shapes in a dark contrasting color. This rug is handcrafted in India and is suitable for modern, casual, or transitional decor styles."
+          },
+          "price": {
+            "amount": 16000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 20000,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/aBq5isq-AUIg-public_ucp?o=01KBPABHH3AJS2137RM3JX5K8V",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/4bebb67a-66e5-4411-b8bf-b7147276e08b"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/4bebb67a-66e5-4411-b8bf-b7147276e08b",
+          "alt_text": "Jute Blend Rug"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 20000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 20000,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Flatweave construction",
+          "Made from 60% Jute and 40% Cotton blend",
+          "Features a geometric pattern of stylized hourglass/bowtie shapes",
+          "Handcrafted in India",
+          "Durable and suitable for high-traffic areas",
+          "Low profile design",
+          "Geometric pattern in natural brown and dark contrast color",
+          "Low maintenance, vacuum regularly",
+          "Natural brown base color with dark contrasting motif",
+          "Hand Woven"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Sxs3eca",
+      "title": "Bok Dining Table",
+      "description": {
+        "plain": "The Bok Dining Table by Ethnicraft is a sculptural piece that balances airy refinement with quiet strength. Crafted in Serbia from solid natural oak or teak, it features a broad, stable tabletop resting on subtly tapered legs that curve into the frame. This minimalist design is available in various sizes and finishes, blending seamlessly into contemporary, Scandinavian, and minimalist interiors."
+      },
+      "price_range": {
+        "min": {
+          "amount": 219900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 219900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Sxs3eca:AUIg:01M289TB464KGV10D7FT3JD7R3",
+          "title": "Ethnicraft Bok Dining Table - Oak Brown/large : 200cm",
+          "description": {
+            "plain": "The Bok Dining Table by Ethnicraft is a sculptural piece that balances airy refinement with quiet strength. Crafted in Serbia from solid natural oak or teak, it features a broad, stable tabletop resting on subtly tapered legs that curve into the frame. This minimalist design is available in various sizes and finishes, blending seamlessly into contemporary, Scandinavian, and minimalist interiors."
+          },
+          "price": {
+            "amount": 219900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Sxs3eca-AUIg-public_ucp?o=01M289TB464KGV10D7FT3JD7R3",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c17c863f-725a-44cb-9ec9-d725e9dfe468"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/c17c863f-725a-44cb-9ec9-d725e9dfe468",
+          "alt_text": "Bok Dining Table"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Crafted from responsibly sourced hardwood",
+          "Subtly tapered legs that curve into the frame",
+          "Available in sizes from 55 to 95 inches",
+          "Made in Serbia"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:KFKGVh5",
+      "title": "Ambrosia Tri-Light Hanging Pendant",
+      "description": {
+        "plain": "The Ambrosia 3-Light Vertical Pendant by Ciszak Dalmas for Marset is a contemporary lighting fixture that reimagines the timeless tube light. This modular system features a sleek vertical orientation with three diffuse light sources, creating an elegant and minimalist glow suitable for any modern space. Crafted from aluminum with an opal methacrylate shade, it combines structural simplicity with high-quality illumination."
+      },
+      "price_range": {
+        "min": {
+          "amount": 342000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 342000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "KFKGVh5:AUIg:01M2JGBZSEMV9JVGVYN9DDP703",
+          "title": "Ambrosia Tri-light Hanging Pendant - 68.9\"/black/warm White",
+          "description": {
+            "plain": "The Ambrosia 3-Light Vertical Pendant by Ciszak Dalmas for Marset is a contemporary lighting fixture that reimagines the timeless tube light. This modular system features a sleek vertical orientation with three diffuse light sources, creating an elegant and minimalist glow suitable for any modern space. Crafted from aluminum with an opal methacrylate shade, it combines structural simplicity with high-quality illumination."
+          },
+          "price": {
+            "amount": 342000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/KFKGVh5-AUIg-public_ucp?o=01M2JGBZSEMV9JVGVYN9DDP703",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/19ac5a9f-2075-4985-98e4-105ef77e7683"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/19ac5a9f-2075-4985-98e4-105ef77e7683",
+          "alt_text": "Ambrosia Tri-Light Hanging Pendant"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Dimmable",
+          "Integrated LED",
+          "Modular system",
+          "Made in Spain",
+          "CETL Safety Rating",
+          "Sculptural ensemble of light tubes",
+          "Minimalist structure and flexible design",
+          "UL Certified",
+          "27K Light Color Temperature",
+          "43.2W LED"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:uDHcqYm",
+      "title": "Organic Waterproof Fitted Protector Pad",
+      "description": {
+        "plain": "The Naturepedic Organic Waterproof Fitted Protector Pad provides a healthy and protective layer for your mattress. Constructed with two layers of soft, highly absorptive organic jersey cotton, it features an ultra-thin waterproof barrier in the center. Utilizing DrySleep™ technology, the pad effectively blocks liquids, dust mites, and allergens while remaining breathable to ensure a comfortable sleep environment. It is designed with a fitted organic cotton skirt and a full elastic perimeter for a secure fit and is free from vinyl, PVC, phthalates, latex rubber, and flame retardants."
+      },
+      "price_range": {
+        "min": {
+          "amount": 12900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 12900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "uDHcqYm:AUIg:01M2QVTKYY34BW2VA63F7MBGPT",
+          "title": "Organic Waterproof Fitted Protector Pad",
+          "description": {
+            "plain": "The Naturepedic Organic Waterproof Fitted Protector Pad provides a healthy and protective layer for your mattress. Constructed with two layers of soft, highly absorptive organic jersey cotton, it features an ultra-thin waterproof barrier in the center. Utilizing DrySleep™ technology, the pad effectively blocks liquids, dust mites, and allergens while remaining breathable to ensure a comfortable sleep environment. It is designed with a fitted organic cotton skirt and a full elastic perimeter for a secure fit and is free from vinyl, PVC, phthalates, latex rubber, and flame retardants."
+          },
+          "price": {
+            "amount": 12900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/uDHcqYm-AUIg-public_ucp?o=01M2QVTKYY34BW2VA63F7MBGPT",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/bf981d04-f465-45c6-a1aa-7b6c2107caab"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/bf981d04-f465-45c6-a1aa-7b6c2107caab",
+          "alt_text": "Organic Waterproof Fitted Protector Pad"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Two layers of jersey organic cotton fabric for maximum comfort and flexibility",
+          "Highly absorptive and extra soft",
+          "Ultra-thin waterproof barrier in center",
+          "DrySleep™ technology blocks liquids while allowing fabric to breathe",
+          "Blocks dust-mites and other allergens",
+          "Fitted design with organic cotton skirt and full elastic perimeter",
+          "Free of Vinyl/PVC, phthalates, latex rubber, and Flame Retardants",
+          "Machine Wash & Dry",
+          "GOTS-certified organic cotton jersey",
+          "Accommodates mattress depths from 9\" to 16\""
+        ]
+      }
+    },
+    {
+      "id": "01M2SZAGCCRP6QW0Y3CT82ZHF3",
+      "title": "Aurore Bath Rug",
+      "description": {
+        "plain": "The Aurore Bath Rug is a luxury cotton-blend bath mat measuring 29\" L x 39\" W. It features a striking ombre effect in a rich baton rouge hue, transitioning from deep burgundy to a soft cream. Crafted in Portugal, the rug's face is composed of 75% Giza Egyptian long staple cotton for a soft, high-quality feel, blended with 25% acrylic for enhanced durability, color depth, and shape retention. Its dense pile (2500g/m2) provides an absorbent and resilient surface suitable for bathtubs, showers, or vanities."
+      },
+      "price_range": {
+        "min": {
+          "amount": 54500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 54500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "vn81LHE:AUIg:01M2QZPF8BHQZG55JK2RF1NEPQ",
+          "title": "Aurore Bath Rug, 29\" L X 39\" W",
+          "description": {
+            "plain": "The Aurore Bath Rug is a luxury cotton-blend bath mat measuring 29\" L x 39\" W. It features a striking ombre effect in a rich baton rouge hue, transitioning from deep burgundy to a soft cream. Crafted in Portugal, the rug's face is composed of 75% Giza Egyptian long staple cotton for a soft, high-quality feel, blended with 25% acrylic for enhanced durability, color depth, and shape retention. Its dense pile (2500g/m2) provides an absorbent and resilient surface suitable for bathtubs, showers, or vanities."
+          },
+          "price": {
+            "amount": 54500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/vn81LHE-AUIg-public_ucp?o=01M2QZPF8BHQZG55JK2RF1NEPQ",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/797f2c80-3d2b-498c-8443-9bd03c154a9a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/797f2c80-3d2b-498c-8443-9bd03c154a9a",
+          "alt_text": "Aurore Bath Rug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Ombre color design",
+          "High absorbency surface",
+          "Crafted from Giza Egyptian long staple cotton",
+          "Rectangular design suitable for bathtub and shower areas"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:oRffLN4",
+      "title": "Piet Boon Base Tableware Collection",
+      "description": {
+        "plain": "A minimalist porcelain bowl from the Piet Boon Base Tableware Collection, featuring a glazed white finish. Designed as part of a collaboration between Studio Piet Boon and Serax, this medium bowl is part of a set of four and pairs elegantly with other pieces in the collection. Crafted from porcelain and origin China, it embodies clean lines and refined craftsmanship suitable for everyday dining or styled tablescapes."
+      },
+      "price_range": {
+        "min": {
+          "amount": 13600,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 13600,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "oRffLN4:AUIg:01KHYPWETM99S2MAD8DVTXN47E",
+          "title": "Piet Boon Base Tableware Collection - Glazed White/xlarge Deep Plate (set Of 4)",
+          "description": {
+            "plain": "A minimalist porcelain bowl from the Piet Boon Base Tableware Collection, featuring a glazed white finish. Designed as part of a collaboration between Studio Piet Boon and Serax, this medium bowl is part of a set of four and pairs elegantly with other pieces in the collection. Crafted from porcelain and origin China, it embodies clean lines and refined craftsmanship suitable for everyday dining or styled tablescapes."
+          },
+          "price": {
+            "amount": 13600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/oRffLN4-AUIg-public_ucp?o=01KHYPWETM99S2MAD8DVTXN47E",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/631ba14a-bc93-4f55-9cb0-d0a00eafbf04"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/631ba14a-bc93-4f55-9cb0-d0a00eafbf04",
+          "alt_text": "Piet Boon Base Tableware Collection"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Designer porcelain dinnerware",
+          "Glazed white finish",
+          "Medium bowl size",
+          "Set of 4 bowls",
+          "China origin",
+          "Dishwasher safe",
+          "Designed for everyday use and special occasions",
+          "Partnership between Studio Piet Boon and Serax",
+          "Designer porcelain deep plate",
+          "Part of Piet Boon Base Tableware Collection"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:LBnijP9",
+      "title": "Capri Outdoor Pillow",
+      "description": {
+        "plain": "A vibrant and stylish outdoor pillow from Missoni Home, featuring the iconic zigzag pattern in a multicolor palette of green, red, brown, and purple. Crafted from a blend of viscose and cotton, this 16\" x 16\" pillow is designed for both indoor and outdoor use. It is a durable and decorative accent piece, made in Italy and requires dry cleaning only."
+      },
+      "price_range": {
+        "min": {
+          "amount": 45000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 45000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "LBnijP9:AUIg:01KQWHHMNTY8G9CGMAAMSGBPY0",
+          "title": "Missoni Capri Outdoor Cushion (40cm X 40cm)",
+          "description": {
+            "plain": "A vibrant and stylish outdoor pillow from Missoni Home, featuring the iconic zigzag pattern in a multicolor palette of green, red, brown, and purple. Crafted from a blend of viscose and cotton, this 16\" x 16\" pillow is designed for both indoor and outdoor use. It is a durable and decorative accent piece, made in Italy and requires dry cleaning only."
+          },
+          "price": {
+            "amount": 45000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/LBnijP9-AUIg-public_ucp?o=01KQWHHMNTY8G9CGMAAMSGBPY0",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ff1cf3f5-fa7e-4e9c-9839-3ebe4846b965"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/ff1cf3f5-fa7e-4e9c-9839-3ebe4846b965",
+          "alt_text": "Capri Outdoor Pillow"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "40 cm x 40 cm",
+          "Outdoor, wind‑ and rain‑resistant",
+          "Hand‑washable",
+          "100 % Acrylic outer fabric",
+          "Dimensions: 16\" x 16\"",
+          "Color: Red Multicolor",
+          "Material: 60% Viscose, 40% Cotton",
+          "Weight: 3.0 lb",
+          "Country of origin: Italy",
+          "Care instructions: Dry clean only"
+        ]
+      }
+    },
+    {
+      "id": "01M320Y3K6CZ42Q5WRMG78AQK9",
+      "title": "Classic Diamond Bracelet",
+      "description": {
+        "plain": "Hand-woven using precious metal and gemstones, our Classic Diamond Bracelet symbolizes connection, community and interconnectedness. Cast from solid gold set with brilliant white diamond on nylon cord, the perfect combination of the ordinary and the extraordinary. Created in a bunch of different colors, each bracelet is braided by hand using premium nylon cord and lightly coated with wax for a 100% water resistant finish, so you can confidently wear your bracelet to shower, swim or surf."
+      },
+      "price_range": {
+        "min": {
+          "amount": 35000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 35000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "uz7yd8G:AUIg:01M30VPT2T9GQC37XD1FGGHDYC",
+          "title": "Classic Diamond Bracelet In Lavender - 7.5",
+          "description": {
+            "plain": "Hand-woven using precious metal and gemstones, our Classic Diamond Bracelet symbolizes connection, community and interconnectedness. Cast from solid gold set with brilliant white diamond on nylon cord, the perfect combination of the ordinary and the extraordinary. Created in a bunch of different colors, each bracelet is braided by hand using premium nylon cord and lightly coated with wax for a 100% water resistant finish, so you can confidently wear your bracelet to shower, swim or surf."
+          },
+          "price": {
+            "amount": 35000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/uz7yd8G-AUIg-public_ucp?o=01M30VPT2T9GQC37XD1FGGHDYC",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d22111e5-7645-4a75-b502-ebcd6063db88"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/d22111e5-7645-4a75-b502-ebcd6063db88",
+          "alt_text": "Classic Diamond Bracelet"
+        }
+      ],
+      "options": [
+        {
+          "name": "Size",
+          "values": [
+            {
+              "label": "6"
+            },
+            {
+              "label": "6\""
+            },
+            {
+              "label": "6.5"
+            },
+            {
+              "label": "6.5\""
+            },
+            {
+              "label": "7"
+            },
+            {
+              "label": "7\""
+            },
+            {
+              "label": "7.5"
+            },
+            {
+              "label": "7.5\""
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Hand-woven nylon cord bracelet",
+          "Solid gold setting with white diamond",
+          "Wax-coated for water resistance",
+          "Available in multiple sizes",
+          "Available in sizes 6, 6.5, 7, 7.5",
+          "Color: lavender (light purple)",
+          "Symbolizes connection, community, and interconnectedness",
+          "Hand-woven braided design",
+          "Cast from solid gold",
+          "Set with a brilliant white diamond"
+        ]
+      }
+    },
+    {
+      "id": "01M0JDXB61ATPD450S5Z3ENC7X",
+      "title": "Solid Indo Gabbeh Wool Rug",
+      "description": {
+        "plain": "This hand-knotted Indo Gabbeh rug, crafted in India from 100% natural wool, features a rich green color with subtle texture variation. The design is minimalist yet detailed, characterized by scattered small diamond motifs across the field and more intricate geometric borders near the ends, including small squares and repeating shapes. The wool construction ensures natural resilience and a soft feel underfoot. Though the product description mentions a grey color for a different size, the title and available options indicate the specific product here is green."
+      },
+      "price_range": {
+        "min": {
+          "amount": 32000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 70720,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "8r8T5Gf:AUIg:01KBPBN12PG92X6HEXQBD56SQ6",
+          "title": "Gabbeh 9 X 12 (ft) Loomed Wool Green Rectangular Indoor Tribal Professionally Clean Only Area Rug",
+          "description": {
+            "plain": "This hand-knotted Indo Gabbeh rug, crafted in India from 100% natural wool, features a rich green color with subtle texture variation. The design is minimalist yet detailed, characterized by scattered small diamond motifs across the field and more intricate geometric borders near the ends, including small squares and repeating shapes. The wool construction ensures natural resilience and a soft feel underfoot. Though the product description mentions a grey color for a different size, the title and available options indicate the specific product here is green."
+          },
+          "price": {
+            "amount": 70720,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 130000,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/8r8T5Gf-AUIg-public_ucp?o=01KBPBN12PG92X6HEXQBD56SQ6",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/b90a1d3f-a440-42cf-876d-16bc7064bf2c"
+            }
+          ]
+        },
+        {
+          "id": "oRrtcFw:AUIg:01M2QSF4KM73JAZR36E9MNS7V8",
+          "title": "Transitional Indo Gabbeh Wool Rug",
+          "description": {
+            "plain": "This Transitional Indo Gabbeh Wool Rug blends traditional hand-knotted Indian craftsmanship with a contemporary aesthetic. Made from 100% natural wool, it offers a soft, durable, and stain-resistant foundation for any room. The design is part of a 'Solids + Textures' collection, featuring a subtle striated pattern and integrated geometric motifs, including a central square of repeated shapes surrounded by bands of diamond and dash patterns."
+          },
+          "price": {
+            "amount": 38400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 60000,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/oRrtcFw-AUIg-public_ucp?o=01M2QSF4KM73JAZR36E9MNS7V8",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/16b09106-c138-4385-9c70-f327513eb37c"
+            }
+          ]
+        },
+        {
+          "id": "ri9vfOP:AUIg:01KBPD3EFJ3J90WXTTKYK0A428",
+          "title": "Transitional Indo Gabbeh Wool Rug",
+          "description": {
+            "plain": "The Transitional Indo Gabbeh Wool Rug blends traditional Indian hand-knotted craftsmanship with a clean, contemporary aesthetic. Made from 100% natural wool, this rug is durable, soft, and naturally stain-resistant. It features a muted color palette with a subtle striated pattern and integrated geometric motifs, including a central square of repeated shapes surrounded by bands of diamonds and dashes, providing visual depth without overwhelming the solid appearance."
+          },
+          "price": {
+            "amount": 32000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 50000,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/ri9vfOP-AUIg-public_ucp?o=01KBPD3EFJ3J90WXTTKYK0A428",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/cd264945-f851-4d94-a50b-3de30b055027"
+            }
+          ]
+        },
+        {
+          "id": "ChdDI1j:AUIg:01KBPBY9WD8PW0CGH4XT78AA4T",
+          "title": "Solid Indo Gabbeh Wool Rug - Grey/2'6\" X 10'",
+          "description": {
+            "plain": "This Solid Indo Gabbeh Wool Rug features a muted grey color with a subtle striated texture characteristic of the 'Solids + Textures' collection. Hand-knotted in India from 100% natural wool, it balances traditional craftsmanship with a contemporary aesthetic. The design incorporates minimalist geometric motifs, including a central square of small, repeated shapes, surrounded by patterns of small diamonds and dash lines, adding depth without overpowering the solid appearance. Its durable and soft texture makes it suitable for various living spaces."
+          },
+          "price": {
+            "amount": 64000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/ChdDI1j-AUIg-public_ucp?o=01KBPBY9WD8PW0CGH4XT78AA4T",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/cdda1b05-17aa-44bd-b01a-ee29066a0c40"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/b90a1d3f-a440-42cf-876d-16bc7064bf2c",
+          "alt_text": "Solid Indo Gabbeh Wool Rug"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "8r8T5Gf",
+              "label": "Green"
+            },
+            {
+              "id": "ri9vfOP",
+              "label": "Purple"
+            },
+            {
+              "id": "oRrtcFw",
+              "label": "Pink"
+            },
+            {
+              "id": "ChdDI1j",
+              "label": "Grey"
+            }
+          ]
+        },
+        {
+          "name": "Size",
+          "values": [
+            {
+              "id": "ChdDI1j",
+              "label": "2'6\" x 10'"
+            },
+            {
+              "id": "oRrtcFw",
+              "label": "3' X 5'"
+            },
+            {
+              "id": "8r8T5Gf",
+              "label": "6' X 9'"
+            }
+          ]
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 50000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 130000,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Hand Loomed",
+          "Pile Height: 0.4\"",
+          "Knot Count: 80 Knots",
+          "Country Of Origin: India",
+          "Professional Clean Only",
+          "Vaccum regularly without a beater bar",
+          "Rug Pad Recommended",
+          "Hand-knotted craftsmanship",
+          "Constructed from 100% natural wool"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Size",
+          "label": "6' X 9'"
+        },
+        {
+          "name": "Color",
+          "label": "Green"
+        }
+      ]
+    },
+    {
+      "id": "01M5BRXMEN76FZRKD5RMZCTPQH",
+      "title": "Carmen Bed End Blanket",
+      "description": {
+        "plain": "A luxurious and reversible bed end blanket from the Carmen collection by Bella Notte. It is crafted from silk velvet and features a petite charmeuse ruffle with raw edges for a shimmering, detailed finish. Lightly padded and designed to span the width of a king bed, this statement piece is handcrafted in California and small-batch dyed to order."
+      },
+      "price_range": {
+        "min": {
+          "amount": 125000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 125000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "ePOkpSa:AUIg:01M5B0XGJ5881WNFZQYDDNNEEQ",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "A luxurious and reversible bed end blanket from the Carmen collection by Bella Notte. It is crafted from silk velvet and features a petite charmeuse ruffle with raw edges for a shimmering, detailed finish. Lightly padded and designed to span the width of a king bed, this statement piece is handcrafted in California and small-batch dyed to order."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/ePOkpSa-AUIg-public_ucp?o=01M5B0XGJ5881WNFZQYDDNNEEQ",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/2918092b-d15b-48d3-9773-2673df2d6ffd"
+            }
+          ]
+        },
+        {
+          "id": "k5cy0lm:AUIg:01M5B0JX85RM9SY810B7KRDTN6",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. It features a silk velvet body accented by a petite charmeuse ruffle with raw edges, offering a shimmering detail and a sophisticated touch. Reversible and handcrafted in California, these blankets are small-batch dyed to order, ensuring a unique finish."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/k5cy0lm-AUIg-public_ucp?o=01M5B0JX85RM9SY810B7KRDTN6",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/61e510f8-07b9-4c39-bb77-6a66ba278b3b"
+            }
+          ]
+        },
+        {
+          "id": "nna01aT:AUIg:01M5B0YYF4EWYBHDTPFMS3VTRD",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. Handcrafted in California, this reversible blanket is made from silk velvet and features a petite charmeuse ruffle with raw edges for shimmering detail. Each piece is small-batch dyed to order, ensuring a unique, high-end finish."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/nna01aT-AUIg-public_ucp?o=01M5B0YYF4EWYBHDTPFMS3VTRD",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/98851880-f2a8-44ec-bd28-d41e223f283b"
+            }
+          ]
+        },
+        {
+          "id": "q6idBmv:AUIg:01M5B0KZGYJYB4QZE08Z1ED2YJ",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. Crafted in California, it features a silk velvet body with a petite charmeuse raw-edged ruffle that adds shimmering detail and a hint of color play. The blanket is reversible and small batch dyed to order, ensuring a unique finish."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/q6idBmv-AUIg-public_ucp?o=01M5B0KZGYJYB4QZE08Z1ED2YJ",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/31ce0743-7e4f-44e3-998c-121247fe9f97"
+            }
+          ]
+        },
+        {
+          "id": "OzCgHYg:AUIg:01M5B11FQR2718QDCS3JMT1F9M",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. Crafted from silk velvet, it features a petite charmeuse ruffle with raw edges that adds a shimmering detail and a touch of color play. This reversible blanket is handcrafted in California and small-batch dyed to order, ensuring a unique, high-quality finish."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/OzCgHYg-AUIg-public_ucp?o=01M5B11FQR2718QDCS3JMT1F9M",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ec83eba2-bbb9-4b71-aa17-a1f84cc23846"
+            }
+          ]
+        },
+        {
+          "id": "o7x4G48:AUIg:01M5B0JXQKDG8CR87X7W676GSN",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. It features a reversible silk velvet body framed by a petite charmeuse ruffle with raw edges for a shimmering detail. Handcrafted in California, each blanket is small-batch dyed to order, ensuring a unique tonal variation."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/o7x4G48-AUIg-public_ucp?o=01M5B0JXQKDG8CR87X7W676GSN",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a34b9b1c-1e68-4890-97aa-db26383a4926"
+            }
+          ]
+        },
+        {
+          "id": "yqovoLh:AUIg:01M5B0K86XG9YFWFTYNXDCJ8CX",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. It features a reversible silk velvet body accented by a petite charmeuse ruffle with raw edges for a touch of shimmering detail. Handcrafted in California and small batch dyed to order, this blanket combines elegance with refined craftsmanship."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/yqovoLh-AUIg-public_ucp?o=01M5B0K86XG9YFWFTYNXDCJ8CX",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/45a04fd8-81f9-453a-8416-8ddbc0fd5450"
+            }
+          ]
+        },
+        {
+          "id": "CDQpz84:AUIg:01M5B0K1EEMKEPXYNMEYKKAQRJ",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket from Bella Notte is a luxurious statement piece designed to span the width of a king bed. Handcrafted in California, it features a silk velvet body with a petite, raw-edged charmeuse ruffle for a shimmering detail. This reversible blanket is lightly padded and small-batch dyed to order, ensuring a unique, high-quality finish."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/CDQpz84-AUIg-public_ucp?o=01M5B0K1EEMKEPXYNMEYKKAQRJ",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/535fc329-1e34-40c8-90e8-7fd6070619a3"
+            }
+          ]
+        },
+        {
+          "id": "GQw0CIp:AUIg:01M5B0KCVN41GVYR8ASR0GE2W4",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket is a luxurious, lightly padded statement piece designed to span the width of a king bed. It features silk velvet construction accented by a petite, raw-edged charmeuse ruffle for a touch of shimmering detail. Reversible and handcrafted in California, these blankets are small batch dyed to order for unique tonal variation."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/GQw0CIp-AUIg-public_ucp?o=01M5B0KCVN41GVYR8ASR0GE2W4",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/22b7f52b-67ff-43b6-869a-d21cf76cf3e8"
+            }
+          ]
+        },
+        {
+          "id": "l19DTZV:AUIg:01M5B0K5M9GHPAGPK0DA1XN175",
+          "title": "Carmen Bed End Blanket - Eucalyptus",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. It features a silk velvet body accented by a petite, raw-edged charmeuse ruffle that adds shimmering detail and a hint of color play. This reversible blanket is handcrafted in California and small-batch dyed to order, ensuring a unique finish."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/l19DTZV-AUIg-public_ucp?o=01M5B0K5M9GHPAGPK0DA1XN175",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/6f86589f-fdef-4f27-83fd-93c6c9d1f0b8"
+            }
+          ]
+        },
+        {
+          "id": "SzipeFP:AUIg:01M5B0JYNF0CSB9P3B1BKGYYZE",
+          "title": "Carmen Bed End Blanket - White",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. It features a soft silk velvet body accented by a petite charmeuse ruffle with raw edges for shimmering detail. Handcrafted in California and reversible, this small-batch dyed blanket adds a sophisticated touch to bedroom decor."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/SzipeFP-AUIg-public_ucp?o=01M5B0JYNF0CSB9P3B1BKGYYZE",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/1feb3c86-5c87-4d8d-bcf3-4224f1014f00"
+            }
+          ]
+        },
+        {
+          "id": "hxlXXKy:AUIg:01M5B0KEVJM5YA2P3S0C1RQDTJ",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, reversible statement piece designed to span the width of a king bed. Handcrafted in California and small-batch dyed to order, it features a silk velvet body and is lightly padded for comfort. The blanket is framed by a petite charmeuse ruffle with raw edges, adding a shimmering detail and a hint of color play."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/hxlXXKy-AUIg-public_ucp?o=01M5B0KEVJM5YA2P3S0C1RQDTJ",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a6e0226a-323d-4712-9420-3d9f53c90252"
+            }
+          ]
+        },
+        {
+          "id": "aiQxbN1:YJEF:01M39Y9ASWPJQ7F9GASZNNKAK6",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Bella Notte Carmen Bed End Throw Blanket is a luxurious statement piece crafted from plush silk velvet. It features a delicate charmeuse ruffle with raw edges that provide a shimmering detail and a touch of color play. This lightly padded blanket is designed to span the width of a king bed and is fully reversible. Handcrafted in California, it is available in a wide range of small-batch dyed colors and is machine washable."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/aiQxbN1-YJEF-public_ucp?o=01M39Y9ASWPJQ7F9GASZNNKAK6",
+          "seller": {
+            "id": "YJEF",
+            "domain": "paynesgray.com",
+            "url": "https://www.paynesgray.com",
+            "name": "Paynes Gray"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c20db737-a48a-43d1-9db4-d905e033ed10"
+            }
+          ]
+        },
+        {
+          "id": "aiQxbN1:AUIg:01M5B0K55XP35P2V5Y5EXW0EE8",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Bella Notte Carmen Bed End Throw Blanket is a luxurious statement piece crafted from plush silk velvet. It features a delicate charmeuse ruffle with raw edges that provide a shimmering detail and a touch of color play. This lightly padded blanket is designed to span the width of a king bed and is fully reversible. Handcrafted in California, it is available in a wide range of small-batch dyed colors and is machine washable."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/aiQxbN1-AUIg-public_ucp?o=01M5B0K55XP35P2V5Y5EXW0EE8",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c20db737-a48a-43d1-9db4-d905e033ed10"
+            }
+          ]
+        },
+        {
+          "id": "ekV2GiV:AUIg:01M5B0K7EH8XHMXSJSSRSCCRXY",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Carmen Bed End Blanket by Bella Notte is a luxurious, lightly padded statement piece designed to span the width of a king bed. It features a silk velvet body framed by a petite charmeuse ruffle with raw edges for shimmering detail. This reversible blanket is handcrafted in California and is small batch dyed to order, ensuring a unique finish."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/ekV2GiV-AUIg-public_ucp?o=01M5B0K7EH8XHMXSJSSRSCCRXY",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a8ec513a-c2d7-435a-9535-98a4f2bc4d90"
+            }
+          ]
+        },
+        {
+          "id": "eeyZnim:YJEF:01M39XNC9TSZMCMS6BGTNWGV23",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Bella Notte Carmen Bed End Throw Blanket is a luxurious, lightly padded statement piece designed to span the width of a king bed. Crafted from plush silk velvet, it features a shimmering petite charmeuse ruffle with raw edges for a touch of color play and sophisticated detail. This reversible blanket is handcrafted in California and is available in a wide array of custom, small-batch dyed colors."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/eeyZnim-YJEF-public_ucp?o=01M39XNC9TSZMCMS6BGTNWGV23",
+          "seller": {
+            "id": "YJEF",
+            "domain": "paynesgray.com",
+            "url": "https://www.paynesgray.com",
+            "name": "Paynes Gray"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/65584684-9746-4690-9cc2-219f73d5e514"
+            }
+          ]
+        },
+        {
+          "id": "eeyZnim:AUIg:01M5B0KETB9SY79WGSGVWK6HTX",
+          "title": "Carmen Bed End Blanket",
+          "description": {
+            "plain": "The Bella Notte Carmen Bed End Throw Blanket is a luxurious, lightly padded statement piece designed to span the width of a king bed. Crafted from plush silk velvet, it features a shimmering petite charmeuse ruffle with raw edges for a touch of color play and sophisticated detail. This reversible blanket is handcrafted in California and is available in a wide array of custom, small-batch dyed colors."
+          },
+          "price": {
+            "amount": 125000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/eeyZnim-AUIg-public_ucp?o=01M5B0KETB9SY79WGSGVWK6HTX",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/65584684-9746-4690-9cc2-219f73d5e514"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/2918092b-d15b-48d3-9773-2673df2d6ffd",
+          "alt_text": "Carmen Bed End Blanket"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "hxlXXKy",
+              "label": "Autumn"
+            },
+            {
+              "id": "OzCgHYg",
+              "label": "Cenote"
+            },
+            {
+              "id": "ePOkpSa",
+              "label": "Cloud"
+            },
+            {
+              "id": "yqovoLh",
+              "label": "Corvino"
+            },
+            {
+              "id": "GQw0CIp",
+              "label": "Crema"
+            },
+            {
+              "id": "l19DTZV",
+              "label": "Eucalyptus"
+            },
+            {
+              "id": "o7x4G48",
+              "label": "Fog"
+            },
+            {
+              "id": "CDQpz84",
+              "label": "French Lavender"
+            },
+            {
+              "id": "eeyZnim",
+              "label": "Honeycomb"
+            },
+            {
+              "id": "aiQxbN1",
+              "label": "Juniper"
+            },
+            {
+              "id": "ekV2GiV",
+              "label": "Midnight"
+            },
+            {
+              "id": "q6idBmv",
+              "label": "Pearl"
+            },
+            {
+              "id": "nna01aT",
+              "label": "Tahoe Blue"
+            },
+            {
+              "id": "SzipeFP",
+              "label": "White"
+            },
+            {
+              "id": "k5cy0lm",
+              "label": "Winter White"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Petite charmeuse ruffle with raw edges",
+          "Reversible",
+          "Lightly padded",
+          "Small batch dyed to order",
+          "Handcrafted in California",
+          "Sized to span the width of a king bed",
+          "Machine Washable"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Cloud"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:cFyHVDF",
+      "title": "Paley Throw",
+      "description": {
+        "plain": "A luxurious cashmere throw product page, featuring the Paley Throw with Mongolian cashmere, reversible ripple design, made in Scotland. Details include dimensions, color, material, weight, country of origin, care instructions, SKU, and vendor."
+      },
+      "price_range": {
+        "min": {
+          "amount": 175000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 175000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "cFyHVDF:AUIg:01KFH49HJXSSKHQG590SHZ7RTD",
+          "title": "Paley Throw",
+          "description": {
+            "plain": "A luxurious cashmere throw product page, featuring the Paley Throw with Mongolian cashmere, reversible ripple design, made in Scotland. Details include dimensions, color, material, weight, country of origin, care instructions, SKU, and vendor."
+          },
+          "price": {
+            "amount": 175000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/cFyHVDF-AUIg-public_ucp?o=01KFH49HJXSSKHQG590SHZ7RTD",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f085e9e3-1773-4cc2-8be8-e217b7ea97e4"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/f085e9e3-1773-4cc2-8be8-e217b7ea97e4",
+          "alt_text": "Paley Throw"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Woven in Mongolian cashmere",
+          "Distinctive ripple texture created with traditional brushing",
+          "Reversible with rich, complementary colors",
+          "Made in Scotland",
+          "60\" W x 72\" L dimensions",
+          "Dry clean only",
+          "SKU 3099326",
+          "Weight 3.5 lb",
+          "Country of origin United Kingdom"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:jPls0pi",
+      "title": "Tam Tam A2 Wall Light",
+      "description": {
+        "plain": "The Marset Tam Tam A2 Wall Light is a striking wall fixture featuring two independently adjustable shades mounted on a central plate. This design allows for versatile, directional lighting, making it ideal for spaces like headboards or hallways. Available in a range of semi-matte colors, this particular model showcases a vibrant orange finish, offering a playful yet sophisticated visual accent to any wall."
+      },
+      "price_range": {
+        "min": {
+          "amount": 136500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 136500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "jPls0pi:AUIg:01M2R0QXZ7XJCF3G8W424VSW9K",
+          "title": "Marset Tam Tam A2 Wall Light - Orange",
+          "description": {
+            "plain": "The Marset Tam Tam A2 Wall Light is a striking wall fixture featuring two independently adjustable shades mounted on a central plate. This design allows for versatile, directional lighting, making it ideal for spaces like headboards or hallways. Available in a range of semi-matte colors, this particular model showcases a vibrant orange finish, offering a playful yet sophisticated visual accent to any wall."
+          },
+          "price": {
+            "amount": 136500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/jPls0pi-AUIg-public_ucp?o=01M2R0QXZ7XJCF3G8W424VSW9K",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a99b4d21-ad93-43f5-a1cc-925aca95f0cf"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/a99b4d21-ad93-43f5-a1cc-925aca95f0cf",
+          "alt_text": "Tam Tam A2 Wall Light"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Semi-matte finishes",
+          "Wall-mounted, hardwired installation",
+          "Suitable for indoor use",
+          "Two adjustable shades for flexible, directional lighting",
+          "Mounted on a single wall plate",
+          "Practical for use near headboards, in hallways, or living areas"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOjdmMjQzZTU1NDdiZmE2ODIiLCAib2Zmc2V0IjogMjB9"
+  },
+  "messages": []
+}

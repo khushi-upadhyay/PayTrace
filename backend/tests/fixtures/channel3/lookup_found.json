@@ -1,0 +1,196 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.lookup": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "01M245A4XE96D5P54JV8EHGFD3",
+      "title": "Nagai Handmade Ceramic Mug",
+      "description": {
+        "plain": "The Nagai Mug is a sturdy, handmade ceramic mug designed for versatility and comfort. It features a chunky handle and a 16oz volume, making it suitable for all hand sizes. The mug has a matte finish and is both dishwasher and microwave safe. Due to its artisanal nature, each piece is unique with slight variations in size, shape, and glaze."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5600,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5600,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "UA9jdyJ:ZPZn:01M20JKFBC4T375JY8878TRVBY",
+          "title": "Nagai Handmade Ceramic Mug",
+          "description": {
+            "plain": "The Nagai Mug is a sturdy, handmade ceramic mug designed for versatility and comfort. It features a chunky handle and a 16oz volume, making it suitable for all hand sizes. The mug has a matte finish and is both dishwasher and microwave safe. Due to its artisanal nature, each piece is unique with slight variations in size, shape, and glaze."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/UA9jdyJ-ZPZn-public_ucp?o=01M20JKFBC4T375JY8878TRVBY",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/28abd181-fc15-438c-b141-95f6148d7afc"
+            }
+          ]
+        },
+        {
+          "id": "R6x14iq:ZPZn:01M23KX4V310Y5WBG5NSCXQV69",
+          "title": "Nagai Handmade Ceramic Mug",
+          "description": {
+            "plain": "The Nagai Mug is a handmade ceramic mug designed for comfort and versatility, featuring a chunky handle and a sturdy build. Each piece is uniquely crafted, ensuring slight variations in size, shape, and glaze. This 16oz mug is both dishwasher and microwave safe."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/R6x14iq-ZPZn-public_ucp?o=01M23KX4V310Y5WBG5NSCXQV69",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/99cf2ac0-b022-48e0-b87d-2ca57d02c6c2"
+            }
+          ]
+        },
+        {
+          "id": "HJOnvCZ:ZPZn:01M1Y1YB25Z5CNWPDDH51S8445",
+          "title": "Nagai Handmade Ceramic Mug",
+          "description": {
+            "plain": "A sturdy and versatile handmade ceramic mug featuring a chunky handle for enhanced comfort. This 16oz mug is both dishwasher and microwave safe, and due to its artisanal nature, each piece is unique with slight variations in size, shape, and glaze."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/HJOnvCZ-ZPZn-public_ucp?o=01M1Y1YB25Z5CNWPDDH51S8445",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c3656cd0-e87f-4445-be38-bf28e412550b"
+            }
+          ]
+        },
+        {
+          "id": "F8GoQEt:ZPZn:01KBPBRMYZ3VJ1RHPKQ06EFTMF",
+          "title": "Nagai Handmade Ceramic Mug - Sand",
+          "description": {
+            "plain": "The Nagai Mug is a distinct piece of drinkware crafted from ceramic, featuring a speckled, sand-colored glaze. Its design emphasizes comfort and versatility, highlighted by a notably chunky handle that offers a sturdy and comfortable grip for various hand sizes. As a handmade item, each mug possesses a unique character in its shape and glaze finish."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/F8GoQEt-ZPZn-public_ucp?o=01KBPBRMYZ3VJ1RHPKQ06EFTMF",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/25b84bbe-6318-4afc-9cf5-097e1ff0f8ff"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/28abd181-fc15-438c-b141-95f6148d7afc",
+          "alt_text": "Nagai Handmade Ceramic Mug"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "F8GoQEt",
+              "label": "Sand"
+            },
+            {
+              "id": "UA9jdyJ",
+              "label": "Charcoal"
+            },
+            {
+              "id": "HJOnvCZ",
+              "label": "Speckled Blue"
+            },
+            {
+              "id": "R6x14iq",
+              "label": "Eggshell"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handmade ceramic",
+          "16oz volume",
+          "Chunky handle for comfort",
+          "Dishwasher and Microwave safe"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Charcoal"
+        }
+      ]
+    }
+  ],
+  "messages": []
+}

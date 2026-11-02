@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
-
+import httpx
 from app.api.dependencies import get_db
 from app.core.config import settings
 from app.db.models.payment import Payment
@@ -27,6 +27,11 @@ from app.schemas.shelfswipe import (
     ShelfProductDeckResponse,
     SwipeRecordRequest,
     ShelfSwipeCheckoutRequest,
+    ProductPatchRequest,
+    ShopPatchRequest,
+    ApproveRequest,
+    ApproveResponse,
+    ApproveRejectedItem,
 )
 from app.services.lifecycle.engine import lifecycle_engine
 from app.services.paypal.client import (
@@ -39,6 +44,17 @@ from app.services.shelfswipe import mcp_client
 from app.services.shelfswipe.importer import (
     import_shop,
     ConsentRequiredError,
+    recompute_ss_product_review_flags,
+)
+from app.services.shelfswipe.fixture_provider import FixtureCatalogProvider
+from app.services.shelfswipe.channel3_provider import (
+    Channel3CatalogProvider,
+    Channel3NoProductsError,
+)
+from app.services.shelfswipe.channel3_client import (
+    Channel3ClientError,
+    Channel3RateLimitError,
+    Channel3TimeoutError,
 )
 from app.services.shelfswipe.mcp_client import McpClientError
 
@@ -75,15 +91,44 @@ def onboard_seller(
     db: Session = Depends(get_db),
 ):
     """
-    Onboards a merchant shop via MCP catalog extraction.
+    Onboards a merchant shop via MCP catalog extraction or Channel3 lookup.
     Creates or updates seller, shop, extraction job, and imports products as drafts.
     """
+    provider_name = (req.provider or "fixture").strip().lower()
+
+    if provider_name == "channel3":
+        if not req.ownership_attested:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Seller ownership attestation is required for Channel3 onboarding.",
+            )
+        if not (req.shop_url.startswith("http://") or req.shop_url.startswith("https://")):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="shop_url must be a valid http or https URL for Channel3 onboarding.",
+            )
+        if req.product_urls and len(req.product_urls) > 20:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Maximum 20 product URLs allowed per onboarding request.",
+            )
+        provider = Channel3CatalogProvider()
+    elif provider_name == "fixture":
+        provider = FixtureCatalogProvider()
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported catalog provider: '{req.provider}'. Allowed: 'fixture', 'channel3'.",
+        )
+
     try:
         result = import_shop(
             db=db,
             shop_url=req.shop_url,
             consent=req.consent,
             seller_name=req.seller_name,
+            provider=provider,
+            product_urls=req.product_urls,
         )
         return ShelfSwipeOnboardResponse(
             seller_id=str(result.seller_id),
@@ -96,6 +141,23 @@ def onboard_seller(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
+        )
+    except Channel3NoProductsError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        )
+    except Channel3RateLimitError as exc:
+        logger.error(f"Channel3 rate limit error during onboard: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Channel3 rate limit exceeded: {str(exc)}",
+        )
+    except Channel3ClientError as exc:
+        logger.error(f"Channel3 client error during onboard: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Channel3 client error: {str(exc)}",
         )
     except McpClientError as exc:
         logger.error(f"MCP client error during onboard: {exc}")
@@ -165,6 +227,9 @@ def get_seller_draft(
             tags=p.tags or [],
             stock=p.stock,
             status=p.status,
+            data_source=p.source,
+            source_url=p.source_url,
+            provider_ref=p.provider_ref,
             review_flags=p.review_flags or [],
         )
         for p in draft_products
@@ -180,6 +245,197 @@ def get_seller_draft(
         pickup_notes=shop.pickup_notes,
         is_demo=shop.is_demo,
         products=product_items,
+    )
+
+
+@router.patch(
+    "/sellers/{seller_id}/products/{product_id}",
+    response_model=ShelfSwipeDraftProductItem,
+)
+def patch_seller_product(
+    seller_id: str,
+    product_id: str,
+    req: ProductPatchRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Edits a draft product for a specific seller.
+    Recomputes quality review flags and validates numeric ranges.
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    product = (
+        db.query(SSProduct)
+        .filter(SSProduct.id == product_id, SSProduct.shop_id == shop.id)
+        .first()
+    )
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Product with ID '{product_id}' not found for seller '{seller_id}'.",
+        )
+
+    updates = req.model_dump(exclude_unset=True)
+    if "name" in updates and updates["name"] is not None:
+        product.name = updates["name"]
+    if "price" in updates and updates["price"] is not None:
+        product.price = updates["price"]
+    if "description" in updates and updates["description"] is not None:
+        product.description = updates["description"]
+    if "category" in updates and updates["category"] is not None:
+        product.category = updates["category"]
+    if "tags" in updates and updates["tags"] is not None:
+        product.tags = updates["tags"]
+    if "image_url" in updates:
+        product.image_url = updates["image_url"]
+    if "stock" in updates and updates["stock"] is not None:
+        product.stock = updates["stock"]
+
+    # Recompute review flags based on updated fields
+    product.review_flags = recompute_ss_product_review_flags(product)
+
+    db.commit()
+    db.refresh(product)
+
+    return ShelfSwipeDraftProductItem(
+        id=str(product.id),
+        external_id=product.external_id,
+        name=product.name,
+        price=float(product.price),
+        currency=product.currency,
+        image_url=product.image_url,
+        description=product.description,
+        category=product.category,
+        tags=product.tags or [],
+        stock=product.stock,
+        status=product.status,
+        data_source=product.source,
+        source_url=product.source_url,
+        provider_ref=product.provider_ref,
+        review_flags=product.review_flags or [],
+    )
+
+
+@router.patch(
+    "/sellers/{seller_id}/shop",
+    response_model=ShelfSwipeDraftResponse,
+)
+def patch_seller_shop(
+    seller_id: str,
+    req: ShopPatchRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Edits shop configuration (pickup location, notes) for a seller.
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    updates = req.model_dump(exclude_unset=True)
+    if "pickup_notes" in updates:
+        shop.pickup_notes = updates["pickup_notes"]
+    if "latitude" in updates:
+        shop.latitude = updates["latitude"]
+    if "longitude" in updates:
+        shop.longitude = updates["longitude"]
+
+    db.commit()
+    db.refresh(shop)
+
+    return get_seller_draft(seller_id=seller_id, db=db)
+
+
+@router.post(
+    "/sellers/{seller_id}/approve",
+    response_model=ApproveResponse,
+)
+def approve_seller_draft_products(
+    seller_id: str,
+    req: ApproveRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Batch approves draft products to live status after confirming stock.
+    Rejects products with critical review flags (e.g. invalid_price) or already live products.
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    approved: List[str] = []
+    rejected: List[ApproveRejectedItem] = []
+
+    for item in req.items:
+        prod = (
+            db.query(SSProduct)
+            .filter(SSProduct.id == item.product_id, SSProduct.shop_id == shop.id)
+            .first()
+        )
+        if not prod:
+            rejected.append(ApproveRejectedItem(id=item.product_id, reason="not_found"))
+            continue
+
+        if prod.status == "live":
+            rejected.append(ApproveRejectedItem(id=item.product_id, reason="already_live"))
+            continue
+
+        flags = list(prod.review_flags or [])
+        if "invalid_price" in flags:
+            rejected.append(ApproveRejectedItem(id=item.product_id, reason="invalid_price"))
+            continue
+
+        # Approve product
+        prod.stock = item.confirmed_stock
+        prod.status = "live"
+        # Remove confirm_stock flag
+        prod.review_flags = [f for f in flags if f != "confirm_stock"]
+        approved.append(str(prod.id))
+
+    db.commit()
+
+    still_draft_count = (
+        db.query(SSProduct)
+        .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
+        .count()
+    )
+
+    return ApproveResponse(
+        approved=approved,
+        rejected=rejected,
+        still_draft_count=still_draft_count,
     )
 
 

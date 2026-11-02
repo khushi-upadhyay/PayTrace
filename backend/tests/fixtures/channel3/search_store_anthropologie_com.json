@@ -1,0 +1,1961 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "01M0WDNWPCKQYGBSY02Y8QZKNW",
+      "title": "Legendary Lip Oil",
+      "description": {
+        "plain": "RMS Beauty Legendary Lip Oil is a nourishing, vanilla-flavored lip treatment that combines the hydration of a balm with the high-shine finish of a gloss. Infused with organic jojoba oil, bitter cherry seed oil, and the RMS Adaptogenic Herbal Blend, it works to soothe, balance, and revitalize dry lips. The non-sticky, lightweight formula provides rich color and can be worn alone or layered over lip color for added dimension."
+      },
+      "price_range": {
+        "min": {
+          "amount": 2600,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 2999,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Jud3Z6t:gb5P:01KKPHBQJY45R1PMCZ1CD8JGR6",
+          "title": "Legendary Lip Oil",
+          "description": {
+            "plain": "RMS Beauty Legendary Lip Oil is a nourishing, vanilla-flavored lip treatment that combines the hydration of a balm with the high-shine finish of a gloss. Infused with organic jojoba oil, bitter cherry seed oil, and the RMS Adaptogenic Herbal Blend, it works to soothe, balance, and revitalize dry lips. The non-sticky, lightweight formula provides rich color and can be worn alone or layered over lip color for added dimension."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Jud3Z6t-gb5P-public_ucp?o=01KKPHBQJY45R1PMCZ1CD8JGR6",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d2728022-5826-41a8-80cf-d027df18b19d"
+            }
+          ]
+        },
+        {
+          "id": "BYAMSs5:lJxY:01KSJVECER3Z51F9F6XVQD6FV1",
+          "title": "Legendary Lip Oil | Nourishing Color With Non‑sticky Finish | Rms Beauty",
+          "description": {
+            "plain": "This RMS Beauty Legendary Lip Oil in the shade Alessandra is a luxurious, nourishing lip treatment that provides a vibrant color and a high-shine finish without feeling sticky. It's formulated with beneficial ingredients like Bitter Cherry Seed Oil for hydration and antioxidants, Organic Vanilla Extract for a soothing aroma, an RMS Adaptogenic Herbal Blend to balance and hydrate the skin, and Organic Jojoba Oil to mimic natural skin oils for easy absorption and protection. The product comes in a cylindrical tube with a ribbed top and features the 'rms' logo in white. It includes a doe-foot applicator for precise application."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/BYAMSs5-lJxY-public_ucp?o=01KSJVECER3Z51F9F6XVQD6FV1",
+          "seller": {
+            "id": "lJxY",
+            "domain": "dermstore.com",
+            "url": "https://www.dermstore.com",
+            "name": "Dermstore"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ea78b7ec-1227-49ab-b5a1-fc294e893726"
+            }
+          ]
+        },
+        {
+          "id": "BYAMSs5:MMoD:01M3TGSBHN06FCHFZA6THWVME1",
+          "title": "Legendary Lip Oil | Nourishing Color With Non‑sticky Finish | Rms Beauty",
+          "description": {
+            "plain": "This RMS Beauty Legendary Lip Oil in the shade Alessandra is a luxurious, nourishing lip treatment that provides a vibrant color and a high-shine finish without feeling sticky. It's formulated with beneficial ingredients like Bitter Cherry Seed Oil for hydration and antioxidants, Organic Vanilla Extract for a soothing aroma, an RMS Adaptogenic Herbal Blend to balance and hydrate the skin, and Organic Jojoba Oil to mimic natural skin oils for easy absorption and protection. The product comes in a cylindrical tube with a ribbed top and features the 'rms' logo in white. It includes a doe-foot applicator for precise application."
+          },
+          "price": {
+            "amount": 2999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/BYAMSs5-MMoD-public_ucp?o=01M3TGSBHN06FCHFZA6THWVME1",
+          "seller": {
+            "id": "MMoD",
+            "domain": "fragrancenet.com",
+            "url": "https://www.fragrancenet.com",
+            "name": "FragranceNet.com"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ea78b7ec-1227-49ab-b5a1-fc294e893726"
+            }
+          ]
+        },
+        {
+          "id": "BYAMSs5:8sta:01KHF58D50MZYBPB8DZQYDC5XR",
+          "title": "Legendary Lip Oil | Nourishing Color With Non‑sticky Finish | Rms Beauty",
+          "description": {
+            "plain": "This RMS Beauty Legendary Lip Oil in the shade Alessandra is a luxurious, nourishing lip treatment that provides a vibrant color and a high-shine finish without feeling sticky. It's formulated with beneficial ingredients like Bitter Cherry Seed Oil for hydration and antioxidants, Organic Vanilla Extract for a soothing aroma, an RMS Adaptogenic Herbal Blend to balance and hydrate the skin, and Organic Jojoba Oil to mimic natural skin oils for easy absorption and protection. The product comes in a cylindrical tube with a ribbed top and features the 'rms' logo in white. It includes a doe-foot applicator for precise application."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/BYAMSs5-8sta-public_ucp?o=01KHF58D50MZYBPB8DZQYDC5XR",
+          "seller": {
+            "id": "8sta",
+            "domain": "rmsbeauty.com",
+            "url": "https://www.rmsbeauty.com",
+            "name": "rms beauty"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ea78b7ec-1227-49ab-b5a1-fc294e893726"
+            }
+          ]
+        },
+        {
+          "id": "FuKhKLU:ICa0:01M1N0TW5FWFME9M0XDYHNAY9Z",
+          "title": "Legendary Lip Oil - Adrianna",
+          "description": {
+            "plain": "The Legendary Lip Oil in shade Elle is a plush, ultra-nourishing lip treatment that combines the benefits of a balm with the high-shine finish of a gloss. Formulated to be non-sticky, it delivers richly tinted color and provides up to 8 hours of hydration while repairing the lip barrier. It is infused with a skincare-rich formula featuring Organic Jojoba Oil, Bitter Cherry Seed Oil, and a proprietary RMS Adaptogenic Herbal Blend to soothe, balance, and revitalize the lips. This hypoallergenic and vegan formula is designed for a smooth, comfortable application using a jumbo doe-foot wand."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/FuKhKLU-ICa0-public_ucp?o=01M1N0TW5FWFME9M0XDYHNAY9Z",
+          "seller": {
+            "id": "ICa0",
+            "domain": "freepeople.com",
+            "url": "https://www.freepeople.com",
+            "name": "Free People"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d14cc722-181b-4fe0-a662-39aa13d03647"
+            }
+          ]
+        },
+        {
+          "id": "FuKhKLU:ELn5:01KRC7SME9XP84F0D7FCAGN49A",
+          "title": "Legendary Lip Oil - Adrianna",
+          "description": {
+            "plain": "The Legendary Lip Oil in shade Elle is a plush, ultra-nourishing lip treatment that combines the benefits of a balm with the high-shine finish of a gloss. Formulated to be non-sticky, it delivers richly tinted color and provides up to 8 hours of hydration while repairing the lip barrier. It is infused with a skincare-rich formula featuring Organic Jojoba Oil, Bitter Cherry Seed Oil, and a proprietary RMS Adaptogenic Herbal Blend to soothe, balance, and revitalize the lips. This hypoallergenic and vegan formula is designed for a smooth, comfortable application using a jumbo doe-foot wand."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/FuKhKLU-ELn5-public_ucp?o=01KRC7SME9XP84F0D7FCAGN49A",
+          "seller": {
+            "id": "ELn5",
+            "domain": "ulta.com",
+            "url": "https://www.ulta.com",
+            "name": "Ulta Beauty"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d14cc722-181b-4fe0-a662-39aa13d03647"
+            }
+          ]
+        },
+        {
+          "id": "FuKhKLU:8sta:01M0Z37T0KJP2FR0PM4T9HJXQH",
+          "title": "Legendary Lip Oil - Adrianna",
+          "description": {
+            "plain": "The Legendary Lip Oil in shade Elle is a plush, ultra-nourishing lip treatment that combines the benefits of a balm with the high-shine finish of a gloss. Formulated to be non-sticky, it delivers richly tinted color and provides up to 8 hours of hydration while repairing the lip barrier. It is infused with a skincare-rich formula featuring Organic Jojoba Oil, Bitter Cherry Seed Oil, and a proprietary RMS Adaptogenic Herbal Blend to soothe, balance, and revitalize the lips. This hypoallergenic and vegan formula is designed for a smooth, comfortable application using a jumbo doe-foot wand."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/FuKhKLU-8sta-public_ucp?o=01M0Z37T0KJP2FR0PM4T9HJXQH",
+          "seller": {
+            "id": "8sta",
+            "domain": "rmsbeauty.com",
+            "url": "https://www.rmsbeauty.com",
+            "name": "rms beauty"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d14cc722-181b-4fe0-a662-39aa13d03647"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/d2728022-5826-41a8-80cf-d027df18b19d",
+          "alt_text": "Legendary Lip Oil"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "Jud3Z6t",
+              "label": "Bright Pink"
+            },
+            {
+              "id": "BYAMSs5",
+              "label": "Nude"
+            }
+          ]
+        },
+        {
+          "name": "Style",
+          "values": [
+            {
+              "id": "BYAMSs5",
+              "label": "Amber"
+            },
+            {
+              "id": "FuKhKLU",
+              "label": "Adrianna"
+            },
+            {
+              "id": "Jud3Z6t",
+              "label": "Karolina"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes a jumbo doe-foot wand applicator",
+          "Delivers richly-tinted color and high shine",
+          "Available in eight shades",
+          "Lightweight and comfortable to wear",
+          "Formula is nourishing and hydrating",
+          "Non-sticky",
+          "Flavoured with a hint of vanilla",
+          "Rich pigmentation with one‑swipe color payoff",
+          "Enriched with Jojoba Oil, Bitter Cherry Seed Oil, and a proprietary RMS Adaptogenic Herbal Blend",
+          "Vegan, cruelty‑free, gluten‑free, paraben‑free, phthalate‑free, sulfate‑free, alcohol‑free, silicone‑free, and free of synthetic fragrances or flavors"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Style",
+          "label": "Karolina"
+        },
+        {
+          "name": "Color",
+          "label": "Bright Pink"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:9K6ok7h",
+      "title": "Delícia Drench Body Butter Travel Size",
+      "description": {
+        "plain": "This ultra-rich body butter cocoons extra-dry skin in a blend of nutrient-rich butters, soothing botanicals and prebiotics, finished with the woody vanilla warmth of Cheirosa 59. It offers up to 48 hours of moisture while supporting the skin barrier for a velvety-soft, never-greasy finish. Delícia Drench Body Butter Travel Size by Sol De Janeiro in Purple at Anthropologie"
+      },
+      "price_range": {
+        "min": {
+          "amount": 2400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 2400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "9K6ok7h:gb5P:01M6DC4VWE6T4XBWDX7QJVWP5Z",
+          "title": "Delícia Drench Body Butter Travel Size",
+          "description": {
+            "plain": "This ultra-rich body butter cocoons extra-dry skin in a blend of nutrient-rich butters, soothing botanicals and prebiotics, finished with the woody vanilla warmth of Cheirosa 59. It offers up to 48 hours of moisture while supporting the skin barrier for a velvety-soft, never-greasy finish. Delícia Drench Body Butter Travel Size by Sol De Janeiro in Purple at Anthropologie"
+          },
+          "price": {
+            "amount": 2400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/9K6ok7h-gb5P-public_ucp?o=01M6DC4VWE6T4XBWDX7QJVWP5Z",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/5cfa32ca-5249-4912-9927-a3643017f963"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/5cfa32ca-5249-4912-9927-a3643017f963",
+          "alt_text": "Delícia Drench Body Butter Travel Size"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:6Qk8JRA",
+      "title": "Deluxe Gradual Tan",
+      "description": {
+        "plain": "The Deluxe Gradual Tan is a luxurious lightweight lotion designed to enhance or extend a mousse tan for up to two weeks or to build a perfect shade on its own. It is formulated for medium‑to‑dark skin tones with antioxidant‑rich Acai Berry and Coffee Extract, hydrating Shea Butter, and a built‑in instant colour guide for precise application. The product comes in a 150 ml bottle and is sold in a solid, tinted formula that is nourishing, buildable, and suitable for adult females."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "6Qk8JRA:gb5P:01KYGS59WT9BZD50J3W4N7DA0Y",
+          "title": "Loving Tan 8 Hr Deluxe Gradual Self-tanning Lotion",
+          "description": {
+            "plain": "This is a gradual self-tanning lotion from Loving Tan, designed to provide a natural-looking, buildable tan. It's formulated for professional strength and a dark shade, offering a flawless, streak-free application that dries in as little as 60 seconds. The lotion is enriched with antioxidants to keep skin hydrated and radiant."
+          },
+          "price": {
+            "amount": 3000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/6Qk8JRA-gb5P-public_ucp?o=01KYGS59WT9BZD50J3W4N7DA0Y",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/290673b6-c893-43ea-a483-b307a569701d"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/290673b6-c893-43ea-a483-b307a569701d",
+          "alt_text": "Deluxe Gradual Tan"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Features antioxidant-rich skin-care actives that leave skin ultra-hydrated and radiant",
+          "Customizable, gradual, buildable formula",
+          "Flawless, streak-free application",
+          "Quick-drying formula dries in as little as 60 seconds"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:VDR1RKT",
+      "title": "L'Occitane Shea Comfort Ultra Rich Body Cream",
+      "description": {
+        "plain": "L'Occitane Karité Confort Ultra Rich Body Cream is a luxurious, intensely nourishing moisturizer designed for dry or sensitive skin. Formulated with 25% shea butter and Omega-6, this cream provides deep hydration, soothes irritation, and restores skin elasticity. It features a rich, creamy texture that absorbs quickly for a smooth, non-greasy finish, leaving the skin soft, supple, and revitalized. Packaged in a sophisticated frosted glass jar, it offers a calming scent with notes of mimosa, musk, and sandalwood."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "VDR1RKT:gb5P:01KJGYAZBF9119Z620GKRC3QX8",
+          "title": "L'occitane Karité Confort Ultra Rich Body Cream, 6.9 Oz.",
+          "description": {
+            "plain": "L'Occitane Karité Confort Ultra Rich Body Cream is a luxurious, intensely nourishing moisturizer designed for dry or sensitive skin. Formulated with 25% shea butter and Omega-6, this cream provides deep hydration, soothes irritation, and restores skin elasticity. It features a rich, creamy texture that absorbs quickly for a smooth, non-greasy finish, leaving the skin soft, supple, and revitalized. Packaged in a sophisticated frosted glass jar, it offers a calming scent with notes of mimosa, musk, and sandalwood."
+          },
+          "price": {
+            "amount": 5200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/VDR1RKT-gb5P-public_ucp?o=01KJGYAZBF9119Z620GKRC3QX8",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/adb5f34d-c610-43f5-800d-e1c56003363d"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/adb5f34d-c610-43f5-800d-e1c56003363d",
+          "alt_text": "L'Occitane Shea Comfort Ultra Rich Body Cream"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Nourishes and protects skin from dryness",
+          "Contains 25% shea butter for intense nourishment",
+          "Includes Omega-6 for skin nourishment and protection",
+          "Designed for dry or sensitive skin",
+          "Rich, creamy texture with a non-greasy finish",
+          "Designed to deliver intense hydration and comfort, day to night",
+          "Finished with the fresh scent of mimosa, musk, and sandalwood"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Qqzpmj0",
+      "title": "Mighty Patch Day + Night",
+      "description": {
+        "plain": "The Mighty Patch Day + Night patches duo pack provides the ultimate AM to PM solution for blemish emergencies. This single pack contains two fan-favorite products: the Invisible+ patches for daytime use, featuring tapered edges designed to blend seamlessly into your skin, and the Original patches for nighttime use, which work overnight to absorb gunk while you sleep. Both types of hydrocolloid patches gently absorb pimple gunk in just 6-8 hours, helping to protect skin from picking and popping while visibly shrinking whiteheads. Dermatologist-tested, non-comedogenic, and formulated without parabens, sulfates, or added fragrance, this duo is perfect for sensitive and acne-prone skin."
+      },
+      "price_range": {
+        "min": {
+          "amount": 1900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 1900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Qqzpmj0:gb5P:01KZCSFG1D7V9082VBY4Y2D5N6",
+          "title": "Mighty Patch Day + Night Patches",
+          "description": {
+            "plain": "The Mighty Patch Day + Night patches duo pack provides the ultimate AM to PM solution for blemish emergencies. This single pack contains two fan-favorite products: the Invisible+ patches for daytime use, featuring tapered edges designed to blend seamlessly into your skin, and the Original patches for nighttime use, which work overnight to absorb gunk while you sleep. Both types of hydrocolloid patches gently absorb pimple gunk in just 6-8 hours, helping to protect skin from picking and popping while visibly shrinking whiteheads. Dermatologist-tested, non-comedogenic, and formulated without parabens, sulfates, or added fragrance, this duo is perfect for sensitive and acne-prone skin."
+          },
+          "price": {
+            "amount": 1900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Qqzpmj0-gb5P-public_ucp?o=01KZCSFG1D7V9082VBY4Y2D5N6",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d3675705-9331-47e1-92c4-20eb1085f7bf"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/d3675705-9331-47e1-92c4-20eb1085f7bf",
+          "alt_text": "Mighty Patch Day + Night"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes both Invisible+ (day) and Original (night) patches",
+          "Tapered edges on Invisible+ patches for seamless blending",
+          "Gently absorbs pimple gunk in 6-8 hours",
+          "Protects skin from picking and popping",
+          "Dermatologist-tested and non-comedogenic",
+          "Safe for sensitive and acne-prone skin",
+          "Formulated without parabens, sulfates, or added fragrance",
+          "Shrinks the look of whiteheads overnight",
+          "Medical grade",
+          "Drug-free"
+        ]
+      }
+    },
+    {
+      "id": "01KR1H8Y2R0WNSDZ4FNRHTD8AK",
+      "title": "Brazilian Play Shower Cream-gel",
+      "description": {
+        "plain": "Indulge your skin with the Sol de Janeiro Brazilian Play Body Wash, a moisturizing shower cream-gel infused with the iconic Cheirosa 62 fragrance. This sulfate-free formula hydrates and softens, leaving your skin feeling nourished and refreshed. Enriched with antioxidant-rich Açaí oil and nourishing Cupuaçu butter, it gently cleanses while providing essential moisture. Perfect for everyday use, this body wash transforms your shower into a tropical escape, leaving behind a warm, pistachio and salted caramel scent."
+      },
+      "price_range": {
+        "min": {
+          "amount": 2600,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 2600,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "QjBdLfm:gb5P:01M6DC39T3KKTX695ZVJ74RWYH",
+          "title": "Brazilian Play Moisturizing Shower Cream-gel",
+          "description": {
+            "plain": "Indulge your skin with the Sol de Janeiro Brazilian Play Body Wash, a moisturizing shower cream-gel infused with the iconic Cheirosa 62 fragrance. This sulfate-free formula hydrates and softens, leaving your skin feeling nourished and refreshed. Enriched with antioxidant-rich Açaí oil and nourishing Cupuaçu butter, it gently cleanses while providing essential moisture. Perfect for everyday use, this body wash transforms your shower into a tropical escape, leaving behind a warm, pistachio and salted caramel scent."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/QjBdLfm-gb5P-public_ucp?o=01M6DC39T3KKTX695ZVJ74RWYH",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/aa77acb2-cec3-4d1b-b90f-4fccedc2cf91"
+            }
+          ]
+        },
+        {
+          "id": "HXhKVn3:ETk6:01M231E63WAZEBH2J5G1G50ZZ5",
+          "title": "Full-size Routine Builder",
+          "description": {
+            "plain": "A customizable body care set that allows customers to create their own irresistible ritual. Users can mix and match a body wash or scrub, a body cream, lotion, or oil, and a complementary fragrance, with options to add deodorant or brand merchandise for a complete personal care experience."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/HXhKVn3-ETk6-public_ucp?o=01M231E63WAZEBH2J5G1G50ZZ5",
+          "seller": {
+            "id": "ETk6",
+            "domain": "soldejaneiro.com",
+            "url": "https://soldejaneiro.com",
+            "name": "Sol de Janeiro"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/0bc1c9fe-34d0-4061-a2df-2a16292d787b"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/aa77acb2-cec3-4d1b-b90f-4fccedc2cf91",
+          "alt_text": "Brazilian Play Shower Cream-gel"
+        }
+      ],
+      "options": [
+        {
+          "name": "Step 2: Body Cream, Lotion Or Oil",
+          "values": []
+        },
+        {
+          "name": "Step 4: Deo Or Merch (Optional)",
+          "values": []
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Moisturizing",
+          "Softens",
+          "Antioxidant-rich",
+          "Sulfate-free",
+          "Cheirosa 62 Fragrance",
+          "Antioxidant-rich Açai oil",
+          "Nourishing Cupuaçu Butter",
+          "Warm gourmand Cheirosa 62™ scent",
+          "Doubles as a shaving gel",
+          "Daily body wash nourishes while cleansing for skin that feels soft and deliciously scented"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Body Wash Or Scrub",
+          "label": "Brazilian Play Moisturizing Shower Cream-Gel"
+        },
+        {
+          "name": "Scent",
+          "label": "Cheirosa 62 Perfume Mist"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:C5RJr9T",
+      "title": "Hydration Shampoo",
+      "description": {
+        "plain": "A rich and creamy hydrating shampoo designed to replenish the driest hair. This formula is infused with rare Amazonian oils, including Rahua oil, Morete, and Sacha Inchi, combined with protein-bonding mango sugars to drive moisture deep into the hair shaft. Scented with tropical passion fruit and mango, it helps smooth the cuticle, prevent frizz, and add shine, leaving the scalp balanced and hair stronger and healthier."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "C5RJr9T:gb5P:01KBPCAMNH0CV8JB2VXH070YHR",
+          "title": "Hydration Shampoo",
+          "description": {
+            "plain": "A rich and creamy hydrating shampoo designed to replenish the driest hair. This formula is infused with rare Amazonian oils, including Rahua oil, Morete, and Sacha Inchi, combined with protein-bonding mango sugars to drive moisture deep into the hair shaft. Scented with tropical passion fruit and mango, it helps smooth the cuticle, prevent frizz, and add shine, leaving the scalp balanced and hair stronger and healthier."
+          },
+          "price": {
+            "amount": 3800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/C5RJr9T-gb5P-public_ucp?o=01KBPCAMNH0CV8JB2VXH070YHR",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c5ef42c1-2c65-403a-91f1-aa4a34fd7937"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/c5ef42c1-2c65-403a-91f1-aa4a34fd7937",
+          "alt_text": "Hydration Shampoo"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "For all hair types experiencing dryness",
+          "Delivers maximum hydration",
+          "Smooths hair cuticle",
+          "Helps prevent frizz",
+          "Adds shine",
+          "Infused with Morete, Rahua oil, and Sacha Inchi",
+          "Vegan and cruelty-free",
+          "Ultrarich moisturizing cream shampoo",
+          "Sustainably sourced rahua and ungurahua oils",
+          "Organic mango sugars for protein-bonding"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:6VLKKmW",
+      "title": "Sunny Start Eye Serum",
+      "description": {
+        "plain": "Ursa Major Sunny Start Eye Serum is a cooling gel serum designed to revitalize tired eyes. Clinically shown to improve the appearance of fine lines, dark circles, and under-eye puffiness, it utilizes plant peptides and skin-energizing actives to firm, tighten, and smooth the delicate orbital area. Key ingredients include Cedar Peptides for elasticity, Ash Tree Bark for de-puffing, Vitamin C for brightening, and Caffeine to reduce puffiness."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "6VLKKmW:gb5P:01KZG298FDASSSRP7K79M4P58J",
+          "title": "Ursa Major Sunny Start Eye Serum",
+          "description": {
+            "plain": "Ursa Major Sunny Start Eye Serum is a cooling gel serum designed to revitalize tired eyes. Clinically shown to improve the appearance of fine lines, dark circles, and under-eye puffiness, it utilizes plant peptides and skin-energizing actives to firm, tighten, and smooth the delicate orbital area. Key ingredients include Cedar Peptides for elasticity, Ash Tree Bark for de-puffing, Vitamin C for brightening, and Caffeine to reduce puffiness."
+          },
+          "price": {
+            "amount": 5200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/6VLKKmW-gb5P-public_ucp?o=01KZG298FDASSSRP7K79M4P58J",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/81f0d393-1b98-43a7-b8bc-1a700d01da39"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/81f0d393-1b98-43a7-b8bc-1a700d01da39",
+          "alt_text": "Sunny Start Eye Serum"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Instantly de-puffs, tightens, and brightens the eye area",
+          "Vitamin C-infused to brighten and smooth appearance",
+          "Contains Cedar Peptides to boost skin elasticity and firmness",
+          "Includes Ash Tree Bark to support a well-rested look by de-puffing",
+          "Lightweight and hydrating formula suitable for all skin types",
+          "Cruelty-free, Vegan, and Fragrance-free",
+          "Sustainable glass packaging",
+          "Brightens dark circles and softens fine lines instantly",
+          "Paraben, sulfate, and phthalate-free",
+          "Cooling gel formula"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:BfPlG9X",
+      "title": "Three Season Down Duvet Insert",
+      "description": {
+        "plain": "This Coyuchi duvet insert is designed for year-round comfort, offering a naturally lightweight and lofty layer. It features responsibly sourced down with a 600-fill power, encased in a down-proof, 100% organic cotton shell. The stitch-through box construction ensures even distribution of the down. Made in the USA, the down is humanely raised and carefully processed on an Indiana duck farm, with quality controlled from start to finish. This insert is recommended for use on its own from spring through fall, and can be layered with a blanket in winter for excellent temperature control. Coyuchi is known for high-quality linens made from minimally processed natural and organic fibers in responsible factories, with a design aesthetic inspired by the coast."
+      },
+      "price_range": {
+        "min": {
+          "amount": 49800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 49800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "BfPlG9X:gb5P:01KKT8BSRPAE7PJ1DESDS5C03J",
+          "title": "Coyuchi Three Season Down Duvet Insert",
+          "description": {
+            "plain": "This Coyuchi duvet insert is designed for year-round comfort, offering a naturally lightweight and lofty layer. It features responsibly sourced down with a 600-fill power, encased in a down-proof, 100% organic cotton shell. The stitch-through box construction ensures even distribution of the down. Made in the USA, the down is humanely raised and carefully processed on an Indiana duck farm, with quality controlled from start to finish. This insert is recommended for use on its own from spring through fall, and can be layered with a blanket in winter for excellent temperature control. Coyuchi is known for high-quality linens made from minimally processed natural and organic fibers in responsible factories, with a design aesthetic inspired by the coast."
+          },
+          "price": {
+            "amount": 49800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/BfPlG9X-gb5P-public_ucp?o=01KKT8BSRPAE7PJ1DESDS5C03J",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/1c57dae0-7748-4da5-89a2-9287ef15dc44"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/1c57dae0-7748-4da5-89a2-9287ef15dc44",
+          "alt_text": "Three Season Down Duvet Insert"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "600-fill-power responsibly sourced duck down",
+          "100% organic cotton shell",
+          "Baffle box stitch construction for even distribution",
+          "Slightly oversized for a lofty, cozy look",
+          "Made in the USA",
+          "Designed for year-round comfort (Three Season)",
+          "naturally lightweight and lofty layer designed for year-round comfort",
+          "double-washed down sourced from an Indiana duck farm where the birds are humanely raised",
+          "recommended for spring through fall, then layered with a blanket in winter for excellent temperature control",
+          "machine washable"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:lmQrpew",
+      "title": "Essential Lip Tints Trio Set",
+      "description": {
+        "plain": "A set of three lanolin-rich tinted lip balms designed to provide hydration and a sheer, effortless tint. Packed with over 70% lanolin, shea butter, and vitamin E, these balms offer a high-gloss sheen and moisturizing care. The trio includes three versatile shades: Perfect Nude, Rhubarb, and Rose."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "lmQrpew:gb5P:01M02N7J34GXJDZP3P39MCKN2P",
+          "title": "The #1 Essential Lip Tints Trio Set",
+          "description": {
+            "plain": "A set of three lanolin-rich tinted lip balms designed to provide hydration and a sheer, effortless tint. Packed with over 70% lanolin, shea butter, and vitamin E, these balms offer a high-gloss sheen and moisturizing care. The trio includes three versatile shades: Perfect Nude, Rhubarb, and Rose."
+          },
+          "price": {
+            "amount": 3200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/lmQrpew-gb5P-public_ucp?o=01M02N7J34GXJDZP3P39MCKN2P",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/817e3639-b7a2-4809-a584-7926e64bc5d4"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/817e3639-b7a2-4809-a584-7926e64bc5d4",
+          "alt_text": "Essential Lip Tints Trio Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Set of three lip tints",
+          "Sheer, wearable tint designed to complement all complexions",
+          "High-gloss sheen for a subtle, polished look",
+          "Blend of lanolin and shea butter to help condition lips",
+          "Lightweight and effortless feel"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:X7A7iLR",
+      "title": "Glow Oil",
+      "description": {
+        "plain": "This lightweight, reef-safe body oil provides SPF 50 sun protection while leaving the skin with a radiant glow. Formulated with an antioxidant-rich blend of argan, meadowfoam, and grape seed oils, it deeply hydrates the skin without a greasy feel. The formula is water-resistant for 80 minutes and features a refreshing cucumber scent."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 4000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "X7A7iLR:gb5P:01KZZ36R1P9VVCYZCF40AS5M17",
+          "title": "Spf 50 Glow Oil",
+          "description": {
+            "plain": "This lightweight, reef-safe body oil provides SPF 50 sun protection while leaving the skin with a radiant glow. Formulated with an antioxidant-rich blend of argan, meadowfoam, and grape seed oils, it deeply hydrates the skin without a greasy feel. The formula is water-resistant for 80 minutes and features a refreshing cucumber scent."
+          },
+          "price": {
+            "amount": 4000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/X7A7iLR-gb5P-public_ucp?o=01KZZ36R1P9VVCYZCF40AS5M17",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/fa259265-c3ed-4587-91ac-c6c676e53424"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/fa259265-c3ed-4587-91ac-c6c676e53424",
+          "alt_text": "Glow Oil"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "SPF 50 protection",
+          "Reef-safe formula",
+          "Water-resistant for 80 minutes",
+          "Cucumber scent",
+          "Deeply hydrating and non-greasy"
+        ]
+      }
+    },
+    {
+      "id": "01KZXNY4ZPSJWQ1MNWEH8EGRNW",
+      "title": "100% Turkish Cotton Towel Collection",
+      "description": {
+        "plain": "Indulge in the luxurious softness and superior absorbency of our 100% Turkish Cotton Towel Collection. Sourced from the finest long-staple cotton from Turkey's Aegean region, these towels are expertly crafted using a hydrocotton process. This unique weaving technique creates exceptionally fine loops, ensuring rapid drying and maximum absorbency. OEKO-TEX® certified, you can trust that these towels are produced with responsible practices and are free from harmful substances, offering a spa-like experience with every use."
+      },
+      "price_range": {
+        "min": {
+          "amount": 2000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5495,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "7ROH4lv:gb5P:01KJTTWVPXAJAJBE724B6N680D",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "Indulge in the luxurious softness and superior absorbency of our 100% Turkish Cotton Towel Collection. Sourced from the finest long-staple cotton from Turkey's Aegean region, these towels are expertly crafted using a hydrocotton process. This unique weaving technique creates exceptionally fine loops, ensuring rapid drying and maximum absorbency. OEKO-TEX® certified, you can trust that these towels are produced with responsible practices and are free from harmful substances, offering a spa-like experience with every use."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/7ROH4lv-gb5P-public_ucp?o=01KJTTWVPXAJAJBE724B6N680D",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/51c30a9d-4273-4caf-9a3b-93ff329188ac"
+            }
+          ]
+        },
+        {
+          "id": "vxdTDEf:gb5P:01KJWGWTFYPNWJM67CMNTV6JPA",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "A collection of Turkish cotton towels featuring long-staple Aegean cotton, hydrocotton woven loops for absorbency and quick drying. OEKO-TEX certified. Includes hand, bath, washcloth towels in a color variant (Guacamole). Made in Turkey."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/vxdTDEf-gb5P-public_ucp?o=01KJWGWTFYPNWJM67CMNTV6JPA",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/b5bcd226-4783-4d23-b8ae-72eccbcee35a"
+            }
+          ]
+        },
+        {
+          "id": "D3388RN:gb5P:01KZMJJNKBXGH5M16AC878GSEP",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "This luxurious towel collection is crafted from 100% long-staple Aegean Turkish cotton, known for its exceptional softness and absorbency. Woven using a hydrocotton process, these towels dry faster and feel incredibly plush. The OEKO-TEX® certification ensures they are made with responsible processes and are free from harmful substances. Available in a range of sophisticated colors, this collection brings spa-like comfort to your home."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/D3388RN-gb5P-public_ucp?o=01KZMJJNKBXGH5M16AC878GSEP",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/8ddf30db-4a2d-4c83-8887-8e17c55a7770"
+            }
+          ]
+        },
+        {
+          "id": "Q9z3inu:gb5P:01KJV4AMS4DYQ3J4M39FYM4KAN",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "A plush, hydrocotton towel collection crafted from 100% long-staple Turkish cotton sourced from the Aegean region. OEKO-TEX certified and manufactured using responsible processes. Includes washcloths, hand towels, bath towels, and bath sheets in multiple colors. Made in Turkey and designed for absorbency and quick drying."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Q9z3inu-gb5P-public_ucp?o=01KJV4AMS4DYQ3J4M39FYM4KAN",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f3774b43-e9ff-4586-a114-cba5b5dca407"
+            }
+          ]
+        },
+        {
+          "id": "jAmbPfB:gb5P:01KJV4TDGPWQX6331JXTA2ZV7N",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "A collection of luxury bath towels crafted from long-staple 100% Turkish cotton sourced from the Aegean region. The towels feature a plush terry texture with fine loops for enhanced absorbency and faster drying, fringed edges, and come in a multi-color pastel assortment. OEKO-TEX certified, produced with responsible processes. Includes washcloths, hand towels, baths towels, and bath sheets as part of bundles. Made in Turkey. Unisex product suitable for adults."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/jAmbPfB-gb5P-public_ucp?o=01KJV4TDGPWQX6331JXTA2ZV7N",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/8cbe6e87-5dd4-41ae-acdf-0e60a610be1c"
+            }
+          ]
+        },
+        {
+          "id": "Cb08g9l:gb5P:01KJVH0MCYG3XJ1ZHN3WVSTY4C",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "A collection of bath towels crafted from long-staple 100% Turkish cotton sourced from the Aegean region. The towels are woven using a hydrocotton process to give a dense, plush pile with enhanced absorbency and faster drying. OEKO-TEX certified and produced with responsible processes. Includes sets and individual towels (washcloths, hand towels, bath towels, bath sheets) in blue colorway with fringed edges. Made in Turkey."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Cb08g9l-gb5P-public_ucp?o=01KJVH0MCYG3XJ1ZHN3WVSTY4C",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/59a6d826-531c-4d1b-ab04-7da3a2f7d219"
+            }
+          ]
+        },
+        {
+          "id": "Mhi9SG9:gb5P:01KJY3G4668F0WR9QT9A381V30",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "A collection of high-absorbency towels crafted from long-staple 100% Turkish cotton sourced from Turkey’s Aegean region. The towels are woven with a hydrocotton process to create fine loops for enhanced absorbency and faster drying. OEKO-TEX certified and made using responsible processes, the collection includes sets of towels and washcloths in a burgundy color. The product is a physical towel collection."
+          },
+          "price": {
+            "amount": 5495,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 6800,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/Mhi9SG9-gb5P-public_ucp?o=01KJY3G4668F0WR9QT9A381V30",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a84d6748-68ca-4e8f-aa61-224e7c1dcab3"
+            }
+          ]
+        },
+        {
+          "id": "AldO0RU:gb5P:01KJY2WQX0450F9RASW24K34Q0",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "A luxurious collection of bath towels crafted from long-staple 100% Turkish cotton, designed for absorbency and quick-drying. OEKO-TEX certified and produced using responsible processes. Available in multiple colors and towel sizes, including hand towel, bath towel, and bath sheet. Unisex and suitable for adults."
+          },
+          "price": {
+            "amount": 4000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/AldO0RU-gb5P-public_ucp?o=01KJY2WQX0450F9RASW24K34Q0",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/54be1160-25b5-4675-ad10-529a21c2845e"
+            }
+          ]
+        },
+        {
+          "id": "n9kwJEM:gb5P:01M0VQGW57Y9GHP44HV6Q1JPAN",
+          "title": "100% Turkish Cotton Towel Collection",
+          "description": {
+            "plain": "A collection of bath towels crafted from 100% long-staple Turkish cotton sourced from Turkey's Aegean region. Woven with a hydrocotton process to create fine loops for high absorbency and rapid drying. OEKO-TEX certified and produced with responsible practices. Includes washcloths, hand towels, bath towels, and bath sheets in a white colorway, with options in multiple sizes. Made in Turkey. 750 gsm. Care: machine wash; tumble dry low. Fringed edges on some pieces."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/n9kwJEM-gb5P-public_ucp?o=01M0VQGW57Y9GHP44HV6Q1JPAN",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/14d241d4-aae2-4669-8f96-7b58152c2a20"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/51c30a9d-4273-4caf-9a3b-93ff329188ac",
+          "alt_text": "100% Turkish Cotton Towel Collection"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "D3388RN",
+              "label": "Blue"
+            },
+            {
+              "id": "vxdTDEf",
+              "label": "Guacamole"
+            },
+            {
+              "id": "Q9z3inu",
+              "label": "Slate"
+            },
+            {
+              "id": "jAmbPfB",
+              "label": "Rose"
+            },
+            {
+              "id": "7ROH4lv",
+              "label": "White"
+            },
+            {
+              "id": "Mhi9SG9",
+              "label": "Wine"
+            },
+            {
+              "id": "AldO0RU",
+              "label": "Honey"
+            }
+          ]
+        },
+        {
+          "name": "Towel Type",
+          "values": [
+            {
+              "label": "Hand Towel"
+            },
+            {
+              "label": "Bath Towel"
+            },
+            {
+              "label": "Bath Sheet"
+            }
+          ]
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 6800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6800,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Woven using a hydrocotton process for enhanced absorbency and faster drying",
+          "750 gsm",
+          "OEKO-TEX® certified and tested to be free from harmful substances",
+          "Machine wash; tumble dry low",
+          "Iron on warm setting if needed"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "White"
+        }
+      ]
+    },
+    {
+      "id": "01M26EDPREHXXSB4Q1MCDN1Q59",
+      "title": "Breathesoft Natural Rise Thong",
+      "description": {
+        "plain": "Experience ultimate comfort and a seamless look with this 3-pack of Hanky Panky thongs. Made from an ultra-lightweight, smooth microfiber knit from Italy, these thongs feature innovative moisture-wicking fabric to keep you dry and comfortable. Designed to stay in place with a sleek, barely-there feel, they disappear under the clingiest fashions. The flattering 2\" wide V waistband hits at mid-hip, offering a comfortable and secure fit. Each thong is made in the USA with a body of nylon/LYCRA® spandex and a Supima® cotton lining. Hand wash in cool water with mild detergent and dry flat or hang to dry."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 4800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "9uf9svk:gb5P:01KZCWBESEZ08TPX98TAA35TE9",
+          "title": "Breathesoft™ Natural Rise Thong 3 Pack",
+          "description": {
+            "plain": "Experience ultimate comfort and a seamless look with this 3-pack of Hanky Panky thongs. Made from an ultra-lightweight, smooth microfiber knit from Italy, these thongs feature innovative moisture-wicking fabric to keep you dry and comfortable. Designed to stay in place with a sleek, barely-there feel, they disappear under the clingiest fashions. The flattering 2\" wide V waistband hits at mid-hip, offering a comfortable and secure fit. Each thong is made in the USA with a body of nylon/LYCRA® spandex and a Supima® cotton lining. Hand wash in cool water with mild detergent and dry flat or hang to dry."
+          },
+          "price": {
+            "amount": 4800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/9uf9svk-gb5P-public_ucp?o=01KZCWBESEZ08TPX98TAA35TE9",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c263a50a-be92-4998-8408-62958084d566"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/c263a50a-be92-4998-8408-62958084d566",
+          "alt_text": "Breathesoft Natural Rise Thong"
+        }
+      ],
+      "options": [
+        {
+          "name": "Size",
+          "values": [
+            {
+              "label": "XS"
+            },
+            {
+              "label": "S"
+            },
+            {
+              "label": "M"
+            },
+            {
+              "label": "L"
+            },
+            {
+              "label": "XL"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Moisture-wicking fabric keeps you dry and comfortable",
+          "Ultra-lightweight, smooth second-skin microfiber knit",
+          "Seamless look that disappears under clothing",
+          "Flattering 2\" wide V-waistband that hits at mid-hip",
+          "Designed to stay in place without shifting or riding up",
+          "Set of three",
+          "Nylon, lycra; Supima cotton gusset",
+          "Hand wash",
+          "Thong panty",
+          "Natural rise"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:ApaLZXp",
+      "title": "Full-Size Hydration Haul 2-Piece Skincare Gift Set with Hyaluronic Acid Moisturizers",
+      "description": {
+        "plain": "The Peter Thomas Roth Full Size Hydration Haul Bestsellers Gift Set is a skincare bundle featuring two full-size Water Drench® Hyaluronic Cloud Cream Hydrating Moisturizers (1.7 oz each). Formulated with a 30% Hyaluronic Acid Complex and Pentavitin®, this set is designed to intensely hydrate the skin for up to 72 hours, visibly reduce the appearance of fine lines and wrinkles, and leave the complexion feeling silky and smooth. It is suitable for all skin types, including normal, oily, combination, and dry skin."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "ApaLZXp:gb5P:01M6CHZCZPESRBBARGNZV26J2A",
+          "title": "Full-size Hydration Haul 2-piece Bestsellers Kit",
+          "description": {
+            "plain": "The Peter Thomas Roth Full Size Hydration Haul Bestsellers Gift Set is a skincare bundle featuring two full-size Water Drench® Hyaluronic Cloud Cream Hydrating Moisturizers (1.7 oz each). Formulated with a 30% Hyaluronic Acid Complex and Pentavitin®, this set is designed to intensely hydrate the skin for up to 72 hours, visibly reduce the appearance of fine lines and wrinkles, and leave the complexion feeling silky and smooth. It is suitable for all skin types, including normal, oily, combination, and dry skin."
+          },
+          "price": {
+            "amount": 5500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/ApaLZXp-gb5P-public_ucp?o=01M6CHZCZPESRBBARGNZV26J2A",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/414bba28-2c6f-46a0-a348-ec753a3fbfde"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/414bba28-2c6f-46a0-a348-ec753a3fbfde",
+          "alt_text": "Full-Size Hydration Haul 2-Piece Skincare Gift Set with Hyaluronic Acid Moisturizers"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Contains two full-size Water Drench Hyaluronic Cloud Cream Moisturizers",
+          "30% Hyaluronic Acid Complex for potent hydration",
+          "Pentavitin helps provide hydration for up to 72 hours",
+          "Contains Ceramides to leave skin feeling silky soft and smooth",
+          "Helps smooth the look of fine lines and wrinkles",
+          "Suitable for all skin types",
+          "Clinically proven to improve skin barrier immediately",
+          "Vegan, gluten-free, and cruelty-free",
+          "Free of parabens, phthalates, and mineral oil",
+          "Contains two full-size Water Drench® Hyaluronic Cloud Cream Hydrating Moisturizers (1.7 oz each)"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:HeXUAYC",
+      "title": "7-Pc. Water Drench Hydra-Besties Skincare Travel Set",
+      "description": {
+        "plain": "The Peter Thomas Roth 7-Pc. Water Drench Hydra-Besties Skincare Travel Set is a hydrating skincare kit designed for on-the-go use. The set includes a Water Drench Hyaluronic Cloud Cream Hydrating Moisturizer (0.67 oz), Water Drench Hyaluronic Cloud Hydra-Gel Eye Patches (5 pairs), and a Water Drench Broad Spectrum SPF 45 Hyaluronic Cloud Moisturizer (0.67 oz), all packaged in a bonus cosmetic zipper pouch. Formulated with a 30% hyaluronic acid complex and Pentavitin, the set aims to drench the skin in moisture, reduce the appearance of under-eye puffiness and dark circles, and provide invisible UVA/UVB protection."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 4200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "HeXUAYC:gb5P:01KY3PHC16X114QXY8AGQ4C11A",
+          "title": "Peter Thomas Roth 7-pc. Water Drench Hydra-besties Skincare Travel Set",
+          "description": {
+            "plain": "The Peter Thomas Roth 7-Pc. Water Drench Hydra-Besties Skincare Travel Set is a hydrating skincare kit designed for on-the-go use. The set includes a Water Drench Hyaluronic Cloud Cream Hydrating Moisturizer (0.67 oz), Water Drench Hyaluronic Cloud Hydra-Gel Eye Patches (5 pairs), and a Water Drench Broad Spectrum SPF 45 Hyaluronic Cloud Moisturizer (0.67 oz), all packaged in a bonus cosmetic zipper pouch. Formulated with a 30% hyaluronic acid complex and Pentavitin, the set aims to drench the skin in moisture, reduce the appearance of under-eye puffiness and dark circles, and provide invisible UVA/UVB protection."
+          },
+          "price": {
+            "amount": 4200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/HeXUAYC-gb5P-public_ucp?o=01KY3PHC16X114QXY8AGQ4C11A",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/97b06f41-ab92-44f7-958f-209e441f5479"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/97b06f41-ab92-44f7-958f-209e441f5479",
+          "alt_text": "7-Pc. Water Drench Hydra-Besties Skincare Travel Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes Hyaluronic Cloud Cream, Hydra-Gel Eye Patches, and SPF 45 Moisturizer",
+          "Contains 30% hyaluronic acid complex for intense hydration",
+          "Pentavitin provides hydration for up to 72 hours",
+          "Broad Spectrum SPF 45 protects against UVA/UVB rays",
+          "Includes a bonus cosmetic bag for travel"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:1k1zsVd",
+      "title": "Due Alberi Biphase Moisturizing Oil",
+      "description": {
+        "plain": "This innovative biphase oil from Furtuna Skin is designed to combat dryness, dullness, and environmental pollutants. When shaken, the botanical olive oil and nutrient-rich olive leaf water work together to visibly plump, protect, and replenish the skin's moisture barrier, resulting in a radiant glow. It features key ingredients like stabilized Vitamin C to support collagen synthesis and brighten skin tone, aromatic magnolia oil for moisture, and Wildly Potent® actives to protect against digital blue light, UV radiation, and urban pollution. The lightweight texture leaves a luminous finish without a greasy residue."
+      },
+      "price_range": {
+        "min": {
+          "amount": 22500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 22500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "1k1zsVd:gb5P:01KZWWNV05WNJHYTXZ4QJXKBA3",
+          "title": "Travel Size Due Alberi Biphase Moisturizing Oil",
+          "description": {
+            "plain": "This innovative biphase oil from Furtuna Skin is designed to combat dryness, dullness, and environmental pollutants. When shaken, the botanical olive oil and nutrient-rich olive leaf water work together to visibly plump, protect, and replenish the skin's moisture barrier, resulting in a radiant glow. It features key ingredients like stabilized Vitamin C to support collagen synthesis and brighten skin tone, aromatic magnolia oil for moisture, and Wildly Potent® actives to protect against digital blue light, UV radiation, and urban pollution. The lightweight texture leaves a luminous finish without a greasy residue."
+          },
+          "price": {
+            "amount": 22500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/1k1zsVd-gb5P-public_ucp?o=01KZWWNV05WNJHYTXZ4QJXKBA3",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/4b9787cd-bd5e-4211-8bbd-ad0c25c0982e"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/4b9787cd-bd5e-4211-8bbd-ad0c25c0982e",
+          "alt_text": "Due Alberi Biphase Moisturizing Oil"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Biphase formula",
+          "Visibly plumps, protects, and replenishes skin's moisture barrier",
+          "Botanically infused olive oil and nutrient-rich olive leaf water",
+          "Contains stabilized Vitamin C to brighten and even tone",
+          "Aromatic magnolia oil replenishes skin with plumping moisture activators",
+          "Protects against digital blue light, UV radiation, and urban air pollution",
+          "Lightweight texture leaves a luminous glow without greasy residue",
+          "Made with twelve certified organic, wild-foraged plants from Sicily",
+          "Helps plump skin and protect against collagen breakdown",
+          "TSA-friendly travel size"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:bzY4s12",
+      "title": "Signature Lace® Padded Triangle Bralette",
+      "description": {
+        "plain": "This Hanky Panky bralette is made from their signature lace and features padded triangle cups for gentle support. It's lined with mocha stretch tulle and designed for comfort and a sexy feel. The bralette slips on over the head and fits AA to B cups best. It is part of the Signature Lace collection."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3995,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3995,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "bzY4s12:gb5P:01KBPD919M30F5W7SQPJZ572RP",
+          "title": "Signature Lace® Padded Triangle Bralette Black",
+          "description": {
+            "plain": "This Hanky Panky bralette is made from their signature lace and features padded triangle cups for gentle support. It's lined with mocha stretch tulle and designed for comfort and a sexy feel. The bralette slips on over the head and fits AA to B cups best. It is part of the Signature Lace collection."
+          },
+          "price": {
+            "amount": 3995,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/bzY4s12-gb5P-public_ucp?o=01KBPD919M30F5W7SQPJZ572RP",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c7a94461-741f-46ab-a437-10a8a6868e41"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/c7a94461-741f-46ab-a437-10a8a6868e41",
+          "alt_text": "Signature Lace® Padded Triangle Bralette"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Padded triangle bralette in our signature lace",
+          "Lined in mocha stretch tulle",
+          "Offers light support",
+          "Removable pads",
+          "Fits AA to B cups best",
+          "Bralette has no back closure and slips on over the head"
+        ]
+      }
+    },
+    {
+      "id": "01KSEZM8JYKBP9FJG76XN18NSF",
+      "title": "Temescal Organic Bath Mat",
+      "description": {
+        "plain": "Experience the ultimate in comfort and absorbency with the Coyuchi Temescal Organic Ribbed Bath Mat. Crafted from 100% organic Turkish cotton, this bath mat is exceptionally soft, lightweight, and quick-drying. Its distinctive vertical ribbed texture enhances its drying power, while the natural softness ensures a plush feel without being overly thick. Ethically produced in responsible factories, this mat reflects Coyuchi's commitment to high-quality, minimally processed natural fibers and sustainable design. Inspired by coastal palettes, it brings a touch of serene elegance to your bathroom."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "aclKuMT:gb5P:01KZFV5QSJ6VVQ1NQQA6VQT4S8",
+          "title": "Temescal Organic Bath Mat Lagoon",
+          "description": {
+            "plain": "Experience the ultimate in comfort and absorbency with the Coyuchi Temescal Organic Ribbed Bath Mat. Crafted from 100% organic Turkish cotton, this bath mat is exceptionally soft, lightweight, and quick-drying. Its distinctive vertical ribbed texture enhances its drying power, while the natural softness ensures a plush feel without being overly thick. Ethically produced in responsible factories, this mat reflects Coyuchi's commitment to high-quality, minimally processed natural fibers and sustainable design. Inspired by coastal palettes, it brings a touch of serene elegance to your bathroom."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/aclKuMT-gb5P-public_ucp?o=01KZFV5QSJ6VVQ1NQQA6VQT4S8",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/77c70484-6bb3-4162-add1-477aaffe1fb6"
+            }
+          ]
+        },
+        {
+          "id": "B5UFmk4:WKoj:01M42GWFDHY3VRZSP603NRNBKX",
+          "title": "Temescal Organic Bath Mat",
+          "description": {
+            "plain": "This bath mat is made from soft, light, and fluffy long-staple organic Turkish cotton. It's woven with narrow vertical channels for enhanced absorbency and quick drying. The mat is naturally soft and plush without feeling heavy, offering a luxurious feel underfoot."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/B5UFmk4-WKoj-public_ucp?o=01M42GWFDHY3VRZSP603NRNBKX",
+          "seller": {
+            "id": "WKoj",
+            "domain": "allmodern.com",
+            "url": "https://www.allmodern.com",
+            "name": "AllModern"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/368f56d5-5f93-473a-bea0-4eb2765433b8"
+            }
+          ]
+        },
+        {
+          "id": "B5UFmk4:6m3X:01KQXNXJVXZBVHBBMB5MB0QH7X",
+          "title": "Temescal Organic Bath Mat",
+          "description": {
+            "plain": "This bath mat is made from soft, light, and fluffy long-staple organic Turkish cotton. It's woven with narrow vertical channels for enhanced absorbency and quick drying. The mat is naturally soft and plush without feeling heavy, offering a luxurious feel underfoot."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/B5UFmk4-6m3X-public_ucp?o=01KQXNXJVXZBVHBBMB5MB0QH7X",
+          "seller": {
+            "id": "6m3X",
+            "domain": "coyuchi.com",
+            "url": "https://www.coyuchi.com",
+            "name": "Coyuchi"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/368f56d5-5f93-473a-bea0-4eb2765433b8"
+            }
+          ]
+        },
+        {
+          "id": "4N58q5t:6m3X:01M2NJSSTZG2DTZ6P0RRQ0J9SM",
+          "title": "Temescal Organic Bath Mat",
+          "description": {
+            "plain": "The Temescal Organic Bath Mat is crafted from long-staple organic Turkish cotton, spun into a lightweight yarn and woven with narrow vertical channels to maximize absorbency and drying power. Naturally soft, plush, and thirsty without feeling heavy, it provides a sustainable and luxurious addition to any bathroom."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/4N58q5t-6m3X-public_ucp?o=01M2NJSSTZG2DTZ6P0RRQ0J9SM",
+          "seller": {
+            "id": "6m3X",
+            "domain": "coyuchi.com",
+            "url": "https://www.coyuchi.com",
+            "name": "Coyuchi"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/12675578-aa79-4271-992f-d3ca9de668f7"
+            }
+          ]
+        },
+        {
+          "id": "YGqjcwT:WKoj:01M4CQ9D1KHC1JFNV7XPBZ8709",
+          "title": "Temescal Organic Bath Mat",
+          "description": {
+            "plain": "The Temescal Organic Bath Mat is designed for optimal absorbency and quick drying. Crafted from long-staple organic Turkish cotton, it features a lightweight yarn woven into narrow vertical channels to enhance drying power. Naturally soft and plush without the use of chemical softeners, it provides a luxury feel while remaining sustainable."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/YGqjcwT-WKoj-public_ucp?o=01M4CQ9D1KHC1JFNV7XPBZ8709",
+          "seller": {
+            "id": "WKoj",
+            "domain": "allmodern.com",
+            "url": "https://www.allmodern.com",
+            "name": "AllModern"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/7dd334f5-3965-41fd-a31b-e5092071837b"
+            }
+          ]
+        },
+        {
+          "id": "YGqjcwT:6m3X:01M2ZCGS0ZGWVJ928XF8Z2XACM",
+          "title": "Temescal Organic Bath Mat",
+          "description": {
+            "plain": "The Temescal Organic Bath Mat is designed for optimal absorbency and quick drying. Crafted from long-staple organic Turkish cotton, it features a lightweight yarn woven into narrow vertical channels to enhance drying power. Naturally soft and plush without the use of chemical softeners, it provides a luxury feel while remaining sustainable."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/YGqjcwT-6m3X-public_ucp?o=01M2ZCGS0ZGWVJ928XF8Z2XACM",
+          "seller": {
+            "id": "6m3X",
+            "domain": "coyuchi.com",
+            "url": "https://www.coyuchi.com",
+            "name": "Coyuchi"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/7dd334f5-3965-41fd-a31b-e5092071837b"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/77c70484-6bb3-4162-add1-477aaffe1fb6",
+          "alt_text": "Temescal Organic Bath Mat"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "aclKuMT",
+              "label": "Lagoon"
+            },
+            {
+              "id": "4N58q5t",
+              "label": "Undyed"
+            },
+            {
+              "id": "YGqjcwT",
+              "label": "Ginger"
+            },
+            {
+              "id": "B5UFmk4",
+              "label": "Alpine White"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "soft",
+          "light",
+          "fluffy",
+          "absorbent",
+          "quick to dry",
+          "woven with narrow vertical channels for added drying power",
+          "naturally soft, plush, and thirsty without feeling thick or heavy",
+          "Made from long-staple organic Turkish cotton",
+          "Responsibly and ethically produced",
+          "Machine washable"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Lagoon"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOjk0YTcyNTg1YWUwOWI2ZjkiLCAib2Zmc2V0IjogMjB9"
+  },
+  "messages": []
+}

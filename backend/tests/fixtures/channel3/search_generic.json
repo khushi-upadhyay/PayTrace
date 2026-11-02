@@ -1,0 +1,1082 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "01M245A4XE96D5P54JV8EHGFD3",
+      "title": "Nagai Handmade Ceramic Mug",
+      "description": {
+        "plain": "The Nagai Mug is a sturdy, handmade ceramic mug designed for versatility and comfort. It features a chunky handle and a 16oz volume, making it suitable for all hand sizes. The mug has a matte finish and is both dishwasher and microwave safe. Due to its artisanal nature, each piece is unique with slight variations in size, shape, and glaze."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5600,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5600,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "UA9jdyJ:ZPZn:01M20JKFBC4T375JY8878TRVBY",
+          "title": "Nagai Handmade Ceramic Mug",
+          "description": {
+            "plain": "The Nagai Mug is a sturdy, handmade ceramic mug designed for versatility and comfort. It features a chunky handle and a 16oz volume, making it suitable for all hand sizes. The mug has a matte finish and is both dishwasher and microwave safe. Due to its artisanal nature, each piece is unique with slight variations in size, shape, and glaze."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/UA9jdyJ-ZPZn-public_ucp?o=01M20JKFBC4T375JY8878TRVBY",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/28abd181-fc15-438c-b141-95f6148d7afc"
+            }
+          ]
+        },
+        {
+          "id": "HJOnvCZ:ZPZn:01M1Y1YB25Z5CNWPDDH51S8445",
+          "title": "Nagai Handmade Ceramic Mug",
+          "description": {
+            "plain": "A sturdy and versatile handmade ceramic mug featuring a chunky handle for enhanced comfort. This 16oz mug is both dishwasher and microwave safe, and due to its artisanal nature, each piece is unique with slight variations in size, shape, and glaze."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/HJOnvCZ-ZPZn-public_ucp?o=01M1Y1YB25Z5CNWPDDH51S8445",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c3656cd0-e87f-4445-be38-bf28e412550b"
+            }
+          ]
+        },
+        {
+          "id": "R6x14iq:ZPZn:01M23KX4V310Y5WBG5NSCXQV69",
+          "title": "Nagai Handmade Ceramic Mug",
+          "description": {
+            "plain": "The Nagai Mug is a handmade ceramic mug designed for comfort and versatility, featuring a chunky handle and a sturdy build. Each piece is uniquely crafted, ensuring slight variations in size, shape, and glaze. This 16oz mug is both dishwasher and microwave safe."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/R6x14iq-ZPZn-public_ucp?o=01M23KX4V310Y5WBG5NSCXQV69",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/99cf2ac0-b022-48e0-b87d-2ca57d02c6c2"
+            }
+          ]
+        },
+        {
+          "id": "F8GoQEt:ZPZn:01KBPBRMYZ3VJ1RHPKQ06EFTMF",
+          "title": "Nagai Handmade Ceramic Mug - Sand",
+          "description": {
+            "plain": "The Nagai Mug is a distinct piece of drinkware crafted from ceramic, featuring a speckled, sand-colored glaze. Its design emphasizes comfort and versatility, highlighted by a notably chunky handle that offers a sturdy and comfortable grip for various hand sizes. As a handmade item, each mug possesses a unique character in its shape and glaze finish."
+          },
+          "price": {
+            "amount": 5600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/F8GoQEt-ZPZn-public_ucp?o=01KBPBRMYZ3VJ1RHPKQ06EFTMF",
+          "seller": {
+            "id": "ZPZn",
+            "domain": "carlyleavenue.com",
+            "url": "https://carlyleavenue.com",
+            "name": "Carlyle Avenue"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/25b84bbe-6318-4afc-9cf5-097e1ff0f8ff"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/28abd181-fc15-438c-b141-95f6148d7afc",
+          "alt_text": "Nagai Handmade Ceramic Mug"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "F8GoQEt",
+              "label": "Sand"
+            },
+            {
+              "id": "UA9jdyJ",
+              "label": "Charcoal"
+            },
+            {
+              "id": "HJOnvCZ",
+              "label": "Speckled Blue"
+            },
+            {
+              "id": "R6x14iq",
+              "label": "Eggshell"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handmade ceramic",
+          "16oz volume",
+          "Chunky handle for comfort",
+          "Dishwasher and Microwave safe"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Charcoal"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:TMzdGAN",
+      "title": "Ceramic Heritage Mug",
+      "description": {
+        "plain": "A charmingly tubby, individually handmade ceramic mug crafted in Jo Marland’s north London studio. It features a sophisticated ivory glaze with a soft pearl sheen, a gently tapering body, and a subtly flared lip, making it an elegant choice for any time of day, from breakfast to tea. Due to the intricate handmaking process, each piece is unique."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "TMzdGAN:EfbI:01M25TH6G4P1DQBGD0MG5D4WFJ",
+          "title": "Handmade Ceramic Heritage Mug",
+          "description": {
+            "plain": "A charmingly tubby, individually handmade ceramic mug crafted in Jo Marland’s north London studio. It features a sophisticated ivory glaze with a soft pearl sheen, a gently tapering body, and a subtly flared lip, making it an elegant choice for any time of day, from breakfast to tea. Due to the intricate handmaking process, each piece is unique."
+          },
+          "price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/TMzdGAN-EfbI-public_ucp?o=01M25TH6G4P1DQBGD0MG5D4WFJ",
+          "seller": {
+            "id": "EfbI",
+            "domain": "rowenandwren.co.uk",
+            "url": "https://www.rowenandwren.co.uk",
+            "name": "Rowen & Wren"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/adaf6834-98a9-4528-96e1-199f4370c81a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/adaf6834-98a9-4528-96e1-199f4370c81a",
+          "alt_text": "Ceramic Heritage Mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Individually handmade in a north London studio",
+          "Finished in an ivory glaze with a soft pearl sheen",
+          "Subtly flared lip and gently tapering shape",
+          "Dishwasher safe",
+          "Unique variations due to handmaking process"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:9aDPNfW",
+      "title": "Heart Handmade Ceramic Mug",
+      "description": {
+        "plain": "A skillfully handcrafted and hand-painted ceramic mug featuring a charming embossed heart. Designed without a handle, this piece adds a touch of joy to your daily coffee, tea, or cocktail routine and serves as a perfect gift for birthdays or Valentine's Day."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "9aDPNfW:uAUq:01M6475HHK77T645FND56Q8QRC",
+          "title": "Heart Handmade Ceramic Mug",
+          "description": {
+            "plain": "A skillfully handcrafted and hand-painted ceramic mug featuring a charming embossed heart. Designed without a handle, this piece adds a touch of joy to your daily coffee, tea, or cocktail routine and serves as a perfect gift for birthdays or Valentine's Day."
+          },
+          "price": {
+            "amount": 5800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/9aDPNfW-uAUq-public_ucp?o=01M6475HHK77T645FND56Q8QRC",
+          "seller": {
+            "id": "uAUq",
+            "domain": "maisonflaneur.com",
+            "url": "https://www.maisonflaneur.com",
+            "name": "Maison Flaneur"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/9e10e587-86fd-4117-ad72-176697fb1a2e"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/9e10e587-86fd-4117-ad72-176697fb1a2e",
+          "alt_text": "Heart Handmade Ceramic Mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted",
+          "Hand painted",
+          "Embossed heart",
+          "Dishwasher safe"
+        ]
+      }
+    },
+    {
+      "id": "01M0Z1KHHG83BJD0TKK33HT46V",
+      "title": "The Borealis Mug",
+      "description": {
+        "plain": "The Borealis Latte Mug in 'Dusk' is a handcrafted ceramic piece meticulously thrown on a potter's wheel. Featuring a beautiful gradient design with shades of pink, beige, and bronze over a speckled brown stoneware clay, each mug is unique due to the nature of the firing process. With a 12-ounce capacity, this durable, lead-free mug is both microwave and dishwasher safe, making it a perfect blend of artisanal charm and everyday functionality."
+      },
+      "price_range": {
+        "min": {
+          "amount": 4000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "x83eqrQ:lXWd:01M0WD4GC207V1PMK1RR5K0813",
+          "title": "The Borealis Latte Mug - Dusk",
+          "description": {
+            "plain": "The Borealis Latte Mug in 'Dusk' is a handcrafted ceramic piece meticulously thrown on a potter's wheel. Featuring a beautiful gradient design with shades of pink, beige, and bronze over a speckled brown stoneware clay, each mug is unique due to the nature of the firing process. With a 12-ounce capacity, this durable, lead-free mug is both microwave and dishwasher safe, making it a perfect blend of artisanal charm and everyday functionality."
+          },
+          "price": {
+            "amount": 4800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/x83eqrQ-lXWd-public_ucp?o=01M0WD4GC207V1PMK1RR5K0813",
+          "seller": {
+            "id": "lXWd",
+            "domain": "ginadesantisceramics.com",
+            "url": "https://www.ginadesantisceramics.com",
+            "name": "Gina DeSantis Ceramics"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ccaaa160-e833-4c4b-930e-472be922fe2f"
+            }
+          ]
+        },
+        {
+          "id": "1iyXdYh:lXWd:01M0SVQ9AKJ428B0PRH7SJM32V",
+          "title": "Borealis Mug In Dusk",
+          "description": {
+            "plain": "The Borealis Mug in Dusk is an exquisite artisanal creation that displays a stunning glaze similar to the Aurora Borealis. Meticulously crafted on a potter's wheel and hand-trimmed, this mug is made from speckled brown stoneware clay and finished with custom-mixed, lead-free glazes. The 'Dusk' colorway features a cheerful and captivating combination of beige, bronze, and two shades of pink, creating a unique gradient effect where no two pieces are exactly alike. Durable and practical, this 16-ounce mug is both microwave and dishwasher safe, making it a functional yet beautiful addition to any table setting."
+          },
+          "price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/1iyXdYh-lXWd-public_ucp?o=01M0SVQ9AKJ428B0PRH7SJM32V",
+          "seller": {
+            "id": "lXWd",
+            "domain": "ginadesantisceramics.com",
+            "url": "https://www.ginadesantisceramics.com",
+            "name": "Gina DeSantis Ceramics"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c0261509-5256-44f2-8a98-fa4ee35caf99"
+            }
+          ]
+        },
+        {
+          "id": "1iyXdYh:JSGM:01M39G10QZBAFTYT6MAN2NGW35",
+          "title": "Borealis Mug In Dusk",
+          "description": {
+            "plain": "The Borealis Mug in Dusk is an exquisite artisanal creation that displays a stunning glaze similar to the Aurora Borealis. Meticulously crafted on a potter's wheel and hand-trimmed, this mug is made from speckled brown stoneware clay and finished with custom-mixed, lead-free glazes. The 'Dusk' colorway features a cheerful and captivating combination of beige, bronze, and two shades of pink, creating a unique gradient effect where no two pieces are exactly alike. Durable and practical, this 16-ounce mug is both microwave and dishwasher safe, making it a functional yet beautiful addition to any table setting."
+          },
+          "price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/1iyXdYh-JSGM-public_ucp?o=01M39G10QZBAFTYT6MAN2NGW35",
+          "seller": {
+            "id": "JSGM",
+            "domain": "garmentory.com",
+            "url": "https://www.garmentory.com",
+            "name": "Garmentory"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c0261509-5256-44f2-8a98-fa4ee35caf99"
+            }
+          ]
+        },
+        {
+          "id": "gz3Q6Dy:lXWd:01M0JE0QKR04EKEMQ4KE3NK7Z8",
+          "title": "Borealis Mugs - Dusk",
+          "description": {
+            "plain": "This 'Seconds' Borealis Mug in Dusk offers a beautiful, artisanal aesthetic with a unique gradient glaze. As part of our seconds collection, this piece features charming imperfections—such as slight variations in shape or glaze—that add character to your daily coffee or tea ritual. This ceramic mug is both microwave and dishwasher safe, making it as functional as it is unique."
+          },
+          "price": {
+            "amount": 4000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/gz3Q6Dy-lXWd-public_ucp?o=01M0JE0QKR04EKEMQ4KE3NK7Z8",
+          "seller": {
+            "id": "lXWd",
+            "domain": "ginadesantisceramics.com",
+            "url": "https://www.ginadesantisceramics.com",
+            "name": "Gina DeSantis Ceramics"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/5db875fd-4196-4e82-9213-3adcd4f1a9b3"
+            }
+          ]
+        },
+        {
+          "id": "Q19ZlWT:lXWd:01M0SWVTE53XWH91041PTX4VN0",
+          "title": "Borealis Mug In Dawn",
+          "description": {
+            "plain": "The Borealis Mug in Dawn is a handcrafted ceramic piece meticulously crafted on a potter's wheel and hand-trimmed. Made from speckled brown stoneware clay, it features a unique, artisanal glaze inspired by the Aurora Borealis, blending neutrals such as beige, white, and bronze with subtle hints of green and pink. Due to the handmade nature of the firing process, each mug is one-of-a-kind with variations in glaze and dripping. It has a 16-ounce capacity and is both microwave and dishwasher safe."
+          },
+          "price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Q19ZlWT-lXWd-public_ucp?o=01M0SWVTE53XWH91041PTX4VN0",
+          "seller": {
+            "id": "lXWd",
+            "domain": "ginadesantisceramics.com",
+            "url": "https://www.ginadesantisceramics.com",
+            "name": "Gina DeSantis Ceramics"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/1c493c0a-1cb3-4299-a804-97a144fa437a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/ccaaa160-e833-4c4b-930e-472be922fe2f",
+          "alt_text": "The Borealis Mug"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "x83eqrQ",
+              "label": "Dawn"
+            },
+            {
+              "id": "gz3Q6Dy",
+              "label": "Dusk"
+            }
+          ]
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 5400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5400,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Hand-thrown on a potter's wheel and hand-trimmed",
+          "Unique glaze finish where no two mugs are ever the same",
+          "12 ounce capacity",
+          "Microwave and dishwasher safe",
+          "Lead-free custom mixed glazes"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Dawn"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:evHE8W7",
+      "title": "Heart glazed ceramic mug",
+      "description": {
+        "plain": "This handmade ceramic mug is a collaboration between Astier de Villatte and New York City artist John Derian. Crafted by artisans in Paris, the mug features a glazed white finish accented by a central red heart design, combining a rustic aesthetic with refined craftsmanship."
+      },
+      "price_range": {
+        "min": {
+          "amount": 16000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 16000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "evHE8W7:AUIg:01M2QSRAXNQPKMGWVFZDG9PHY4",
+          "title": "Crying Heart Mug",
+          "description": {
+            "plain": "A romantically bohemian ceramic mug from the John Derian x Astier de Villatte collaboration. Handmade in Paris from black terracotta and finished with a milky-white glaze, this unique piece features a striking vintage-style illustration of a crying heart, created by decoupage artist John Derian."
+          },
+          "price": {
+            "amount": 16000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/evHE8W7-AUIg-public_ucp?o=01M2QSRAXNQPKMGWVFZDG9PHY4",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/226d18b2-24f8-4a56-99f6-04cbda5673c0"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/226d18b2-24f8-4a56-99f6-04cbda5673c0",
+          "alt_text": "Heart glazed ceramic mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handmade in an antique Bastille workshop in Paris",
+          "Hand-molded from black terracotta",
+          "Finished in a milky-white glaze",
+          "Features iconic decoupage artwork by John Derian",
+          "One-of-a-kind object"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Lmrgcqn",
+      "title": "Arch Mug",
+      "description": {
+        "plain": "A handcrafted ceramic mug featuring a striking marbled pattern of deep brown and white swirling stripes. This piece from Henry Holland Studio combines artistic design with functional utility, perfect for your daily coffee or tea."
+      },
+      "price_range": {
+        "min": {
+          "amount": 8700,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 8700,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Lmrgcqn:BHGy:01M0MT90PPBC1HSKEQ45Y18G3H",
+          "title": "Brown & White Arch Mug",
+          "description": {
+            "plain": "A handcrafted ceramic mug featuring a striking marbled pattern of deep brown and white swirling stripes. This piece from Henry Holland Studio combines artistic design with functional utility, perfect for your daily coffee or tea."
+          },
+          "price": {
+            "amount": 8700,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Lmrgcqn-BHGy-public_ucp?o=01M0MT90PPBC1HSKEQ45Y18G3H",
+          "seller": {
+            "id": "BHGy",
+            "domain": "henryhollandstudio.com",
+            "url": "https://www.henryhollandstudio.com",
+            "name": "Henry Holland Studio"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/df7aacd1-fc17-4490-9077-c14bde87bc1c"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/df7aacd1-fc17-4490-9077-c14bde87bc1c",
+          "alt_text": "Arch Mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Handcrafted ceramic construction",
+          "Striking brown and white marbled stripe pattern",
+          "Ergonomic handle for comfortable grip"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:RdzaNkK",
+      "title": "Stripe Ceramic Mug",
+      "description": {
+        "plain": "Add a pop of personality to your morning routine with this hand-painted ceramic mug. Featuring a striking design of vertical soft pink and burgundy stripes on glazed stoneware, it is complemented by an elongated handle with a playful dotted stripe pattern in dark green. Dishwasher and microwave safe, this mug is perfect for everyday coffee or tea."
+      },
+      "price_range": {
+        "min": {
+          "amount": 2000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 2000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "RdzaNkK:2ckF:01M0SYATSRZHR9TFAACEVEPE9X",
+          "title": "Wine & Peach Pink Stripe Ceramic Mug",
+          "description": {
+            "plain": "Add a pop of personality to your morning routine with this hand-painted ceramic mug. Featuring a striking design of vertical soft pink and burgundy stripes on glazed stoneware, it is complemented by an elongated handle with a playful dotted stripe pattern in dark green. Dishwasher and microwave safe, this mug is perfect for everyday coffee or tea."
+          },
+          "price": {
+            "amount": 2000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/RdzaNkK-2ckF-public_ucp?o=01M0SYATSRZHR9TFAACEVEPE9X",
+          "seller": {
+            "id": "2ckF",
+            "domain": "carolinegardner.com",
+            "url": "https://carolinegardner.com",
+            "name": "Caroline Gardner"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f915b533-2c6d-4f2f-8150-c5111b3d8767"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/f915b533-2c6d-4f2f-8150-c5111b3d8767",
+          "alt_text": "Stripe Ceramic Mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Hand-painted glazed stoneware",
+          "Striped elongated handle",
+          "Dishwasher and microwave safe",
+          "H 70 x W 145 x D 95mm"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:2tTPpUc",
+      "title": "Tall Silo Mug",
+      "description": {
+        "plain": "The Farmhouse Pottery Tall Silo Mug is a handcrafted ceramic mug designed for those who need a larger dose of caffeine to start their day. Handmade in the USA, this artisanally crafted piece features a two-tone design with a white glazed upper and a natural stoneware base. It has a 16-ounce capacity and measures 4.75\" high by 4.25\" in diameter. The mug is functional for modern life, being oven, microwave, and dishwasher safe, with a food-safe, lead-free glaze."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "2tTPpUc:Y7Ot:01M2ZV03A3G17P0NT3CE7SJ1JJ",
+          "title": "Tall Silo Mug - Single",
+          "description": {
+            "plain": "The Farmhouse Pottery Tall Silo Mug is a handcrafted ceramic mug designed for those who need a larger dose of caffeine to start their day. Handmade in the USA, this artisanally crafted piece features a two-tone design with a white glazed upper and a natural stoneware base. It has a 16-ounce capacity and measures 4.75\" high by 4.25\" in diameter. The mug is functional for modern life, being oven, microwave, and dishwasher safe, with a food-safe, lead-free glaze."
+          },
+          "price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/2tTPpUc-Y7Ot-public_ucp?o=01M2ZV03A3G17P0NT3CE7SJ1JJ",
+          "seller": {
+            "id": "Y7Ot",
+            "domain": "westontable.com",
+            "url": "https://westontable.com",
+            "name": "Weston Table"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/15251fee-f691-4c63-9918-b6bdf98eea22"
+            }
+          ]
+        },
+        {
+          "id": "2tTPpUc:eRFt:01M1VFW85X4AS6C2F9VFQ5WM2S",
+          "title": "Tall Silo Mug - Single",
+          "description": {
+            "plain": "The Farmhouse Pottery Tall Silo Mug is a handcrafted ceramic mug designed for those who need a larger dose of caffeine to start their day. Handmade in the USA, this artisanally crafted piece features a two-tone design with a white glazed upper and a natural stoneware base. It has a 16-ounce capacity and measures 4.75\" high by 4.25\" in diameter. The mug is functional for modern life, being oven, microwave, and dishwasher safe, with a food-safe, lead-free glaze."
+          },
+          "price": {
+            "amount": 7200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/2tTPpUc-eRFt-public_ucp?o=01M1VFW85X4AS6C2F9VFQ5WM2S",
+          "seller": {
+            "id": "eRFt",
+            "domain": "urbannatural.com",
+            "url": "https://www.urbannatural.com",
+            "name": "Urbannatural"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/15251fee-f691-4c63-9918-b6bdf98eea22"
+            }
+          ]
+        },
+        {
+          "id": "2tTPpUc:DyQi:01M3QYYJ575TDYFCZEYH8SVJ5K",
+          "title": "Tall Silo Mug - Single",
+          "description": {
+            "plain": "The Farmhouse Pottery Tall Silo Mug is a handcrafted ceramic mug designed for those who need a larger dose of caffeine to start their day. Handmade in the USA, this artisanally crafted piece features a two-tone design with a white glazed upper and a natural stoneware base. It has a 16-ounce capacity and measures 4.75\" high by 4.25\" in diameter. The mug is functional for modern life, being oven, microwave, and dishwasher safe, with a food-safe, lead-free glaze."
+          },
+          "price": {
+            "amount": 7200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/2tTPpUc-DyQi-public_ucp?o=01M3QYYJ575TDYFCZEYH8SVJ5K",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/15251fee-f691-4c63-9918-b6bdf98eea22"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/15251fee-f691-4c63-9918-b6bdf98eea22",
+          "alt_text": "Tall Silo Mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Wheel thrown in Vermont",
+          "Durable American Stoneware",
+          "Oven, Microwave, and Dishwasher Safe",
+          "16 oz. capacity",
+          "Handmade in the USA",
+          "Food safe, lead free glaze",
+          "Artisanally crafted with slight variations in size and design",
+          "Handcrafted stoneware from Vermont",
+          "Classic simple style",
+          "Thoughtfully handcrafted and designed with the coffee connoisseur in mind"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:AcbScMD",
+      "title": "Silo Mug",
+      "description": {
+        "plain": "Silo Mug is a handcrafted wheel-thrown stoneware mug designed for everyday rituals. The mug features a clean, rounded shape with a blue-white glaze and a natural, unglazed bottom foot. It is oven, microwave, and dishwasher safe, made in Vermont by Farmhouse Pottery. The product is sold as a pair with a bundled discount."
+      },
+      "price_range": {
+        "min": {
+          "amount": 12000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 12000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "AcbScMD:WKOL:01KFMR4G59Q9JPZXJNZZE8BQDC",
+          "title": "Silo Mug - Pair (save $5)",
+          "description": {
+            "plain": "Silo Mug is a handcrafted wheel-thrown stoneware mug designed for everyday rituals. The mug features a clean, rounded shape with a blue-white glaze and a natural, unglazed bottom foot. It is oven, microwave, and dishwasher safe, made in Vermont by Farmhouse Pottery. The product is sold as a pair with a bundled discount."
+          },
+          "price": {
+            "amount": 12000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/AcbScMD-WKOL-public_ucp?o=01KFMR4G59Q9JPZXJNZZE8BQDC",
+          "seller": {
+            "id": "WKOL",
+            "domain": "farmhousepottery.com",
+            "url": "https://farmhousepottery.com",
+            "name": "Farmhouse Pottery"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/79967ec2-64e4-49c9-9966-dc50a88f713e"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/79967ec2-64e4-49c9-9966-dc50a88f713e",
+          "alt_text": "Silo Mug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Wheel-thrown by hand in Vermont",
+          "Durable American stoneware pottery",
+          "Oven, microwave, and dishwasher safe",
+          "14 oz capacity",
+          "Clean, refined mug design with natural bottom foot"
+        ]
+      }
+    },
+    {
+      "id": "01KPS2KBW12F5Q8YV3DCNZJSG4",
+      "title": "Barchan Stoneware Mug By Kravitz Design",
+      "description": {
+        "plain": "Mug from the Barchan collection designed by Kravitz Design for CB2. A matte black exterior with a warm white interior, featuring a curved body and a sturdy handle. Made of glazed stoneware, microwave- and dishwasher-safe, made in Portugal. 11 oz capacity."
+      },
+      "price_range": {
+        "min": {
+          "amount": 697,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5599,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "VLlgHDT:1FRg:01KN13GHGNAW7P7JMJ3G35084X",
+          "title": "Barchan Black And Warm White Stoneware Mug By Kravitz Design",
+          "description": {
+            "plain": "Mug from the Barchan collection designed by Kravitz Design for CB2. A matte black exterior with a warm white interior, featuring a curved body and a sturdy handle. Made of glazed stoneware, microwave- and dishwasher-safe, made in Portugal. 11 oz capacity."
+          },
+          "price": {
+            "amount": 897,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 1495,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/VLlgHDT-1FRg-public_ucp?o=01KN13GHGNAW7P7JMJ3G35084X",
+          "seller": {
+            "id": "1FRg",
+            "domain": "cb2.com",
+            "url": "https://www.cb2.com",
+            "name": "CB2"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/a2b19f84-62f0-47c9-be7d-38aa2bb13914"
+            }
+          ]
+        },
+        {
+          "id": "tEOs8ZL:1FRg:01M08D279524S4P5GC01R76SXA",
+          "title": "Barchan Brown And Warm White Stoneware Mug",
+          "description": {
+            "plain": "Part of the Barchan collection by Kravitz Design, this effortlessly elegant stoneware mug features a high-gloss warm white interior contrasted with a matte, softly textured brown exterior reminiscent of sand. Designed for versatility, it is microwave-, freezer-, and dishwasher-safe, and can withstand oven temperatures up to 450 degrees F."
+          },
+          "price": {
+            "amount": 697,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/tEOs8ZL-1FRg-public_ucp?o=01M08D279524S4P5GC01R76SXA",
+          "seller": {
+            "id": "1FRg",
+            "domain": "cb2.com",
+            "url": "https://www.cb2.com",
+            "name": "CB2"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/7aa19e48-af89-415a-a22f-60d630c53f0e"
+            }
+          ]
+        },
+        {
+          "id": "zWixKnr:1FRg:01KXZS9T0SA4TV1F4THZTX85V1",
+          "title": "Barchan Brown And Warm White Stoneware Mugs Set Of 6",
+          "description": {
+            "plain": "This set of six Barchan stoneware mugs, designed by Kravitz Design for CB2, features a unique two-tone design with a warm white interior and a matte brown exterior. The mugs have a capacity of 11 oz and are microwave, freezer, and dishwasher safe. They are also oven-safe up to 450 degrees Fahrenheit and made in Portugal."
+          },
+          "price": {
+            "amount": 5599,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": false
+          },
+          "url": "https://buy.trychannel3.com/zWixKnr-1FRg-public_ucp?o=01KXZS9T0SA4TV1F4THZTX85V1",
+          "seller": {
+            "id": "1FRg",
+            "domain": "cb2.com",
+            "url": "https://www.cb2.com",
+            "name": "CB2"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/8b19ac6b-79ed-43cb-bf96-c5ba7c65e4bf"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/a2b19f84-62f0-47c9-be7d-38aa2bb13914",
+          "alt_text": "Barchan Stoneware Mug By Kravitz Design"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "VLlgHDT",
+              "label": "Black And Warm White"
+            },
+            {
+              "id": "tEOs8ZL",
+              "label": "Brown And Warm White"
+            }
+          ]
+        },
+        {
+          "name": "Quantity",
+          "values": []
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 1495,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 1495,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Glazed stoneware",
+          "11 oz",
+          "Microwave- and freezer-safe; oven-safe up to 450 degrees F",
+          "Dishwasher-safe",
+          "Made in Portugal"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Black And Warm White"
+        }
+      ]
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOmU2NmE1MTUwZWZjZGI0OWMiLCAib2Zmc2V0IjogMTB9"
+  },
+  "messages": []
+}
