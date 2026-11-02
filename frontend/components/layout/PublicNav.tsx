@@ -5,10 +5,7 @@ import { Logo } from "@/components/ui/Logo";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 const LINKS = [
-  { href: "/#platform", label: "Platform" },
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#features", label: "Features" },
-  { href: "/checkout", label: "Demo store" },
+  { href: "/#how-it-works", label: "What it does" },
 ];
 
 export function PublicNav() {
@@ -27,18 +24,19 @@ export function PublicNav() {
         <div className="ml-auto flex items-center gap-3 md:ml-0">
           {ready && user ? (
             <Link href="/dashboard" className="btn-pill btn-pill-black !px-6 !py-2.5 !text-base">
-              Dashboard
+              Open workspace
             </Link>
           ) : (
             <>
               <Link href="/login" className="btn-pill btn-pill-grey !px-6 !py-2.5 !text-base">
-                Log In
+                Sign in
               </Link>
               <Link href="/signup" className="btn-pill btn-pill-black !px-6 !py-2.5 !text-base">
-                Sign Up
+                Get started
               </Link>
             </>
           )}
+          <Link href="/checkout" className="hidden rounded-full px-4 py-2 text-sm font-semibold text-black hover:bg-slate-100 sm:inline-flex">Explore demo</Link>
         </div>
       </div>
     </header>
