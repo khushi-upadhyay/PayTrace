@@ -5,12 +5,14 @@ import { usePathname } from "next/navigation";
 import {
   Activity, BadgeCheck, BarChart3, CircleAlert, CreditCard,
   LayoutDashboard, MonitorPlay, Scale, Settings, ShoppingBag, Sparkles,
+  ListFilter,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
 const ITEMS = [
   { href: "/dashboard", label: "Summary", icon: LayoutDashboard },
   { href: "/payments", label: "Payments", icon: CreditCard },
+  { href: "/transactions", label: "Transaction Explorer", icon: ListFilter },
   { href: "/sessions", label: "Session Replay", icon: MonitorPlay },
   { href: "/incidents", label: "Incidents", icon: CircleAlert },
   { href: "/disputes", label: "Disputes", icon: Scale },

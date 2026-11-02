@@ -198,6 +198,35 @@ export interface PaymentListResponse {
   page_size: number;
 }
 
+export interface PaymentWorkspaceData {
+  total_transactions: number;
+  successful_count: number;
+  failed_count: number;
+  pending_count: number;
+  success_rate_percent: number;
+  processed_amounts: Array<{ currency: string; amount: string }>;
+  average_event_latency_ms: number | null;
+  latency_sample_count: number;
+  status_breakdown: Array<{ status: string; count: number }>;
+  daily_volume: Array<{ date: string; count: number }>;
+  failure_sources: Array<{ provider: string; count: number }>;
+  failures_by_endpoint: Array<{ endpoint: string; count: number; payment_ids: string[] }>;
+  endpoint_event_sample_limit: number;
+  correlated_network_events: Array<{
+    event_id: string;
+    payment_id: string;
+    endpoint: string;
+    occurred_at: string | null;
+    method: string | null;
+    status: number | string | null;
+    duration_ms: number | null;
+    trace_id: string | null;
+  }>;
+  anomalies: Array<{ kind: string; title: string; evidence: string; count: number; payment_ids: string[] }>;
+  transactions: Array<PaymentItem & { provider: string; processing_duration_ms: number | null }>;
+  transaction_sample_limit: number;
+}
+
 export interface PaymentEventItem {
   id: string;
   payment_id: string;
@@ -565,6 +594,8 @@ export interface PaymentListParams {
   status?: string;
   source_mode?: string;
   actor?: string;
+  sort_by?: "id" | "paypal_order_id" | "paypal_capture_id" | "session_id" | "failure_code" | "failure_reason" | "currency" | "created_at" | "amount" | "status" | "source_mode" | "customer_ref";
+  sort_order?: "asc" | "desc";
 }
 
 export const api = {
@@ -660,8 +691,14 @@ export const api = {
         status: params.status,
         source_mode: params.source_mode,
         actor: params.actor,
+        sort_by: params.sort_by,
+        sort_order: params.sort_order,
       })}`
     );
+  },
+
+  getPaymentWorkspace(limit = 500): Promise<PaymentWorkspaceData> {
+    return request<PaymentWorkspaceData>(`/payments/workspace${toQuery({ limit })}`);
   },
 
   getPayment(paymentId: string): Promise<PaymentItem> {
