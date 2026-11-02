@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, func
 from typing import Optional
+from datetime import date
+from decimal import Decimal
 from urllib.parse import urlsplit
 from app.api.dependencies import get_current_user, get_db
 from app.db.models.user import User
@@ -32,6 +34,12 @@ def get_payment_workspace(
         for currency, amount in db.query(Payment.currency, func.sum(Payment.amount))
         .filter(Payment.status.in_(successful_statuses)).group_by(Payment.currency).all()
     ]
+    revenue_at_risk_amounts = [
+        {"currency": currency, "amount": str(amount or 0)}
+        for currency, amount in db.query(Payment.currency, func.sum(Payment.amount))
+        .filter(Payment.status.in_(("CAPTURE_UNCERTAIN", "DENIED", "CAPTURE_FAILED", "DISPUTED")))
+        .group_by(Payment.currency).all()
+    ]
     avg_latency, latency_count = db.query(
         func.avg(PaymentEvent.latency_ms), func.count(PaymentEvent.latency_ms)
     ).filter(PaymentEvent.latency_ms.isnot(None)).one()
@@ -51,6 +59,12 @@ def get_payment_workspace(
         for provider, count in db.query(Payment.source_mode, func.count(Payment.id))
         .filter(Payment.status.in_(failed_statuses)).group_by(Payment.source_mode)
         .order_by(func.count(Payment.id).desc()).all()
+    ]
+    provider_outcomes = [
+        {"provider": provider or "Unknown", "status": status, "count": count}
+        for provider, status, count in db.query(Payment.source_mode, Payment.status, func.count(Payment.id))
+        .group_by(Payment.source_mode, Payment.status)
+        .order_by(Payment.source_mode, func.count(Payment.id).desc()).all()
     ]
     high_latency_count = db.query(func.count(func.distinct(PaymentEvent.payment_id)))\
         .filter(PaymentEvent.latency_ms >= 2000).scalar() or 0
@@ -124,11 +138,13 @@ def get_payment_workspace(
         "pending_count": db.query(func.count(Payment.id)).filter(Payment.status.in_(pending_statuses)).scalar() or 0,
         "success_rate_percent": round((successful / total) * 100, 1) if total else 0,
         "processed_amounts": processed_amounts,
+        "revenue_at_risk_amounts": revenue_at_risk_amounts,
         "average_event_latency_ms": round(float(avg_latency)) if avg_latency is not None else None,
         "latency_sample_count": int(latency_count or 0),
         "status_breakdown": status_breakdown,
         "daily_volume": daily_volume,
         "failure_sources": failure_sources,
+        "provider_outcomes": provider_outcomes,
         "failures_by_endpoint": failures_by_endpoint,
         "endpoint_event_sample_limit": 5000,
         "correlated_network_events": correlated_network_events,
@@ -144,6 +160,11 @@ def list_payments(
     status: Optional[str] = None,
     source_mode: Optional[str] = None,
     actor: Optional[str] = None,
+    customer_ref: Optional[str] = None,
+    date_from: Optional[date] = None,
+    date_to: Optional[date] = None,
+    min_amount: Optional[Decimal] = Query(None, ge=0),
+    max_amount: Optional[Decimal] = Query(None, ge=0),
     search: Optional[str] = None,
     sort_by: Optional[str] = None,
     sort_order: Optional[str] = None,
@@ -159,6 +180,16 @@ def list_payments(
         query = query.filter(Payment.source_mode == source_mode)
     if actor:
         query = query.filter(Payment.actor == actor)
+    if customer_ref:
+        query = query.filter(Payment.customer_ref.ilike(f"%{customer_ref.strip()}%"))
+    if date_from:
+        query = query.filter(func.date(Payment.created_at) >= date_from)
+    if date_to:
+        query = query.filter(func.date(Payment.created_at) <= date_to)
+    if min_amount is not None:
+        query = query.filter(Payment.amount >= min_amount)
+    if max_amount is not None:
+        query = query.filter(Payment.amount <= max_amount)
     if search:
         search_fmt = f"%{search}%"
         query = query.filter(

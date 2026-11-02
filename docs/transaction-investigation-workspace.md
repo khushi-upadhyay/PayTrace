@@ -26,3 +26,15 @@ Grouping and integrated charts are Enterprise capabilities. Users can use the AG
 The workspace currently flags repeated failed transactions sharing a customer reference and payment events with recorded latency of at least 2 seconds. Findings link to actual payment IDs and describe evidence; they do not infer a causal root cause.
 
 Payment method and completed-at timestamps are not fields in the current payment model and are not fabricated in the UI.
+
+## Browser SDK direction (architecture only)
+
+The current Demo Store/ShelfSwipe instrumentation already has separable building blocks, but they remain app-owned code and are not yet a reusable or published SDK:
+
+- Session and tab identity: `frontend/lib/session-identity.mjs` plus its tests.
+- Safe fetch/XHR and console instrumentation: `frontend/lib/session-instrumentation.mjs`.
+- Event buffering, durable outbox, retry policy, and expiry recovery: `frontend/lib/session-outbox.ts`, `frontend/lib/session-buffer-policy.mjs`, and `frontend/components/session/SessionRecordingProvider.tsx`.
+- rrweb capture, privacy masking, lifecycle ingestion, and playback: `frontend/components/session/SessionRecordingProvider.tsx`, `frontend/lib/session-recording-policy.mjs`, and `frontend/lib/session-playback.mjs`.
+- Payment correlation: existing payment/order/session IDs in `frontend/lib/api.ts` and backend event schemas.
+
+Recommended extraction sequence: define a browser-safe transport/config contract; move identity and instrumentation into a package-independent core; keep recorder/outbox as optional modules; expose explicit custom-event and payment-correlation APIs; document masking and consent defaults; then test in external sample apps before packaging. Project/environment credentials should identify an ingestion project, never contain provider secrets. Ingestion authentication, origin controls, retention, and server-side rate limits must be designed before a public release. The current backend's public session-ingestion route and app-specific identity assumptions need an explicit threat-model review before the SDK accepts external projects. Do not advertise `@paytrace/browser` as available until packaging, external integration tests, and documentation exist.

@@ -69,6 +69,7 @@ def test_payment_workspace_uses_persisted_payment_and_event_data(client, db_sess
     data = response.json()
     assert data["total_transactions"] == 1
     assert data["failed_count"] == 1
+    assert data["revenue_at_risk_amounts"] == [{"currency": "USD", "amount": "42.50"}]
     assert data["average_event_latency_ms"] == 2450
     assert data["latency_sample_count"] == 1
     assert data["transactions"][0]["id"] == payment.id
@@ -87,6 +88,7 @@ def test_payment_workspace_represents_missing_data_as_missing(client):
     assert data["average_event_latency_ms"] is None
     assert data["latency_sample_count"] == 0
     assert data["processed_amounts"] == []
+    assert data["revenue_at_risk_amounts"] == []
     assert data["transactions"] == []
 
 
@@ -107,3 +109,27 @@ def test_payment_list_filters_and_sorts_in_the_database(client, db_session):
     data = response.json()
     assert data["total"] == 2
     assert [item["id"] for item in data["items"]] == ["sort-payment-b", "sort-payment-a"]
+
+
+def test_payment_list_filters_customer_amount_and_date(client, db_session):
+    from datetime import datetime
+    from app.db.models.payment import Payment
+
+    db_session.add(Payment(
+        id="filter-payment-match", customer_ref="filter-buyer-7", amount="17.50",
+        currency="USD", status="CAPTURED", source_mode="PAYPAL_SANDBOX",
+        created_at=datetime(2025, 2, 3, 12, 0, 0),
+    ))
+    db_session.add(Payment(
+        id="filter-payment-other-date", customer_ref="filter-buyer-7", amount="17.50",
+        currency="USD", status="CAPTURED", source_mode="PAYPAL_SANDBOX",
+        created_at=datetime(2025, 2, 4, 12, 0, 0),
+    ))
+    db_session.commit()
+
+    response = client.get("/api/v1/payments", params={
+        "customer_ref": "buyer-7", "min_amount": "10", "max_amount": "20",
+        "date_from": "2025-02-03", "date_to": "2025-02-03",
+    })
+    assert response.status_code == 200
+    assert [item["id"] for item in response.json()["items"]] == ["filter-payment-match"]
