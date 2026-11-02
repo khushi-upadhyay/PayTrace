@@ -6,7 +6,20 @@ from app.db.models.session import Session, SessionEvent
 from app.db.models.incident import Incident
 from app.db.models.ai_investigation import AIInvestigation
 from app.db.models.approval_ticket import ApprovalTicket
-from app.db.models.shelfswipe import Seller, ShelfProduct, SwipeAction, ShelfCartItem, ShelfOrderItem
+from app.db.models.shelfswipe import (
+    Seller,
+    ShelfProduct,
+    SwipeAction,
+    ShelfCartItem,
+    ShelfOrderItem,
+    SSSeller,
+    SSShop,
+    SSProduct,
+    SSExtractionJob,
+    SSBuyerProfile,
+    SSSwipe,
+    SSOrder,
+)
 from app.db.models.user import User
 from app.db.models.dispute import Dispute
 
@@ -25,6 +38,13 @@ __all__ = [
     "SwipeAction",
     "ShelfCartItem",
     "ShelfOrderItem",
+    "SSSeller",
+    "SSShop",
+    "SSProduct",
+    "SSExtractionJob",
+    "SSBuyerProfile",
+    "SSSwipe",
+    "SSOrder",
     "User",
     "Dispute",
 ]

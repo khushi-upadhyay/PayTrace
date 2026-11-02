@@ -25,6 +25,8 @@ export default function ShelfSwipePage() {
   const [query, setQuery] = useState("birthday gift under $40 nearby");
   const [buyerRef] = useState("buyer_demo_01");
   const [deck, setDeck] = useState<ShelfProduct[]>([]);
+  const [seenProductIds, setSeenProductIds] = useState<string[]>([]);
+  const [totalMatches, setTotalMatches] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [refinements, setRefinements] = useState<string[]>([]);
   const [loadingDeck, setLoadingDeck] = useState(false);
@@ -44,12 +46,13 @@ export default function ShelfSwipePage() {
   const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
   const capturedOrders = useRef<Set<string>>(new Set());
 
-  const fetchDeck = async (searchQuery: string) => {
+  const fetchDeck = async (searchQuery: string, excludedIds = seenProductIds) => {
     try {
       setLoadingDeck(true);
       setDeckError(null);
       const res = await api.getShelfDeck(searchQuery, buyerRef);
-      setDeck(res.deck);
+      setDeck(res.deck.filter((product) => !excludedIds.includes(product.id)));
+      setTotalMatches(res.total_matches);
       setRefinements(res.refinements_applied || []);
       setCurrentIndex(0);
     } catch (err: any) {
@@ -61,7 +64,7 @@ export default function ShelfSwipePage() {
   };
 
   useEffect(() => {
-    fetchDeck(query);
+    fetchDeck(query, []);
   }, []);
 
   useEffect(() => {
@@ -118,7 +121,8 @@ export default function ShelfSwipePage() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchDeck(query);
+    setSeenProductIds([]);
+    fetchDeck(query, []);
   };
 
   const handleSwipe = async (direction: "right" | "left") => {
@@ -129,14 +133,16 @@ export default function ShelfSwipePage() {
       // Record swipe so the backend can adapt category ranking.
       await api.recordSwipe(buyerRef, currentItem.id, direction);
 
+      const seen = [...seenProductIds, currentItem.id];
+      setSeenProductIds(seen);
       if (direction === "right") {
-        // Re-fetch so the adapted category ranking is reflected.
+        // Reload the persisted preference-ranked deck, excluding products already reviewed.
         const res = await api.getShelfDeck(query, buyerRef);
-      setDeck(res.deck);
+        setDeck(res.deck.filter((product) => !seen.includes(product.id)));
+        setTotalMatches(res.total_matches);
         setRefinements(res.refinements_applied || []);
-      }
-
-      setCurrentIndex((prev) => Math.min(prev + 1, deck.length));
+        setCurrentIndex(0);
+      } else setCurrentIndex((prev) => Math.min(prev + 1, deck.length));
     } catch (err) {
       console.error(err);
     }
@@ -202,15 +208,15 @@ export default function ShelfSwipePage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r from-sky-500/20 to-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-              ShelfSwipe + PayTrace Engine
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-800 border border-blue-200">
+              Agentic Commerce · ShelfSwipe + PayTrace
             </span>
           </div>
           <h1 className="text-2xl font-extrabold text-ink mt-1 flex items-center gap-2">
             Local Store Discovery Demo
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
-            Explore a curated sample catalog, refine its deterministic ranking with swipes, and test PayTrace checkout safety.
+            Describe what you need, review ranked local catalog options, and approve any PayPal Sandbox purchase yourself.
           </p>
         </div>
 
@@ -232,8 +238,11 @@ export default function ShelfSwipePage() {
         </div>
       </div>
 
-      <div className="px-4 py-2.5 rounded-lg bg-slate-900/70 border border-slate-800 text-[11px] text-slate-400">
-        <strong className="text-cyan-300">DEMO CATALOG:</strong> sample products and stock are local test data, not live merchant listings or inventory.
+      <div className="grid gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-xs text-slate-700 md:grid-cols-3">
+        <div><strong className="block text-blue-800">1 · Understand intent</strong><span className="mt-1 block">Your search terms filter the persisted catalog.</span></div>
+        <div><strong className="block text-blue-800">2 · Adapt recommendations</strong><span className="mt-1 block">Likes are stored for this demo buyer and influence category ranking.</span></div>
+        <div><strong className="block text-blue-800">3 · Buyer approves checkout</strong><span className="mt-1 block">Purchases still go through explicit PayPal Sandbox approval.</span></div>
+        <p className="md:col-span-3 border-t border-blue-200 pt-2 text-[11px] text-slate-600"><strong className="text-blue-800">Demo catalog:</strong> product records and inventory are local test data, not live merchant listings or stock.</p>
       </div>
 
       {/* Natural Language Search Bar */}
@@ -248,7 +257,7 @@ export default function ShelfSwipePage() {
             className="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
           />
         </div>
-        <button
+          <button
           type="submit"
           disabled={loadingDeck}
           className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors flex items-center gap-1.5"
@@ -272,7 +281,7 @@ export default function ShelfSwipePage() {
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span className="font-mono">
-              {loadingDeck ? "Loading catalog..." : deckError ? "Catalog unavailable" : deck.length ? `Card ${currentIndex + 1} of ${deck.length}` : "0 matching products"}
+              {loadingDeck ? "Loading catalog..." : deckError ? "Catalog unavailable" : deck.length ? `Reviewing ${seenProductIds.length + currentIndex + 1} · ${totalMatches} matches` : "No unreviewed matches"}
             </span>
             <span>Swipes adapt sample catalog ranking</span>
           </div>
@@ -352,7 +361,7 @@ export default function ShelfSwipePage() {
               <h4 className="text-sm font-bold text-ink">{deck.length === 0 ? "No matching products found" : "You've explored the shelf!"}</h4>
               <p className="text-xs text-slate-400">{deck.length === 0 ? "Try a broader search to browse the demo catalog." : "Search another term or reset the deck to keep discovering."}</p>
               <button
-                onClick={() => fetchDeck(query)}
+                onClick={() => { setSeenProductIds([]); fetchDeck(query, []); }}
                 className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink rounded-lg text-xs font-semibold"
               >
                 Reset Swipe Deck

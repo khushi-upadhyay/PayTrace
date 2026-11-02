@@ -25,19 +25,39 @@ export default function PaymentsPage() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [sourceFilter, setSourceFilter] = useState<string>("");
+  const [customerFilter, setCustomerFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [minAmount, setMinAmount] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
+  const [filtersReady, setFiltersReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const fetchPayments = async () => {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setStatusFilter(params.get("status") || "");
+    setDateFrom(params.get("date_from") || "");
+    setDateTo(params.get("date_to") || "");
+    setCustomerFilter(params.get("customer_ref") || "");
+    setFiltersReady(true);
+  }, []);
+
+  const fetchPayments = async (requestedPage = page) => {
     try {
       setLoading(true);
       setLoadError(null);
       const res = await api.getPayments({
-        page,
+        page: requestedPage,
         page_size: pageSize,
         search: search.trim() || undefined,
         status: statusFilter || undefined,
         source_mode: sourceFilter || undefined,
+        customer_ref: customerFilter.trim() || undefined,
+        date_from: dateFrom || undefined,
+        date_to: dateTo || undefined,
+        min_amount: minAmount ? Number(minAmount) : undefined,
+        max_amount: maxAmount ? Number(maxAmount) : undefined,
       });
       setPayments(res.items);
       setTotal(res.total);
@@ -50,13 +70,14 @@ export default function PaymentsPage() {
   };
 
   useEffect(() => {
+    if (!filtersReady) return;
     fetchPayments();
-  }, [page, statusFilter, sourceFilter]);
+  }, [filtersReady, page, statusFilter, sourceFilter, customerFilter, dateFrom, dateTo, minAmount, maxAmount]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setPage(1);
-    fetchPayments();
+    fetchPayments(1);
   };
 
   const totalPages = Math.ceil(total / pageSize) || 1;
@@ -79,7 +100,7 @@ export default function PaymentsPage() {
       </div>
 
       {/* Filters & Search Toolbar */}
-      <div className="glass-panel rounded-xl p-4 border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="glass-panel rounded-xl p-4 border border-slate-800 space-y-3">
         {/* Search Input */}
         <form onSubmit={handleSearchSubmit} className="flex-1 w-full md:w-auto relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -93,7 +114,7 @@ export default function PaymentsPage() {
         </form>
 
         {/* Filter dropdowns */}
-        <div className="flex items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Status Filter */}
           <div className="flex items-center gap-1.5 text-xs text-slate-400">
             <Filter className="w-3.5 h-3.5 text-slate-400" />
@@ -109,8 +130,12 @@ export default function PaymentsPage() {
               <option value="CAPTURED">CAPTURED</option>
               <option value="CAPTURE_UNCERTAIN">CAPTURE_UNCERTAIN</option>
               <option value="DENIED">DENIED</option>
+              <option value="CAPTURE_FAILED">CAPTURE_FAILED</option>
+              <option value="DISPUTED">DISPUTED</option>
               <option value="REFUNDED">REFUNDED</option>
               <option value="CREATED">CREATED</option>
+              <option value="APPROVED">APPROVED</option>
+              <option value="CAPTURE_PENDING">CAPTURE_PENDING</option>
             </select>
           </div>
 
@@ -128,6 +153,11 @@ export default function PaymentsPage() {
             <option value="PAYPAL_LIVE">PayPal Live</option>
             <option value="SIMULATED">Simulated Demo</option>
           </select>
+          <input aria-label="Filter customer" value={customerFilter} onChange={(e) => { setCustomerFilter(e.target.value); setPage(1); }} placeholder="Customer reference" className="min-w-36 rounded-lg border border-slate-800 bg-slate-900 px-2.5 py-2 text-xs text-slate-300 placeholder:text-slate-500" />
+          <label className="flex items-center gap-1 text-[11px] text-slate-500">From <input aria-label="Created from" type="date" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1); }} className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-2 text-xs text-slate-300" /></label>
+          <label className="flex items-center gap-1 text-[11px] text-slate-500">To <input aria-label="Created to" type="date" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1); }} className="rounded-lg border border-slate-800 bg-slate-900 px-2 py-2 text-xs text-slate-300" /></label>
+          <label className="flex items-center gap-1 text-[11px] text-slate-500">Min <input aria-label="Minimum amount" type="number" min="0" step="0.01" value={minAmount} onChange={(e) => { setMinAmount(e.target.value); setPage(1); }} placeholder="0.00" className="w-24 rounded-lg border border-slate-800 bg-slate-900 px-2 py-2 text-xs text-slate-300" /></label>
+          <label className="flex items-center gap-1 text-[11px] text-slate-500">Max <input aria-label="Maximum amount" type="number" min="0" step="0.01" value={maxAmount} onChange={(e) => { setMaxAmount(e.target.value); setPage(1); }} placeholder="Any" className="w-24 rounded-lg border border-slate-800 bg-slate-900 px-2 py-2 text-xs text-slate-300" /></label>
         </div>
       </div>
 
@@ -143,7 +173,7 @@ export default function PaymentsPage() {
             <AlertTriangle className="w-10 h-10 text-amber-400 mx-auto" />
             <p className="text-sm font-semibold text-slate-200">Payment records could not be loaded</p>
             <p className="text-xs text-slate-400">{loadError}</p>
-            <button onClick={fetchPayments} className="px-4 py-2 bg-paypal-navy hover:bg-paypal-blue text-onsolid rounded-lg text-xs font-semibold transition-colors duration-150">
+            <button onClick={() => void fetchPayments()} className="px-4 py-2 bg-paypal-navy hover:bg-paypal-blue text-onsolid rounded-lg text-xs font-semibold transition-colors duration-150">
               Retry
             </button>
           </div>

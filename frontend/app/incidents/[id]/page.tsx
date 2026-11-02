@@ -89,7 +89,7 @@ export default function IncidentDetailPage() {
           <ArrowLeft className="w-4 h-4" />
           Back to Incidents
         </Link>
-
+        <Link href={`/investigate?incident_id=${encodeURIComponent(incidentId)}`} className="inline-flex items-center gap-2 rounded-lg bg-cyan-600 px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-cyan-500"><Sparkles className="h-4 w-4" />Investigate with AI</Link>
         <button
           onClick={handleGenerateReport}
           disabled={generatingReport}

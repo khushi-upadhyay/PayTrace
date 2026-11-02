@@ -36,3 +36,24 @@ def test_analytics_metrics(client):
     assert "status_breakdown" in data
     assert "volume_over_time" in data
     assert "failure_categories" in data
+    assert data["average_webhook_delay_seconds"] is None
+
+
+def test_analytics_keeps_revenue_at_risk_separate_by_currency(client, db_session):
+    from app.db.models.payment import Payment
+
+    db_session.add_all([
+        Payment(id="risk-usd", customer_ref="risk-usd", amount="25.00", currency="USD", status="DENIED"),
+        Payment(id="risk-eur", customer_ref="risk-eur", amount="30.00", currency="EUR", status="CAPTURE_UNCERTAIN"),
+    ])
+    db_session.commit()
+
+    response = client.get("/api/v1/analytics")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["potential_revenue_at_risk"] is None
+    assert data["currency"] == "MULTI"
+    assert data["revenue_at_risk_by_currency"] == [
+        {"currency": "EUR", "amount": "30.00"},
+        {"currency": "USD", "amount": "25.00"},
+    ]

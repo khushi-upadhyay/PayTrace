@@ -1,7 +1,7 @@
 """Add ShelfSwipe cart items and multi-item order line tables.
 
 Revision ID: e7a4f21b9c3d
-Revises: d2f9a4b1c6e3
+Revises: f3a8c91d2e70
 Create Date: 2026-11-03
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 
 revision: str = "e7a4f21b9c3d"
-down_revision: Union[str, None] = "d2f9a4b1c6e3"
+down_revision: Union[str, None] = "f3a8c91d2e70"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

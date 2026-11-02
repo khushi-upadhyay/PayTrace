@@ -103,4 +103,91 @@ def test_investigation_delayed_webhook_scenario(client):
     assert inv_res.status_code == 200
     inv = inv_res.json()
     assert "webhook" in inv["root_cause"].lower() or "delayed" in inv["root_cause"].lower()
+    assert any("does not prove" in fact.lower() for fact in inv["facts"])
+
+
+def test_captured_payment_without_webhook_does_not_claim_provider_delivery_failure(client):
+    create_res = client.post("/api/v1/paypal/orders", json={"amount": 18.25, "customer_ref": "no-webhook-evidence"})
+    payment_id = create_res.json()["payment_id"]
+    order_id = create_res.json()["paypal_order_id"]
+    client.post(f"/api/v1/paypal/orders/{order_id}/approve")
+    client.post(f"/api/v1/paypal/orders/{order_id}/capture")
+
+    response = client.post("/api/v1/ai/investigate", json={"payment_id": payment_id})
+    assert response.status_code == 200
+    result = response.json()
+    claims = " ".join([result["root_cause"], *result["facts"], *result["inferences"]]).lower()
+    assert "no linked webhook records were found" in claims
+    assert "does not prove" in claims
+    assert "delayed" not in result["root_cause"].lower()
+
+
+def test_followup_webhook_question_reports_only_stored_evidence(client):
+    create_res = client.post("/api/v1/paypal/orders", json={"amount": 18.25, "customer_ref": "chat-webhook-evidence"})
+    payment_id = create_res.json()["payment_id"]
+
+    response = client.post("/api/v1/ai/chat", json={
+        "payment_id": payment_id,
+        "messages": [
+            {"role": "user", "content": "Explain this payment"},
+            {"role": "assistant", "content": "The payment is pending."},
+            {"role": "user", "content": "Were any webhook events recorded?"},
+        ],
+        "question": "Were any webhook events recorded?",
+    })
+    assert response.status_code == 200
+    assert "no webhook events were found" in response.json()["response"].lower()
+    assert "does not prove" in response.json()["response"].lower()
+
+
+def test_followup_investigation_uses_linked_session_network_evidence(client):
+    session_response = client.post("/api/v1/sessions", json={"visitor_ref": "ai-evidence-test"})
+    assert session_response.status_code == 200
+    session_id = session_response.json()["id"]
+    payment_response = client.post("/api/v1/paypal/orders", json={"amount": 18.25, "customer_ref": "session-evidence", "session_id": session_id})
+    payment_id = payment_response.json()["payment_id"]
+    event_response = client.post(f"/api/v1/sessions/{session_id}/events", json={"events": [{
+        "id": "a5a98f9c-2ccd-4c20-a57d-4e43fbdb0e97",
+        "event_type": "network",
+        "category": "network",
+        "severity": "error",
+        "payment_id": payment_id,
+        "route": "/checkout",
+        "payload": {"method": "POST", "url": "http://localhost:8000/api/v1/paypal/orders/capture", "status": 502, "duration_ms": 2100, "outcome": "http_error"},
+    }]})
+    assert event_response.status_code == 200
+
+    response = client.post("/api/v1/ai/chat", json={
+        "payment_id": payment_id,
+        "messages": [{"role": "user", "content": "Which network request failed?"}],
+        "question": "Which network request failed?",
+    })
+    assert response.status_code == 200
+    assert "network" in response.json()["response"].lower()
+    assert "502" in response.json()["response"]
+
+
+def test_incident_investigation_uses_stored_incident_and_payment_evidence(client, db_session):
+    from datetime import datetime
+    from decimal import Decimal
+    from app.db.models.incident import Incident
+    from app.db.models.payment import Payment
+
+    payment_id = "incident-payment-1"
+    incident_id = "incident-context-1"
+    db_session.add(Payment(id=payment_id, paypal_order_id="ORDER-INCIDENT-1", customer_ref="buyer-incident", amount=Decimal("45.00"), currency="USD", status="CAPTURE_UNCERTAIN", failure_code="TIMEOUT_BEFORE_RESPONSE", source_mode="SIMULATED", actor="demo", created_at=datetime.utcnow(), updated_at=datetime.utcnow()))
+    db_session.add(Incident(id=incident_id, title="Stored timeout incident", severity="HIGH", status="OPEN", started_at=datetime.utcnow(), affected_payment_count=1, revenue_at_risk=Decimal("45.00"), currency="USD", detection_rule="CAPTURE_TIMEOUT_SPIKE", root_cause=None, created_at=datetime.utcnow(), updated_at=datetime.utcnow()))
+    db_session.flush()
+
+    response = client.post("/api/v1/ai/investigate", json={"incident_id": incident_id})
+    assert response.status_code == 200
+    result = response.json()
+    assert result["incident_id"] == incident_id
+    assert result["severity"] == "HIGH"
+    assert any(payment_id in fact for fact in result["facts"])
+    assert any("no stored root-cause assessment" in fact.lower() for fact in result["facts"])
+
+    chat = client.post("/api/v1/ai/chat", json={"incident_id": incident_id, "messages": [{"role": "user", "content": "Which payments are affected?"}]})
+    assert chat.status_code == 200
+    assert payment_id in chat.json()["response"]
 

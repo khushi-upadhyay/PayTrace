@@ -326,6 +326,9 @@ export default function PaymentDetailPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <Link href={`/investigate?payment_id=${encodeURIComponent(payment.id)}`} className="inline-flex items-center gap-2 rounded-lg border border-cyan-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-cyan-800 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">
+              <Brain className="h-3.5 w-3.5" /> Ask AI about this payment
+            </Link>
             {/* Status Pill */}
             <div className="flex flex-col items-end">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider">Lifecycle State</span>
@@ -706,9 +709,9 @@ export default function PaymentDetailPage() {
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 uppercase block">Evidence Confidence</span>
-                    <span className="text-xs font-bold text-cyan-400">
-                      {(investigation.confidence * 100).toFixed(0)}%
+                    <span className="text-[10px] text-slate-400 uppercase block">Evidence confidence</span>
+                    <span className="text-xs font-bold text-cyan-700">
+                      {investigation.confidence >= 0.75 ? "Strong" : investigation.confidence >= 0.5 ? "Partial" : "Limited"}
                     </span>
                   </div>
                 </div>

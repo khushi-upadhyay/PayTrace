@@ -16,6 +16,7 @@ from app.api.routes.sessions import router as sessions_router, payment_session_r
 from app.api.routes.ai import router as ai_router
 from app.api.routes.incidents import router as incidents_router
 from app.api.routes.analytics import router as analytics_router
+from app.api.routes.search import router as search_router
 from app.api.routes.approvals import router as approvals_router
 from app.api.routes.demo import router as demo_router
 from app.api.routes.settings import router as settings_router
@@ -68,6 +69,7 @@ app.include_router(sessions_router, prefix=api_v1_prefix)
 app.include_router(ai_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(incidents_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(analytics_router, prefix=api_v1_prefix, dependencies=operator_only)
+app.include_router(search_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(approvals_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(demo_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(settings_router, prefix=api_v1_prefix, dependencies=operator_only)

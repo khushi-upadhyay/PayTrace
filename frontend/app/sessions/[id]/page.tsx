@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { AgGridReact } from "ag-grid-react";
+import { AgGridProvider } from "ag-grid-react";
+import { AllCommunityModule, ColDef, themeQuartz } from "ag-grid-community";
 import { AlertTriangle, ArrowLeft, Loader2, Pause, Play, Video } from "lucide-react";
 import { api, type BrowserSessionEvent, type BrowserSessionReplay } from "@/lib/api";
 import { createReplayConfig, normalizeOccurrenceTime, PLAYBACK_SPEEDS, seekPreservingPlayback } from "@/lib/session-playback.mjs";
@@ -10,6 +13,7 @@ import { createReplayConfig, normalizeOccurrenceTime, PLAYBACK_SPEEDS, seekPrese
 type PanelTab = "journey" | "events" | "alerts";
 type SignalTab = "console" | "network";
 type ReplayEvent = BrowserSessionEvent & { id: string; occurred_at: string };
+type SignalGridRow = ReplayEvent & { method: string; endpoint: string; status_code: string; duration: string; log_level: string };
 function formatTime(milliseconds: number) {
   const seconds = Math.max(0, Math.floor(milliseconds / 1000));
   return `${Math.floor(seconds / 60).toString().padStart(2, "0")}:${(seconds % 60).toString().padStart(2, "0")}`;
@@ -275,6 +279,24 @@ export default function SessionReplayPage() {
     signalTab === "console" ? event.category === "console" || event.event_type === "console"
       : event.category === "network" || event.event_type === "network",
   );
+  const signalGridRows = useMemo<SignalGridRow[]>(() => signalEvents.map((event) => {
+    const attributes = (event.attributes ?? {}) as Record<string, unknown>;
+    const payload = (event.payload ?? {}) as Record<string, unknown>;
+    return {
+      ...event,
+      method: String(attributes.method ?? payload.method ?? "—"),
+      endpoint: String(attributes.url ?? payload.url ?? labelFor(event)),
+      status_code: String(attributes.status ?? payload.status ?? (signalTab === "console" ? event.severity ?? "info" : "—")),
+      duration: attributes.duration_ms == null && payload.duration_ms == null ? "—" : `${String(attributes.duration_ms ?? payload.duration_ms)} ms`,
+      log_level: String(event.severity ?? "info").toUpperCase(),
+    };
+  }), [signalEvents, signalTab]);
+  const signalColumns = useMemo<ColDef<SignalGridRow>[]>(() => [
+    { field: "occurred_at", headerName: "Time", minWidth: 175, valueFormatter: ({ value }) => value ? new Date(value).toLocaleString() : "—" },
+    ...(signalTab === "network" ? [{ field: "method", headerName: "Method", width: 100 } as ColDef<SignalGridRow>, { field: "endpoint", headerName: "Endpoint", minWidth: 250, flex: 2 } as ColDef<SignalGridRow>, { field: "status_code", headerName: "HTTP status", width: 120 } as ColDef<SignalGridRow>, { field: "duration", headerName: "Duration", width: 110 } as ColDef<SignalGridRow>] : [{ field: "log_level", headerName: "Level", width: 110 } as ColDef<SignalGridRow>, { field: "endpoint", headerName: "Message", minWidth: 250, flex: 2 } as ColDef<SignalGridRow>]),
+    { field: "route", headerName: "Route", minWidth: 150, valueFormatter: ({ value }) => value || "—" },
+    { field: "tab_id", headerName: "Tab ID", minWidth: 125, valueFormatter: ({ value }) => value ? String(value).slice(0, 10) : "—" },
+  ], [signalTab]);
   const timelineGroups: Array<{ event: ReplayEvent; repeats: ReplayEvent[] }> = [];
   for (const event of visibleEvents) {
     const previous = timelineGroups[timelineGroups.length - 1];
@@ -328,25 +350,16 @@ export default function SessionReplayPage() {
           {playerError && <p role="alert" className="text-xs text-rose-300">{playerError}</p>}
           <p className="text-[12px] text-slate-500">Inputs are masked. PayPal-hosted checkout pages are not included. Each browser tab and recording segment plays independently.</p>
 
-          <section className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/40">
-            <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
-              <div><h2 className="text-sm font-semibold text-ink">Console & network logs</h2><p className="mt-0.5 text-[11px] text-slate-500">Captured signals from this session</p></div>
-              <div className="flex rounded-lg border border-slate-700 p-0.5" role="tablist" aria-label="Session signal logs">
-                {(["network", "console"] as SignalTab[]).map((value) => <button key={value} type="button" role="tab" aria-selected={signalTab === value} onClick={() => setSignalTab(value)} className={`rounded-md px-3 py-1.5 text-xs capitalize ${signalTab === value ? "bg-cyan-500/20 text-cyan-200" : "text-slate-400 hover:text-white"}`}>{value}</button>)}
+          <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 px-4 py-3">
+              <div><h2 className="text-sm font-semibold text-slate-900">Console & network logs</h2><p className="mt-0.5 text-[11px] text-slate-500">Captured signals from this session · select a row to inspect its replay point</p></div>
+              <div className="flex rounded-lg border border-slate-300 p-0.5" role="tablist" aria-label="Session signal logs">
+                {(["network", "console"] as SignalTab[]).map((value) => <button key={value} type="button" role="tab" aria-selected={signalTab === value} onClick={() => setSignalTab(value)} className={`rounded-md px-3 py-1.5 text-xs capitalize ${signalTab === value ? "bg-blue-100 text-blue-800" : "text-slate-600 hover:bg-slate-50"}`}>{value}</button>)}
               </div>
             </div>
-            <div className="max-h-[360px] space-y-2 overflow-y-auto p-3">
-              {signalEvents.length === 0 ? <p className="py-8 text-center text-xs text-slate-500">No {signalTab} logs match the current filters.</p> : signalEvents.map((event) => {
-                const attrs = (event.attributes ?? {}) as Record<string, unknown>;
-                const payload = (event.payload ?? {}) as Record<string, unknown>;
-                const failed = isAlertEvent(event);
-                return <button key={event.id} type="button" onClick={() => selectEvent(event)} className={`block w-full rounded-lg border p-3 text-left ${selectedEvent?.id === event.id ? "border-cyan-500/60 bg-cyan-950/20" : "border-slate-800 bg-slate-950/50 hover:border-slate-700"}`}>
-                  <span className="flex items-center justify-between gap-3"><span className={`truncate text-xs font-semibold ${failed ? "text-rose-200" : "text-slate-200"}`}>{signalTab === "network" ? `${String(attrs.method ?? "REQUEST")} ${String(attrs.url ?? payload.url ?? labelFor(event))}` : labelFor(event)}</span><span className={`shrink-0 rounded px-1.5 py-0.5 text-[10px] ${failed ? "bg-rose-950 text-rose-300" : "bg-slate-800 text-slate-400"}`}>{signalTab === "network" ? `HTTP ${String(attrs.status ?? payload.status ?? "?")}` : String(event.severity ?? "info").toUpperCase()}</span></span>
-                  <span className="mt-1 block text-[11px] text-slate-500">{new Date(chronologyTime(event) ?? Date.now()).toLocaleString()}{attrs.duration_ms !== undefined ? ` · ${String(attrs.duration_ms)} ms` : ""} · Tab {event.tab_id?.slice(0, 8) ?? "unknown"}</span>
-                  {failed && <span className="mt-1 block truncate text-[11px] text-rose-300">{String(attrs.error_message ?? payload.error ?? payload.message ?? "Captured failure signal")}</span>}
-                </button>;
-              })}
-            </div>
+            <AgGridProvider modules={[AllCommunityModule]}><div className="h-[360px] w-full">
+              <AgGridReact<SignalGridRow> theme={themeQuartz.withParams({ backgroundColor: "#ffffff", foregroundColor: "#1e293b", headerBackgroundColor: "#f8fafc", headerTextColor: "#475569", borderColor: "#e2e8f0", rowHoverColor: "#eff6ff", fontFamily: "Inter, sans-serif", fontSize: 12, accentColor: "#0b73c2" })} rowData={signalGridRows} columnDefs={signalColumns} defaultColDef={{ sortable: true, filter: true, resizable: true, minWidth: 100 }} getRowId={({ data }) => data.id} rowHeight={42} onRowClicked={({ data }) => { if (data) selectEvent(data); }} overlayNoRowsTemplate={`<span class='ag-overlay-no-rows-center'>No ${signalTab} logs match the current filters</span>`} />
+            </div></AgGridProvider>
           </section>
         </section>
         <aside className="flex min-w-0 flex-col rounded-xl border border-slate-800 bg-slate-900/40 p-4 xl:max-h-[calc(100vh-180px)]">
