@@ -80,8 +80,8 @@ class Settings(BaseSettings):
                 return "grok-2-latest"
             return configured_model
         elif prov == "groq":
-            if not configured_model or configured_model.startswith("gpt-") or configured_model.startswith("grok"):
-                return "llama-3.3-70b-versatile"
+            if not configured_model or configured_model.startswith("gpt-") or configured_model.startswith("grok") or "llama" in configured_model:
+                return "openai/gpt-oss-120b"
             return configured_model
         return configured_model or "gpt-4o-mini"
 
