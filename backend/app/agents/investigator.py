@@ -104,7 +104,7 @@ class AIInvestigator:
 
         evidence_event_ids = [e["id"] for e in facts_data.get("events_summary", [])]
 
-        # 2. Try LLM Provider if configured
+        # 2. Try LLM Provider if configured (supports OpenAI, Grok, Groq)
         if settings.is_ai_configured:
             try:
                 llm_response = await AIInvestigator._call_llm(facts_data, similar_failures, comparison, question)
@@ -115,7 +115,7 @@ class AIInvestigator:
                     AIInvestigator._save_investigation(db, llm_response)
                     return llm_response
             except Exception as e:
-                logger.warning(f"AI provider call failed, falling back to deterministic investigator: {e}")
+                logger.warning(f"AI provider call failed ({settings.effective_ai_provider}), falling back to deterministic investigator: {e}")
 
         # 3. Deterministic Evidence-Based Fallback Investigator
         fallback_res = AIInvestigator._deterministic_investigate(facts_data, similar_failures, comparison, question)
@@ -303,7 +303,7 @@ class AIInvestigator:
         comparison: Optional[Dict[str, Any]],
         question: str,
     ) -> Optional[AIInvestigationResponse]:
-        """Calls OpenAI or OpenAI-compatible provider with structured JSON output."""
+        """Calls OpenAI, Grok (xAI), or Groq with structured JSON output."""
         prompt = f"""
 You are the PayTrace AI Investigator. Analyze the supplied persisted payment or incident evidence and return structured findings.
 Strictly adhere to the facts provided. Never invent missing events. Separate FACT, INFERENCE, and RECOMMENDATION. A missing webhook record means only that no linked record was found; it does not prove PayPal failed to send one. A local payment status is not an independent live provider check. Never claim a browser-visible outcome unless it is in evidence. For every statement about an API call, event, webhook, or timeline, cite a corresponding evidence record in facts or say it is unknown. Do not present a hypothesis as a confirmed root cause.
@@ -335,12 +335,16 @@ Return ONLY valid JSON matching this exact schema:
   "insufficient_evidence": true | false
 }}
 """
+        model_name = settings.effective_ai_model
+        api_key = settings.effective_ai_api_key
+        endpoint = settings.effective_ai_endpoint
+
         headers = {
-            "Authorization": f"Bearer {settings.AI_API_KEY}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
         body = {
-            "model": settings.AI_MODEL or "gpt-4o-mini",
+            "model": model_name,
             "messages": [
                 {"role": "system", "content": "You are PayTrace AI Investigator. Use only supplied persisted evidence. Clearly separate observed facts, inferences, and unknowns. Never invent API responses, webhooks, customer behavior, or causes. Return only JSON."},
                 {"role": "user", "content": prompt}
@@ -348,11 +352,18 @@ Return ONLY valid JSON matching this exact schema:
             "response_format": {"type": "json_object"},
             "temperature": 0.1
         }
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=body)
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            resp = await client.post(endpoint, headers=headers, json=body)
             resp.raise_for_status()
             content = resp.json()["choices"][0]["message"]["content"]
-            parsed = json.loads(content)
+            cleaned = content.strip()
+            if cleaned.startswith("```json"):
+                cleaned = cleaned[7:]
+            elif cleaned.startswith("```"):
+                cleaned = cleaned[3:]
+            if cleaned.endswith("```"):
+                cleaned = cleaned[:-3]
+            parsed = json.loads(cleaned.strip())
             return AIInvestigationResponse(
                 root_cause=parsed.get("root_cause", ""),
                 confidence=float(parsed.get("confidence", 0.8)),
@@ -364,7 +375,7 @@ Return ONLY valid JSON matching this exact schema:
                 recommendation=parsed.get("recommendation", ""),
                 is_incident_likely=bool(parsed.get("is_incident_likely", False)),
                 insufficient_evidence=bool(parsed.get("insufficient_evidence", False)),
-                model_name=settings.AI_MODEL,
+                model_name=model_name,
             )
 
     @staticmethod
@@ -481,6 +492,43 @@ Return ONLY valid JSON matching this exact schema:
                 "PayTrace policy mandates that all refund actions require explicit human operator approval. "
                 "You can initiate a refund proposal from the payment actions panel, which routes into the Human Approval Inbox."
             )
+        elif settings.is_ai_configured:
+            try:
+                system_prompt = (
+                    "You are PayTrace AI Investigator chatting with an authorized payments operator. "
+                    "Answer strictly grounded in the following payment evidence facts. "
+                    "Never invent facts or transactions. "
+                    f"EVIDENCE: {json.dumps(facts_data)}"
+                )
+                chat_msgs = [{"role": "system", "content": system_prompt}]
+                for m in messages[-4:]:
+                    chat_msgs.append({"role": m.get("role", "user"), "content": m.get("content", "")})
+                if question and not any(m.get("content") == question for m in messages):
+                    chat_msgs.append({"role": "user", "content": question})
+
+                headers = {
+                    "Authorization": f"Bearer {settings.effective_ai_api_key}",
+                    "Content-Type": "application/json"
+                }
+                body = {
+                    "model": settings.effective_ai_model,
+                    "messages": chat_msgs,
+                    "temperature": 0.2
+                }
+                async with httpx.AsyncClient(timeout=15.0) as client:
+                    resp = await client.post(settings.effective_ai_endpoint, headers=headers, json=body)
+                    if resp.status_code == 200:
+                        reply = resp.json()["choices"][0]["message"]["content"]
+                    else:
+                        raise ValueError(f"HTTP {resp.status_code}")
+            except Exception as e:
+                logger.warning(f"AI chat call failed ({settings.effective_ai_provider}), falling back to grounded rule engine: {e}")
+                reply = (
+                    f"Based on the cross-signal evidence for payment `{payment_id}` (current status: `{status}`), "
+                    f"the investigation detected {facts_data.get('event_count', 0)} lifecycle events and "
+                    f"{facts_data.get('webhooks_count', 0)} verified webhooks. "
+                    f"Root cause summary: {facts_data.get('failure_reason') or 'Normal settlement or pending outcome.'}"
+                )
         else:
             events = facts_data.get("events_summary", [])
             reply = f"The stored status is {status}. "
