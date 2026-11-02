@@ -11,11 +11,25 @@ from app.agents.tools import evidence_gatherer
 from app.schemas.ai import AIInvestigationResponse
 from app.core.config import settings
 from app.core.time import utc_now
+from app.agents.graph import run_investigation_graph
 
 logger = logging.getLogger(__name__)
 
 class AIInvestigator:
-    """Investigates payment failures using structured cross-signal evidence and deterministic fallbacks."""
+    """
+    Investigates payment failures using a LangGraph-powered agentic workflow.
+
+    Investigation flow (LangGraph nodes):
+      A. gather_initial_evidence  — collects all local DB evidence
+      B. analyze_evidence         — LLM generates hypotheses (or deterministic fallback)
+      C. select_investigation_tools — picks tools based on hypotheses
+      D. execute_tools            — calls read-only investigation tools
+      E. verify_hypothesis        — confirms or refutes; loops up to MAX_CYCLES
+      F. generate_investigation_report — structured evidence-grounded report
+
+    Falls back to deterministic rule engine if LangGraph/LLM fails.
+    Preserves the existing public interface and API schema.
+    """
 
     @staticmethod
     async def investigate(
@@ -36,7 +50,7 @@ class AIInvestigator:
                 model_name="deterministic-rule-engine-v1",
             )
 
-        # 1. Gather deterministic facts from database
+        # Quick existence check
         facts_data = evidence_gatherer.get_payment_facts(db, payment_id)
         if "error" in facts_data:
             return AIInvestigationResponse(
@@ -50,27 +64,59 @@ class AIInvestigator:
                 model_name="deterministic-rule-engine-v1",
             )
 
+        evidence_event_ids = [e["id"] for e in facts_data.get("events_summary", [])]
+
+        # 1. LangGraph Agentic Investigation (primary path)
+        try:
+            import asyncio
+
+            # run_investigation_graph is synchronous (LangGraph state machines run sync)
+            graph_response = await asyncio.get_event_loop().run_in_executor(
+                None,
+                run_investigation_graph,
+                db,
+                payment_id,
+                question,
+            )
+            graph_response.payment_id = payment_id
+            graph_response.incident_id = incident_id
+            graph_response.evidence_event_ids = evidence_event_ids[:10]
+            AIInvestigator._save_investigation(db, graph_response)
+            logger.info(
+                "payment_id=%s LangGraph investigation complete model=%s confidence=%.2f",
+                payment_id,
+                graph_response.model_name,
+                graph_response.confidence,
+            )
+            return graph_response
+        except Exception as graph_err:
+            logger.warning(
+                "LangGraph investigation failed for payment_id=%s error=%s — "
+                "falling back to simple LLM call then deterministic engine.",
+                payment_id,
+                graph_err,
+            )
+
+        # 2. Simple LLM fallback (existing behavior)
         similar_failures = evidence_gatherer.find_similar_failures(db, payment_id)
         comparison = evidence_gatherer.compare_with_successful(db, payment_id)
 
-        evidence_event_ids = [e["id"] for e in facts_data.get("events_summary", [])]
-
-        # 2. Try LLM Provider if configured (supports OpenAI, Grok, Groq)
         if settings.is_ai_configured:
             try:
                 llm_response = await AIInvestigator._call_llm(facts_data, similar_failures, comparison, question)
                 if llm_response:
                     llm_response.payment_id = payment_id
+                    llm_response.incident_id = incident_id
                     llm_response.evidence_event_ids = evidence_event_ids[:10]
-                    # Save to DB
                     AIInvestigator._save_investigation(db, llm_response)
                     return llm_response
             except Exception as e:
-                logger.warning(f"AI provider call failed ({settings.effective_ai_provider}), falling back to deterministic investigator: {e}")
+                logger.warning(f"Simple LLM call failed ({settings.effective_ai_provider}), falling back to deterministic investigator: {e}")
 
-        # 3. Deterministic Evidence-Based Fallback Investigator
+        # 3. Deterministic Evidence-Based Fallback
         fallback_res = AIInvestigator._deterministic_investigate(facts_data, similar_failures, comparison, question)
         fallback_res.payment_id = payment_id
+        fallback_res.incident_id = incident_id
         fallback_res.evidence_event_ids = evidence_event_ids[:10]
         AIInvestigator._save_investigation(db, fallback_res)
         return fallback_res
