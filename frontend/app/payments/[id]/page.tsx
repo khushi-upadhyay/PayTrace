@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -9,6 +9,7 @@ import {
   TimelineData,
   PaymentEventItem,
   AIInvestigationData,
+  DisputeItem,
 } from "@/lib/api";
 import {
   Activity,
@@ -29,6 +30,7 @@ import {
   Sparkles,
   HelpCircle,
   Eye,
+  Scale,
 } from "lucide-react";
 
 export default function PaymentDetailPage() {
@@ -49,6 +51,7 @@ export default function PaymentDetailPage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
+  const chatThreadEndRef = useRef<HTMLDivElement | null>(null);
 
   // Refund modal state
   const [showRefundModal, setShowRefundModal] = useState(false);
@@ -60,18 +63,31 @@ export default function PaymentDetailPage() {
   const [reconciling, setReconciling] = useState(false);
   const [reconcileResult, setReconcileResult] = useState<any>(null);
 
+  // Dispute state
+  const [disputes, setDisputes] = useState<DisputeItem[]>([]);
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
+  const [disputeReason, setDisputeReason] = useState("MERCHANDISE_OR_SERVICE_NOT_RECEIVED");
+  const [disputeStatement, setDisputeStatement] = useState("");
+  const [disputeSubmitting, setDisputeSubmitting] = useState(false);
+  const [respondingDisputeId, setRespondingDisputeId] = useState<string | null>(null);
+  const [disputeResponseText, setDisputeResponseText] = useState("");
+  const [disputeAcceptLiability, setDisputeAcceptLiability] = useState(false);
+  const [disputeNotice, setDisputeNotice] = useState<string | null>(null);
+
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
-      const [pm, tl, sess] = await Promise.all([
+      const [pm, tl, sess, disp] = await Promise.all([
         api.getPayment(paymentId),
         api.getPaymentTimeline(paymentId),
         api.getPaymentSession(paymentId).catch(() => null),
+        api.getDisputesForPayment(paymentId).catch(() => null),
       ]);
       setPayment(pm);
       setTimeline(tl);
       setSessionInfo(sess);
+      setDisputes(disp?.items || []);
     } catch (err: any) {
       setError(err.message || "Failed to load payment detail");
     } finally {
@@ -84,6 +100,12 @@ export default function PaymentDetailPage() {
       loadData();
     }
   }, [paymentId]);
+
+  // The chat thread is a fixed-height scrollable box; without this, new
+  // messages render below the visible fold and the chat looks dead.
+  useEffect(() => {
+    chatThreadEndRef.current?.scrollIntoView({ block: "nearest" });
+  }, [chatMessages, chatLoading]);
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
@@ -154,6 +176,49 @@ export default function PaymentDetailPage() {
     }
   };
 
+  const handleSimulateDispute = async () => {
+    try {
+      setDisputeSubmitting(true);
+      await api.simulateDispute({
+        payment_id: paymentId,
+        reason: disputeReason,
+        buyer_statement: disputeStatement.trim() || undefined,
+      });
+      setDisputeNotice("Simulated dispute opened. Respond within the demo's 10-day window to resolve it.");
+      setShowDisputeModal(false);
+      setDisputeStatement("");
+      loadData();
+    } catch (err: any) {
+      alert(`Error opening dispute: ${err.message}`);
+    } finally {
+      setDisputeSubmitting(false);
+    }
+  };
+
+  const handleRespondToDispute = async (disputeId: string) => {
+    if (!disputeResponseText.trim()) return;
+    try {
+      setDisputeSubmitting(true);
+      const updated = await api.respondToDispute(disputeId, {
+        seller_response: disputeResponseText.trim(),
+        accept_liability: disputeAcceptLiability,
+      });
+      setDisputeNotice(
+        updated.status === "RESOLVED_BUYER_FAVOUR"
+          ? "Response submitted. Liability accepted — route a refund through Approvals to reconcile the ledger."
+          : "Response submitted. Dispute moved to UNDER_REVIEW."
+      );
+      setRespondingDisputeId(null);
+      setDisputeResponseText("");
+      setDisputeAcceptLiability(false);
+      loadData();
+    } catch (err: any) {
+      alert(`Error responding to dispute: ${err.message}`);
+    } finally {
+      setDisputeSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
@@ -177,6 +242,8 @@ export default function PaymentDetailPage() {
   }
 
   const isTimeoutUncertain = payment.status === "CAPTURE_UNCERTAIN" || payment.failure_code === "TIMEOUT_BEFORE_RESPONSE";
+  const hasOpenDispute = disputes.some((d) => d.status === "OPEN" || d.status === "UNDER_REVIEW");
+  const canOpenDispute = payment.status === "CAPTURED" && !hasOpenDispute;
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto animate-fadeIn pb-16">
@@ -206,6 +273,15 @@ export default function PaymentDetailPage() {
               Reconcile with PayPal
             </button>
           )}
+          {canOpenDispute && (
+            <button
+              onClick={() => setShowDisputeModal(true)}
+              className="px-3.5 py-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-200 text-xs font-semibold transition-colors flex items-center gap-1.5"
+            >
+              <Scale className="w-3.5 h-3.5" />
+              Simulate Dispute
+            </button>
+          )}
         </div>
       </div>
 
@@ -213,6 +289,13 @@ export default function PaymentDetailPage() {
         <div className="p-3.5 rounded-lg bg-emerald-950/70 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           {refundNotice}
+        </div>
+      )}
+
+      {disputeNotice && (
+        <div className="p-3.5 rounded-lg bg-sky-950/70 border border-sky-800 text-sky-300 text-xs flex items-center gap-2">
+          <Scale className="w-4 h-4 text-sky-400 shrink-0" />
+          {disputeNotice}
         </div>
       )}
 
@@ -243,6 +326,9 @@ export default function PaymentDetailPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
+            <Link href={`/investigate?payment_id=${encodeURIComponent(payment.id)}`} className="inline-flex items-center gap-2 rounded-lg border border-cyan-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-cyan-800 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">
+              <Brain className="h-3.5 w-3.5" /> Ask AI about this payment
+            </Link>
             {/* Status Pill */}
             <div className="flex flex-col items-end">
               <span className="text-[10px] text-slate-500 uppercase tracking-wider">Lifecycle State</span>
@@ -471,6 +557,104 @@ export default function PaymentDetailPage() {
               </Link>
             </div>
           )}
+
+          {/* Disputes */}
+          {disputes.length > 0 && (
+            <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
+              <div className="flex items-center gap-2.5">
+                <Scale className="w-4 h-4 text-amber-400" />
+                <h3 className="text-sm font-bold text-ink">Disputes</h3>
+              </div>
+              {disputes.map((d) => (
+                <div key={d.id} className="rounded-xl border border-slate-800 bg-slate-900/60 p-4 space-y-3">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                        d.status === "OPEN"
+                          ? "bg-amber-950 text-amber-300 border border-amber-800"
+                          : d.status === "UNDER_REVIEW"
+                          ? "bg-sky-950 text-sky-300 border border-sky-800"
+                          : d.status === "RESOLVED_BUYER_FAVOUR"
+                          ? "bg-purple-950 text-purple-300 border border-purple-800"
+                          : "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                      }`}
+                    >
+                      {d.status.replace(/_/g, " ")}
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-mono">{d.paypal_dispute_id}</span>
+                  </div>
+                  <p className="text-xs text-slate-300">
+                    Reason: <span className="text-slate-100 font-medium">{d.reason.replace(/_/g, " ")}</span>
+                    {" "}· ${Number(d.amount).toFixed(2)} {d.currency}
+                  </p>
+                  {d.buyer_statement && (
+                    <p className="text-xs text-slate-400 italic">&ldquo;{d.buyer_statement}&rdquo;</p>
+                  )}
+                  {d.response_due_by && (d.status === "OPEN" || d.status === "UNDER_REVIEW") && (
+                    <p className="text-[11px] text-amber-400">
+                      Respond by {new Date(d.response_due_by).toLocaleDateString()}
+                    </p>
+                  )}
+                  {d.seller_response && (
+                    <p className="text-xs text-slate-400">
+                      <span className="text-slate-500">Your response:</span> {d.seller_response}
+                    </p>
+                  )}
+                  {d.outcome_note && (
+                    <p className="text-xs text-cyan-300 bg-cyan-950/30 border border-cyan-800/40 rounded-lg p-2.5">
+                      {d.outcome_note}
+                    </p>
+                  )}
+
+                  {(d.status === "OPEN" || d.status === "UNDER_REVIEW") && (
+                    respondingDisputeId === d.id ? (
+                      <div className="space-y-2 pt-2 border-t border-slate-800">
+                        <textarea
+                          value={disputeResponseText}
+                          onChange={(e) => setDisputeResponseText(e.target.value)}
+                          maxLength={1024}
+                          rows={3}
+                          placeholder="Evidence or explanation for this dispute..."
+                          className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                        />
+                        <label className="flex items-center gap-2 text-[11px] text-slate-400">
+                          <input
+                            type="checkbox"
+                            checked={disputeAcceptLiability}
+                            onChange={(e) => setDisputeAcceptLiability(e.target.checked)}
+                            className="rounded accent-cyan-500"
+                          />
+                          Accept liability (resolves in the buyer&apos;s favour)
+                        </label>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => { setRespondingDisputeId(null); setDisputeResponseText(""); setDisputeAcceptLiability(false); }}
+                            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={() => handleRespondToDispute(d.id)}
+                            disabled={disputeSubmitting || !disputeResponseText.trim()}
+                            className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-onsolid text-xs font-bold disabled:opacity-50"
+                          >
+                            Submit Response
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setRespondingDisputeId(d.id)}
+                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold"
+                      >
+                        Respond to Dispute
+                      </button>
+                    )
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right: AI Investigator & Root Cause Diagnosis (5 cols) */}
@@ -525,9 +709,9 @@ export default function PaymentDetailPage() {
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-400 uppercase block">Evidence Confidence</span>
-                    <span className="text-xs font-bold text-cyan-400">
-                      {(investigation.confidence * 100).toFixed(0)}%
+                    <span className="text-[10px] text-slate-400 uppercase block">Evidence confidence</span>
+                    <span className="text-xs font-bold text-cyan-700">
+                      {investigation.confidence >= 0.75 ? "Strong" : investigation.confidence >= 0.5 ? "Partial" : "Limited"}
                     </span>
                   </div>
                 </div>
@@ -650,6 +834,7 @@ export default function PaymentDetailPage() {
                     Querying grounded evidence tools...
                   </div>
                 )}
+                <div ref={chatThreadEndRef} />
               </div>
 
               {/* Input */}
@@ -720,6 +905,69 @@ export default function PaymentDetailPage() {
               >
                 {refundSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
                 Submit Proposal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Simulate Dispute Modal */}
+      {showDisputeModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass-panel max-w-md w-full rounded-2xl p-6 border border-slate-700 space-y-5 animate-scaleUp">
+            <h3 className="text-base font-bold text-ink flex items-center gap-2">
+              <Scale className="w-5 h-5 text-amber-400" />
+              Simulate a Buyer Dispute
+            </h3>
+            <p className="text-xs text-slate-400">
+              This sandbox does not call PayPal&apos;s live Disputes API. It creates a clearly-labelled
+              simulated dispute so you can exercise the respond/resolve workflow end to end.
+            </p>
+
+            <div className="space-y-2">
+              <label className="text-xs text-slate-400">Reason</label>
+              <select
+                value={disputeReason}
+                onChange={(e) => setDisputeReason(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-ink focus:outline-none focus:border-cyan-500"
+              >
+                <option value="MERCHANDISE_OR_SERVICE_NOT_RECEIVED">Merchandise/service not received</option>
+                <option value="MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED">Not as described</option>
+                <option value="UNAUTHORIZED">Unauthorized transaction</option>
+                <option value="CREDIT_NOT_PROCESSED">Credit not processed</option>
+                <option value="DUPLICATE_TRANSACTION">Duplicate transaction</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs text-slate-400">Buyer statement (optional)</label>
+              <textarea
+                value={disputeStatement}
+                onChange={(e) => setDisputeStatement(e.target.value)}
+                maxLength={1024}
+                rows={3}
+                placeholder="What the buyer says went wrong..."
+                className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowDisputeModal(false)}
+                className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 transition-colors duration-150 hover:text-ink"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSimulateDispute}
+                disabled={disputeSubmitting}
+                className="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-onsolid text-xs font-bold transition-colors flex items-center gap-1.5"
+              >
+                {disputeSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                Open Dispute
               </button>
             </div>
           </div>

@@ -277,7 +277,7 @@ def seed_demo_catalog(db: Session) -> None:
 def get_swipe_deck(
     query: str = Query("gift", description="Natural language buyer search query"),
     buyer_ref: str = Query("buyer_demo_01"),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Returns a deterministic, search-filtered demo deck.
@@ -366,3 +366,93 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
     db.add(swipe)
     db.commit()
     return {"status": "recorded", "direction": req.direction, "product_id": req.product_id}
+
+@router.post("/checkout")
+async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
+    """
+    Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
+    """
+    prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
+    if not prod:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if prod.stock < req.quantity:
+        raise HTTPException(status_code=400, detail="Insufficient stock")
+
+    payment_id = str(uuid.uuid4())
+    total_amount = Decimal(str(prod.price)) * req.quantity
+    is_mock = not settings.is_paypal_configured
+
+    paypal_order_id = ""
+    approval_url = None
+
+    if settings.is_paypal_configured:
+        try:
+            order_data = await paypal_client.create_order(
+                amount=total_amount,
+                currency=prod.currency,
+                custom_id=payment_id,
+                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
+                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
+            )
+            if prod.currency != "USD":
+                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
+            validate_created_order_amount(order_data, total_amount, prod.currency)
+            paypal_order_id = order_data["id"]
+            for link in order_data.get("links", []):
+                if link.get("rel") == "approve":
+                    approval_url = link.get("href")
+        except Exception as exc:
+            diagnostics = (
+                safe_paypal_error_diagnostics(exc)
+                if isinstance(exc, httpx.HTTPStatusError)
+                else {"http_status": None, "error_type": type(exc).__name__}
+            )
+            diagnostics.update({"requested_amount": f"{total_amount:.2f}", "requested_currency": prod.currency})
+            logger.error("ShelfSwipe PayPal order creation failed", extra={"paypal_diagnostics": diagnostics})
+            raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
+
+    if is_mock:
+        order_data = mock_paypal.create_order(
+            amount=total_amount,
+            currency=prod.currency,
+            custom_id=payment_id,
+        )
+        paypal_order_id = order_data["id"]
+        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
+
+    # Register in PayTrace unified payment ledger
+    payment = Payment(
+        id=payment_id,
+        paypal_order_id=paypal_order_id,
+        customer_ref=req.buyer_ref,
+        session_id=req.session_id,
+        amount=total_amount,
+        currency=prod.currency,
+        status="CREATED",
+        actor="human",
+        source_mode="SIMULATED" if is_mock else f"PAYPAL_{settings.paypal_mode.upper()}",
+        failure_code=req.simulate_scenario,
+    )
+    db.add(payment)
+
+    lifecycle_engine.record_event(
+        db=db,
+        payment=payment,
+        event_type="CHECKOUT_ORDER_CREATED",
+        source="SHELVESWIPE_APP",
+        status="SUCCESS",
+        paypal_order_id=paypal_order_id,
+        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": prod.seller_id},
+        is_simulated=is_mock,
+    )
+    db.commit()
+
+    return {
+        "payment_id": payment_id,
+        "paypal_order_id": paypal_order_id,
+        "approval_url": approval_url,
+        "amount": float(total_amount),
+        "currency": prod.currency,
+        "product_name": prod.name,
+        "is_mock": is_mock,
+    }

@@ -449,3 +449,53 @@ def test_capture_persistence_failure_retries_by_reconciling_without_recapture(cl
     assert response.json()["paypal_capture_id"] == "CAP-COMMIT-RETRY"
     assert client.get(f"/api/v1/payments/{recreated.json()['payment_id']}").json()["status"] == "CAPTURED"
     capture.assert_not_awaited()
+
+
+def test_reconcile_after_timeout_never_issues_a_second_capture(client):
+    """
+    Regression test for a critical bug: the "reconcile" call (same endpoint the
+    frontend's "Reconcile with PayPal" button uses, with simulate_timeout omitted)
+    used to fall through CAPTURE_UNCERTAIN's safety branch and execute a second real
+    capture — the exact blind-retry double-charge this status exists to prevent.
+    """
+    create_res = client.post(
+        "/api/v1/paypal/orders",
+        json={"amount": 42.00, "currency": "USD", "customer_ref": "reconcile_test_buyer"},
+    )
+    assert create_res.status_code == 200
+    order_id = create_res.json()["paypal_order_id"]
+    payment_id = create_res.json()["payment_id"]
+
+    client.post(f"/api/v1/paypal/orders/{order_id}/approve")
+
+    # First capture attempt times out before the merchant backend hears back.
+    timeout_res = client.post(
+        f"/api/v1/paypal/orders/{order_id}/capture",
+        json={"simulate_timeout": True},
+    )
+    assert timeout_res.status_code == 200
+    timeout_data = timeout_res.json()
+    assert timeout_data["status"] == "CAPTURE_UNCERTAIN"
+    first_capture_id = timeout_data["paypal_capture_id"]
+    assert first_capture_id
+
+    # Operator clicks "Reconcile with PayPal" (same endpoint, no simulate_timeout flag).
+    reconcile_res = client.post(f"/api/v1/paypal/orders/{order_id}/capture")
+    assert reconcile_res.status_code == 200
+    reconcile_data = reconcile_res.json()
+
+    # Must stay uncertain and must NOT mint a new capture — not "CAPTURED", and not a
+    # different capture id (which would mean a second capture was actually executed).
+    assert reconcile_data["status"] == "CAPTURE_UNCERTAIN"
+    assert reconcile_data["reconciliation_required"] is True
+    assert reconcile_data["paypal_capture_id"] == first_capture_id
+
+    # DB state must not have silently regressed to APPROVED or jumped to CAPTURED.
+    payment = client.get(f"/api/v1/payments/{payment_id}").json()
+    assert payment["status"] == "CAPTURE_UNCERTAIN"
+
+    # Reconciling again (e.g. the operator clicks it twice) must be stably idempotent.
+    second_reconcile_res = client.post(f"/api/v1/paypal/orders/{order_id}/capture")
+    assert second_reconcile_res.status_code == 200
+    assert second_reconcile_res.json()["status"] == "CAPTURE_UNCERTAIN"
+    assert second_reconcile_res.json()["paypal_capture_id"] == first_capture_id

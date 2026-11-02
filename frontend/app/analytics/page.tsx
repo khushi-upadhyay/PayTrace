@@ -23,6 +23,7 @@ import {
   Tooltip,
   CartesianGrid,
   Cell,
+  Legend,
   PieChart,
   Pie,
 } from "recharts";
@@ -33,13 +34,15 @@ export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [providerOutcomes, setProviderOutcomes] = useState<Array<{ provider: string; status: string; count: number }>>([]);
 
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
       setLoadError(null);
-      const data = await api.getAnalytics();
+      const [data, workspace] = await Promise.all([api.getAnalytics(), api.getPaymentWorkspace(1)]);
       setAnalytics(data);
+      setProviderOutcomes(workspace.provider_outcomes);
     } catch (err: any) {
       setLoadError(err.message || "Unable to load analytics from the backend.");
     } finally {
@@ -50,6 +53,14 @@ export default function AnalyticsPage() {
   useEffect(() => {
     fetchAnalytics();
   }, []);
+
+  const providerOutcomeRows = Array.from(providerOutcomes.reduce((providers, entry) => {
+    const row = providers.get(entry.provider) ?? { provider: entry.provider } as Record<string, string | number>;
+    row[entry.status] = entry.count;
+    providers.set(entry.provider, row);
+    return providers;
+  }, new Map<string, Record<string, string | number>>()).values());
+  const providerStatuses = Array.from(new Set(providerOutcomes.map((entry) => entry.status)));
 
   if (loading) {
     return (
@@ -76,10 +87,10 @@ export default function AnalyticsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
           <h1 className="font-display text-4xl font-bold tracking-tight text-black">
-            Performance & SLA Analytics
+            Historical Performance
           </h1>
           <p className="text-base text-black/70 mt-2">
-            Stage latencies, failure distributions, and revenue impact trends across PayPal checkout journeys.
+            Historical payment volume, outcomes, recorded event latency, and failure categories. Settlement metrics are not available in this data model.
           </p>
         </div>
         <button
@@ -94,29 +105,30 @@ export default function AnalyticsPage() {
       {/* KPI Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
-          <span className="text-xs font-medium text-slate-400">Total Settlement Volume</span>
-          <div className="text-2xl font-extrabold text-ink">{analytics.total_payments} Transactions</div>
+          <span className="text-xs font-medium text-slate-400">Payment records</span>
+          <div className="text-2xl font-extrabold text-ink">{analytics.total_payments.toLocaleString()}</div>
           <span className="text-[11px] text-emerald-400 font-semibold">{analytics.success_rate_percent}% Success Ratio</span>
         </div>
 
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
           <span className="text-xs font-medium text-slate-400">Potential Revenue at Risk</span>
           <div className="text-2xl font-extrabold text-amber-400">
-            ${Number(analytics.potential_revenue_at_risk).toFixed(2)}
+            {analytics.potential_revenue_at_risk == null ? "Multiple currencies" : new Intl.NumberFormat(undefined, { style: "currency", currency: analytics.currency }).format(Number(analytics.potential_revenue_at_risk))}
           </div>
           <span className="text-[11px] text-amber-400/80">From {analytics.failed_payments + analytics.uncertain_payments} unresolved payments</span>
+          {analytics.revenue_at_risk_by_currency.length > 1 && <span className="block text-[10px] text-slate-400">{analytics.revenue_at_risk_by_currency.map((item) => new Intl.NumberFormat(undefined, { style: "currency", currency: item.currency }).format(Number(item.amount))).join(" · ")}</span>}
         </div>
 
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
-          <span className="text-xs font-medium text-slate-400">Average Outbound Latency</span>
-          <div className="text-2xl font-extrabold text-ink">{analytics.average_latency_ms} ms</div>
-          <span className="text-[11px] text-slate-400">Across API order & capture calls</span>
+          <span className="text-xs font-medium text-slate-400">Recorded event latency</span>
+          <div className="text-2xl font-extrabold text-ink">{analytics.average_latency_ms == null ? "No data" : `${analytics.average_latency_ms} ms`}</div>
+          <span className="text-[11px] text-slate-400">Average of persisted payment event samples</span>
         </div>
 
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
-          <span className="text-xs font-medium text-slate-400">Avg Webhook Arrival Delay</span>
-          <div className="text-2xl font-extrabold text-ink">{analytics.average_webhook_delay_seconds} s</div>
-          <span className="text-[11px] text-emerald-400">Well within healthy delivery SLA</span>
+          <span className="text-xs font-medium text-slate-400">Webhook arrival delay</span>
+          <div className="text-2xl font-extrabold text-ink">{analytics.average_webhook_delay_seconds == null ? "No data" : `${analytics.average_webhook_delay_seconds} s`}</div>
+          <span className="text-[11px] text-slate-400">Provider event timestamps are not currently persisted</span>
         </div>
       </div>
 
@@ -158,7 +170,7 @@ export default function AnalyticsPage() {
               >
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
                 <XAxis type="number" stroke="var(--chart-axis)" fontSize={11} />
-                <YAxis type="category" dataKey="category" stroke="var(--chart-axis)" fontSize={10} width={100} />
+                <YAxis type="category" dataKey="category" stroke="var(--chart-axis)" fontSize={10} width={170} />
                 <Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", borderColor: "var(--chart-tooltip-border)", borderRadius: "8px", fontSize: "12px" }} />
                 <Bar dataKey="count" fill="#0b73c2" name="Occurrences" radius={[0, 4, 4, 0]}>
                   {analytics.failure_categories.map((entry, index) => (
@@ -168,6 +180,11 @@ export default function AnalyticsPage() {
               </BarChart>
             </ResponsiveContainer>
           </div>
+        </div>
+
+        <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4 lg:col-span-2">
+          <div><h3 className="text-sm font-bold text-ink">Payment outcomes by provider environment</h3><p className="text-xs text-slate-400">Counts grouped from persisted payment source and status fields.</p></div>
+          {providerOutcomeRows.length ? <div className="h-72 w-full"><ResponsiveContainer width="100%" height="100%"><BarChart data={providerOutcomeRows} margin={{ top: 10, right: 20, left: -15, bottom: 4 }}><CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" /><XAxis dataKey="provider" stroke="var(--chart-axis)" fontSize={11} /><YAxis stroke="var(--chart-axis)" fontSize={11} allowDecimals={false} /><Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", borderColor: "var(--chart-tooltip-border)", borderRadius: "8px", fontSize: "12px" }} /><Legend />{providerStatuses.map((status, index) => <Bar key={status} dataKey={status} stackId="outcomes" fill={COLORS[index % COLORS.length]} name={status.replaceAll("_", " ")} />)}</BarChart></ResponsiveContainer></div> : <p className="py-12 text-center text-xs text-slate-500">No provider outcome data is stored.</p>}
         </div>
       </div>
     </div>

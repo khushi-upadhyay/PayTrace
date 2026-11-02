@@ -27,8 +27,8 @@ def get_analytics(db: Session = Depends(get_db), user: User = Depends(get_curren
             failure_rate_percent=0.0,
             potential_revenue_at_risk=Decimal("0.00"),
             currency="USD",
-            average_latency_ms=0,
-            average_webhook_delay_seconds=0.0,
+            average_latency_ms=None,
+            average_webhook_delay_seconds=None,
             volume_over_time=[],
             status_breakdown=[],
             failure_categories=[],
@@ -43,13 +43,18 @@ def get_analytics(db: Session = Depends(get_db), user: User = Depends(get_curren
     failure_rate = round(((len(failed) + len([p for p in uncertain if p.status == "CAPTURE_UNCERTAIN"])) / total_count) * 100, 1)
 
     # Revenue at risk: only failed and uncertain payments (per PRD section 13.1)
-    risk_payments = [p for p in payments if p.status in ("CAPTURE_UNCERTAIN", "DENIED", "CAPTURE_FAILED")]
-    revenue_at_risk = sum([p.amount for p in risk_payments], Decimal("0.00"))
+    risk_payments = [p for p in payments if p.status in ("CAPTURE_UNCERTAIN", "DENIED", "CAPTURE_FAILED", "DISPUTED")]
+    risk_by_currency = {}
+    for payment in risk_payments:
+        risk_by_currency[payment.currency] = risk_by_currency.get(payment.currency, Decimal("0.00")) + payment.amount
+    risk_totals = [{"currency": currency, "amount": amount} for currency, amount in sorted(risk_by_currency.items())]
+    revenue_at_risk = risk_totals[0]["amount"] if len(risk_totals) == 1 else Decimal("0.00") if not risk_totals else None
+    risk_currency = risk_totals[0]["currency"] if len(risk_totals) == 1 else "USD" if not risk_totals else "MULTI"
 
     # Compute latencies
     events_with_latency = db.query(PaymentEvent.latency_ms).filter(PaymentEvent.latency_ms.isnot(None)).all()
     latencies = [e[0] for e in events_with_latency if e[0] is not None]
-    avg_latency = int(sum(latencies) / len(latencies)) if latencies else 320
+    avg_latency = int(sum(latencies) / len(latencies)) if latencies else None
 
     # Status breakdown
     status_counts = {}
@@ -96,9 +101,12 @@ def get_analytics(db: Session = Depends(get_db), user: User = Depends(get_curren
         success_rate_percent=success_rate,
         failure_rate_percent=failure_rate,
         potential_revenue_at_risk=revenue_at_risk,
-        currency="USD",
+        currency=risk_currency,
+        revenue_at_risk_by_currency=risk_totals,
         average_latency_ms=avg_latency,
-        average_webhook_delay_seconds=1.8,
+        # The current webhook model stores receipt/processing time, but not a
+        # verified provider-originated event timestamp. Do not present a made-up delay.
+        average_webhook_delay_seconds=None,
         volume_over_time=volume_over_time,
         status_breakdown=status_breakdown,
         failure_categories=failure_categories,

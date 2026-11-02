@@ -30,6 +30,7 @@ class Payment(Base):
     webhooks: Mapped[List["PayPalWebhook"]] = relationship("PayPalWebhook", back_populates="payment")
     approvals: Mapped[List["ApprovalTicket"]] = relationship("ApprovalTicket", back_populates="payment", cascade="all, delete-orphan")
     investigations: Mapped[List["AIInvestigation"]] = relationship("AIInvestigation", back_populates="payment")
+    disputes: Mapped[List["Dispute"]] = relationship("Dispute", back_populates="payment", cascade="all, delete-orphan")
 
     __table_args__ = (
         Index("ix_payments_status_created_at", "status", "created_at"),

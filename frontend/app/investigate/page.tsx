@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { api, PaymentItem, AIInvestigationData } from "@/lib/api";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { api, PaymentItem, AIInvestigationData, IncidentItem } from "@/lib/api";
 import {
   Brain,
   Search,
@@ -18,6 +19,7 @@ import {
 export default function InvestigateHubPage() {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [selectedPaymentId, setSelectedPaymentId] = useState<string>("");
+  const [incidentContext, setIncidentContext] = useState<IncidentItem | null>(null);
   const [question, setQuestion] = useState("Investigate payment outcome, uncertainty, and root cause");
   const [investigation, setInvestigation] = useState<AIInvestigationData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -26,31 +28,57 @@ export default function InvestigateHubPage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const chatThreadEndRef = useRef<HTMLDivElement | null>(null);
+  const autoInvestigatedIncidents = useRef(new Set<string>());
+  const promptSuggestions = ["Why did this payment fail?", "Why is this payment uncertain?", "Show the complete payment lifecycle", "Were any webhook events recorded?", "Is this payment linked to a browser session?", "What should I investigate next?"];
+
+  // The chat thread is a fixed-height scrollable box; without this, new
+  // messages render below the visible fold and the chat looks dead.
+  useEffect(() => {
+    chatThreadEndRef.current?.scrollIntoView({ block: "nearest" });
+  }, [chatMessages, chatLoading]);
 
   useEffect(() => {
-    api.getPayments({ page_size: 30 }).then((res) => {
-      setPayments(res.items);
-      if (res.items.length > 0) {
-        // Default to uncertain or failed payment if available
-        const preferred = res.items.find(
-          (p: any) => p.status === "CAPTURE_UNCERTAIN" || p.status === "DENIED"
-        ) || res.items[0];
-        setSelectedPaymentId(preferred.id);
-      }
-    });
+    const params = new URLSearchParams(window.location.search);
+    const requestedPayment = params.get("payment_id");
+    const requestedIncident = params.get("incident_id");
+    if (requestedIncident) setLoading(true);
+    Promise.all([api.getPayments({ page_size: 100 }), requestedIncident ? api.getIncident(requestedIncident) : Promise.resolve(null)])
+      .then(async ([res, incident]) => {
+        setPayments(res.items);
+        if (incident) {
+          setIncidentContext(incident);
+          setSelectedPaymentId(incident.affected_payments?.[0]?.id || "");
+          const incidentQuestion = `Investigate incident ${incident.title} and its supporting evidence`;
+          setQuestion(incidentQuestion);
+          try {
+            if (!autoInvestigatedIncidents.current.has(incident.id)) {
+              autoInvestigatedIncidents.current.add(incident.id);
+              setInvestigation(await api.investigatePayment(null, incidentQuestion, incident.id));
+            }
+          } catch (err) {
+            setError(err instanceof Error ? err.message : "Incident investigation could not be completed.");
+          } finally { setLoading(false); }
+        } else if (res.items.length > 0) {
+          const preferred = res.items.find((p) => p.status === "CAPTURE_UNCERTAIN" || p.status === "DENIED") || res.items[0];
+          setSelectedPaymentId(res.items.some((payment) => payment.id === requestedPayment) ? requestedPayment! : preferred.id);
+        }
+      }).catch((err) => { setError(err instanceof Error ? err.message : "Investigation context could not be loaded."); setLoading(false); });
   }, []);
 
   const handleRunInvestigation = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!selectedPaymentId) return;
+    if (!selectedPaymentId && !incidentContext) return;
 
     try {
       setLoading(true);
+      setError(null);
       setChatMessages([]);
-      const res = await api.investigatePayment(selectedPaymentId, question);
+      const res = await api.investigatePayment(incidentContext ? null : selectedPaymentId || null, question, incidentContext?.id);
       setInvestigation(res);
     } catch (err: any) {
-      alert(`Investigation failed: ${err.message}`);
+      setError(err instanceof Error ? err.message : "Investigation could not be completed.");
     } finally {
       setLoading(false);
     }
@@ -58,7 +86,7 @@ export default function InvestigateHubPage() {
 
   const handleSendChat = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chatInput.trim() || chatLoading || !selectedPaymentId) return;
+    if (!chatInput.trim() || chatLoading || (!selectedPaymentId && !incidentContext)) return;
 
     const userMsg = { role: "user", content: chatInput.trim() };
     const newMessages = [...chatMessages, userMsg];
@@ -67,7 +95,7 @@ export default function InvestigateHubPage() {
     setChatLoading(true);
 
     try {
-      const res = await api.chatInvestigator(selectedPaymentId, newMessages, userMsg.content);
+      const res = await api.chatInvestigator(incidentContext ? null : selectedPaymentId || null, newMessages, userMsg.content, incidentContext?.id);
       setChatMessages([...newMessages, { role: "assistant", content: res.response }]);
     } catch (err: any) {
       setChatMessages([
@@ -90,7 +118,7 @@ export default function InvestigateHubPage() {
             AI Investigation Hub
           </h1>
           <p className="text-base text-black/70 mt-2">
-            Autonomous root-cause investigator grounded in PayPal APIs, webhooks, and customer telemetry.
+            Investigates stored payment and incident records, lifecycle events, verified webhooks, and linked browser telemetry.
           </p>
         </div>
       </div>
@@ -100,10 +128,11 @@ export default function InvestigateHubPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Payment Selector */}
           <div className="md:col-span-5 space-y-1.5">
-            <label className="text-xs text-slate-400">Select Target Payment</label>
+            <label className="text-xs text-slate-400">{incidentContext ? "Affected payment (incident context is active)" : "Select Target Payment"}</label>
             <select
               value={selectedPaymentId}
               onChange={(e) => setSelectedPaymentId(e.target.value)}
+              disabled={Boolean(incidentContext)}
               className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-ink focus:outline-none focus:border-cyan-500"
             >
               {payments.map((p) => (
@@ -128,7 +157,7 @@ export default function InvestigateHubPage() {
               <button
                 type="button"
                 onClick={() => handleRunInvestigation()}
-                disabled={loading || !selectedPaymentId}
+                disabled={loading || (!selectedPaymentId && !incidentContext)}
                 className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-onsolid font-bold text-xs rounded-lg transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-1.5 shrink-0 disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -137,6 +166,18 @@ export default function InvestigateHubPage() {
             </div>
           </div>
         </div>
+
+        <div className="border-t border-slate-200 pt-3">
+          <p className="mb-2 text-xs font-medium text-slate-600">Suggested questions</p>
+          <div className="flex flex-wrap gap-2">{promptSuggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => setQuestion(suggestion)} className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:border-cyan-500 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">{suggestion}</button>)}</div>
+        </div>
+        {error && <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{error}</div>}
+
+        {incidentContext && <section aria-label="Incident investigation context" className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-slate-800">
+          <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-[10px] font-semibold uppercase tracking-wider text-blue-700">Incident context · {incidentContext.severity} · {incidentContext.status}</p><h2 className="mt-1 text-sm font-bold">{incidentContext.title}</h2><p className="mt-1 text-xs text-slate-600">Rule: {incidentContext.detection_rule || "not recorded"} · {incidentContext.affected_payment_count} affected · {incidentContext.revenue_at_risk} {incidentContext.currency}</p></div><Link href={`/incidents/${incidentContext.id}`} className="text-xs font-semibold text-blue-700 hover:underline">Open incident record →</Link></div>
+          <p className="mt-2 text-xs text-slate-600">Stored evidence: {incidentContext.root_cause || incidentContext.ai_summary || "No root cause summary is stored."}</p>
+          <div className="mt-3 flex flex-wrap gap-2">{(incidentContext.affected_payments || []).map((payment) => <span key={payment.id} className="inline-flex flex-wrap items-center gap-1 rounded-md border border-blue-200 bg-white px-2 py-1 text-[11px]"><Link href={`/payments/${payment.id}`} className="font-mono text-blue-700 hover:underline">Payment {payment.id.slice(0, 10)}…</Link><span className="text-slate-500">{payment.status}</span>{payment.session_id && <Link href={`/sessions/${payment.session_id}`} className="text-blue-700 hover:underline">Session ↗</Link>}</span>)}</div>
+        </section>}
 
         {/* Selected Payment Snapshot chip */}
         {selectedPayment && (
@@ -201,8 +242,8 @@ export default function InvestigateHubPage() {
                   >
                     {investigation.severity}
                   </span>
-                  <span className="text-xs text-cyan-400 font-bold">
-                    {(investigation.confidence * 100).toFixed(0)}% Confidence
+                  <span className="text-xs text-cyan-500 font-semibold">
+                    Evidence confidence: {investigation.confidence >= 0.75 ? "strong" : investigation.confidence >= 0.5 ? "partial" : "limited"}
                   </span>
                 </div>
               </div>
@@ -287,7 +328,7 @@ export default function InvestigateHubPage() {
                 {chatMessages.length === 0 ? (
                   <div className="text-center py-8 text-xs text-slate-500 space-y-2">
                     <HelpCircle className="w-6 h-6 mx-auto text-slate-600" />
-                    <p>Have specific questions about this payment outcome?</p>
+                  <p>Have specific questions about {incidentContext ? "this incident and its linked records" : "this payment outcome"}?</p>
                     <p className="text-[11px] text-cyan-400">Try: &ldquo;Why shouldn&apos;t I retry right now?&rdquo;</p>
                   </div>
                 ) : (
@@ -313,6 +354,7 @@ export default function InvestigateHubPage() {
                     Consulting payment records...
                   </div>
                 )}
+                <div ref={chatThreadEndRef} />
               </div>
 
               <form onSubmit={handleSendChat} className="flex gap-2 pt-2 border-t border-slate-800">
@@ -325,7 +367,7 @@ export default function InvestigateHubPage() {
                 />
                 <button
                   type="submit"
-                  disabled={chatLoading || !chatInput.trim()}
+                  disabled={chatLoading || !chatInput.trim() || (!selectedPaymentId && !incidentContext)}
                   className="px-3 py-2 bg-cyan-500 hover:bg-cyan-400 text-onsolid rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />

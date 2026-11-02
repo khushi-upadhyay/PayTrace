@@ -45,7 +45,7 @@ export function resolvePayPalReturnOrder(tokenParam, activeOrderId, storedOrderI
     (tokenParam && storedOrderId && tokenParam !== storedOrderId)
   );
 
-  return { orderId: returnOrderId, mismatch };
+  return { orderId: mismatch ? null : returnOrderId, mismatch };
 }
 
 export function clearCheckoutOnCancellation(callbacks) {

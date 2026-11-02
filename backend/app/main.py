@@ -16,10 +16,12 @@ from app.api.routes.sessions import router as sessions_router, payment_session_r
 from app.api.routes.ai import router as ai_router
 from app.api.routes.incidents import router as incidents_router
 from app.api.routes.analytics import router as analytics_router
+from app.api.routes.search import router as search_router
 from app.api.routes.approvals import router as approvals_router
 from app.api.routes.demo import router as demo_router
 from app.api.routes.settings import router as settings_router
 from app.api.routes.shelfswipe import router as shelfswipe_router
+from app.api.routes.disputes import router as disputes_router
 
 setup_logging()
 logger = logging.getLogger("paytrace")
@@ -32,10 +34,12 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS configuration
+# CORS configuration. Credentialed requests (Authorization header) must never be paired
+# with a wildcard origin: a literal "*" alongside allow_credentials=True lets any site on
+# the internet make authenticated calls against this API using a victim's stolen token.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*", settings.FRONTEND_ORIGIN],
+    allow_origins=[settings.FRONTEND_ORIGIN],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -65,10 +69,12 @@ app.include_router(sessions_router, prefix=api_v1_prefix)
 app.include_router(ai_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(incidents_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(analytics_router, prefix=api_v1_prefix, dependencies=operator_only)
+app.include_router(search_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(approvals_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(demo_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(settings_router, prefix=api_v1_prefix, dependencies=operator_only)
 app.include_router(shelfswipe_router, prefix=api_v1_prefix)
+app.include_router(disputes_router, prefix=api_v1_prefix, dependencies=operator_only)
 
 # PayPal Webhook route (both root /api/webhooks/paypal and /api/v1/webhooks/paypal)
 app.include_router(webhooks_router)

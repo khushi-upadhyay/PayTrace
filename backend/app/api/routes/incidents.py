@@ -11,6 +11,7 @@ from app.schemas.incident import (
     IncidentResponse,
     IncidentDetailResponse,
     IncidentReportResponse,
+    IncidentRecurrence,
 )
 from app.schemas.payment import PaymentResponse
 from app.services.incidents.detector import incident_detector
@@ -22,10 +23,12 @@ def list_incidents(db: Session = Depends(get_db), user: User = Depends(get_curre
     """Lists detected payment incidents, evaluating rules on the fly."""
     incident_detector.evaluate_system_health(db)
     incidents = db.query(Incident).order_by(Incident.started_at.desc()).all()
-    return IncidentListResponse(
-        items=[IncidentResponse.model_validate(inc) for inc in incidents],
-        total=len(incidents),
-    )
+    items = []
+    for inc in incidents:
+        resp = IncidentResponse.model_validate(inc)
+        resp.recurrence = IncidentRecurrence(**incident_detector.compute_recurrence(db, inc))
+        items.append(resp)
+    return IncidentListResponse(items=items, total=len(incidents))
 
 @router.get("/{incident_id}", response_model=IncidentDetailResponse)
 def get_incident(incident_id: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -45,6 +48,7 @@ def get_incident(incident_id: str, db: Session = Depends(get_db), user: User = D
 
     resp = IncidentDetailResponse.model_validate(inc)
     resp.affected_payments = [PaymentResponse.model_validate(p) for p in affected]
+    resp.recurrence = IncidentRecurrence(**incident_detector.compute_recurrence(db, inc))
     return resp
 
 @router.post("/{incident_id}/report", response_model=IncidentReportResponse)

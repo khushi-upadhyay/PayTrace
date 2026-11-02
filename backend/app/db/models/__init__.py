@@ -19,6 +19,7 @@ from app.db.models.shelfswipe import (
     SSOrder,
 )
 from app.db.models.user import User
+from app.db.models.dispute import Dispute
 
 __all__ = [
     "Base",
@@ -41,4 +42,5 @@ __all__ = [
     "SSSwipe",
     "SSOrder",
     "User",
+    "Dispute",
 ]
