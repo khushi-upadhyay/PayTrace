@@ -149,7 +149,7 @@ class ShelfCommerceAgent:
                 product = _best_match(db, buyer_ref, item.get("query", ""))
                 if not product:
                     continue
-                qty = max(1, min(int(item.get("quantity") or 1), 100))
+                qty = int(item.get("quantity") or 1)
                 existing = (
                     db.query(ShelfCartItem)
                     .filter(ShelfCartItem.buyer_ref == buyer_ref, ShelfCartItem.product_id == product.id)

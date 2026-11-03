@@ -206,7 +206,7 @@ export default function ShelfSwipeOnboardingPage() {
   };
 
   return (
-    <div className="light-scale min-h-screen bg-slate-50 text-slate-900 pb-16">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
       {/* Top Banner / Breadcrumb */}
       <div className="border-b border-slate-200 bg-white">
         <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 flex items-center justify-between">
@@ -228,8 +228,8 @@ export default function ShelfSwipeOnboardingPage() {
           </div>
 
           {/* Coming Next note */}
-          <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-medium text-cyan-800">
-            <Compass className="h-3.5 w-3.5 text-cyan-600" />
+          <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+            <Compass className="h-3.5 w-3.5 text-slate-400" />
             <span>Buyer deck: coming next</span>
           </div>
         </div>
@@ -273,11 +273,11 @@ export default function ShelfSwipeOnboardingPage() {
               onClick={() => handleModeChange("demo")}
               className={`flex items-center justify-center gap-2 rounded-lg py-2.5 px-3 text-xs font-bold transition-all ${
                 mode === "demo"
-                  ? "bg-amber-500 text-white shadow-md"
-                  : "bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100"
+                  ? "bg-white text-paypal-navy shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              <Sparkles className={`h-4 w-4 ${mode === "demo" ? "text-white" : "text-amber-500"}`} />
+              <Sparkles className="h-4 w-4 text-amber-500" />
               Demo shops
             </button>
             <button
@@ -285,11 +285,11 @@ export default function ShelfSwipeOnboardingPage() {
               onClick={() => handleModeChange("channel3")}
               className={`flex items-center justify-center gap-2 rounded-lg py-2.5 px-3 text-xs font-bold transition-all ${
                 mode === "channel3"
-                  ? "bg-paypal-blue text-white shadow-md"
-                  : "bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-100"
+                  ? "bg-white text-paypal-navy shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              <Globe className={`h-4 w-4 ${mode === "channel3" ? "text-white" : "text-paypal-blue"}`} />
+              <Globe className="h-4 w-4 text-paypal-blue" />
               My own products via Channel3
             </button>
           </div>
@@ -339,7 +339,7 @@ export default function ShelfSwipeOnboardingPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-bold text-slate-900">{shop.name}</span>
-                            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
+                            <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
                               {shop.item_count || 5} items
                             </span>
                           </div>
@@ -397,14 +397,14 @@ export default function ShelfSwipeOnboardingPage() {
 
             {/* Checkbox Section */}
             <div className="pt-2">
-              <label className="flex items-start gap-3 rounded-xl border border-paypal-navy bg-paypal-navy p-4 cursor-pointer hover:bg-opacity-90 shadow-sm transition-colors">
+              <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer hover:bg-slate-100/60 transition-colors">
                 <input
                   type="checkbox"
                   checked={ticked}
                   onChange={(e) => setTicked(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 rounded border-white/60 bg-white text-paypal-blue focus:ring-white"
+                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-paypal-blue focus:ring-paypal-blue"
                 />
-                <span className="text-xs font-medium text-white/90 leading-relaxed">
+                <span className="text-xs font-medium text-slate-700 leading-relaxed">
                   {mode === "demo" ? (
                     <>
                       <strong>I consent to importing this demo catalog</strong> into PayTrace ShelfSwipe
@@ -476,7 +476,7 @@ export default function ShelfSwipeOnboardingPage() {
               <button
                 type="submit"
                 disabled={!ticked || submitting || (mode === "demo" && loadingShops)}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-paypal-navy py-3 px-4 text-sm font-bold text-white shadow-sm hover:bg-opacity-90 transition-all disabled:cursor-not-allowed disabled:bg-slate-600 disabled:text-white disabled:shadow-none"
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-paypal-navy py-3 px-4 text-sm font-bold text-white shadow-sm hover:bg-opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {submitting ? (
                   <>

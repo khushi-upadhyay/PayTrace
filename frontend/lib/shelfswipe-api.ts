@@ -58,7 +58,6 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${getApiBaseUrl()}${API_PREFIX}${path}`;
   const headers = new Headers(init?.headers);
   headers.set("Accept", "application/json");
-  headers.set("X-Requested-With", "PayTrace");
 
   if (init?.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
@@ -66,7 +65,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   let res: Response;
   try {
-    res = await fetch(url, { ...init, headers, credentials: "include" });
+    res = await fetch(url, { ...init, headers });
   } catch (err: unknown) {
     const reason = err instanceof Error ? err.message : "Network error";
     throw new ShelfSwipeApiError(
@@ -193,16 +192,8 @@ export interface ApproveResponse {
 }
 
 export const shelfswipeApi = {
-  async getDemoShops(): Promise<DemoShopItem[]> {
-    // The API names these fields shop_id / shop_name / shop_url / product_count.
-    const shops = await request<Array<Record<string, unknown>>>("/demo-shops");
-    return shops.map((shop) => ({
-      id: String(shop.id ?? shop.shop_id ?? ""),
-      name: String(shop.name ?? shop.shop_name ?? "Demo shop"),
-      url: String(shop.url ?? shop.shop_url ?? ""),
-      description: shop.description ? String(shop.description) : undefined,
-      item_count: Number(shop.item_count ?? shop.product_count ?? 0) || undefined,
-    }));
+  getDemoShops(): Promise<DemoShopItem[]> {
+    return request<DemoShopItem[]>("/demo-shops");
   },
 
   onboardSeller(body: ShelfSwipeOnboardRequest): Promise<ShelfSwipeOnboardResponse> {
