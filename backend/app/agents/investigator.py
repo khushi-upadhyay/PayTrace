@@ -11,11 +11,25 @@ from app.agents.tools import evidence_gatherer
 from app.schemas.ai import AIInvestigationResponse
 from app.core.config import settings
 from app.core.time import utc_now
+from app.agents.graph import run_investigation_graph
 
 logger = logging.getLogger(__name__)
 
 class AIInvestigator:
-    """Investigates payment failures using structured cross-signal evidence and deterministic fallbacks."""
+    """
+    Investigates payment failures using a LangGraph-powered agentic workflow.
+
+    Investigation flow (LangGraph nodes):
+      A. gather_initial_evidence  — collects all local DB evidence
+      B. analyze_evidence         — LLM generates hypotheses (or deterministic fallback)
+      C. select_investigation_tools — picks tools based on hypotheses
+      D. execute_tools            — calls read-only investigation tools
+      E. verify_hypothesis        — confirms or refutes; loops up to MAX_CYCLES
+      F. generate_investigation_report — structured evidence-grounded report
+
+    Falls back to deterministic rule engine if LangGraph/LLM fails.
+    Preserves the existing public interface and API schema.
+    """
 
     @staticmethod
     async def investigate(
@@ -85,7 +99,7 @@ class AIInvestigator:
                 model_name="deterministic-rule-engine-v1",
             )
 
-        # 1. Gather deterministic facts from database
+        # Quick existence check
         facts_data = evidence_gatherer.get_payment_facts(db, payment_id)
         if "error" in facts_data:
             return AIInvestigationResponse(
@@ -99,27 +113,59 @@ class AIInvestigator:
                 model_name="deterministic-rule-engine-v1",
             )
 
+        evidence_event_ids = [e["id"] for e in facts_data.get("events_summary", [])]
+
+        # 1. LangGraph Agentic Investigation (primary path)
+        try:
+            import asyncio
+
+            # run_investigation_graph is synchronous (LangGraph state machines run sync)
+            graph_response = await asyncio.get_event_loop().run_in_executor(
+                None,
+                run_investigation_graph,
+                db,
+                payment_id,
+                question,
+            )
+            graph_response.payment_id = payment_id
+            graph_response.incident_id = incident_id
+            graph_response.evidence_event_ids = evidence_event_ids[:10]
+            AIInvestigator._save_investigation(db, graph_response)
+            logger.info(
+                "payment_id=%s LangGraph investigation complete model=%s confidence=%.2f",
+                payment_id,
+                graph_response.model_name,
+                graph_response.confidence,
+            )
+            return graph_response
+        except Exception as graph_err:
+            logger.warning(
+                "LangGraph investigation failed for payment_id=%s error=%s — "
+                "falling back to simple LLM call then deterministic engine.",
+                payment_id,
+                graph_err,
+            )
+
+        # 2. Simple LLM fallback (existing behavior)
         similar_failures = evidence_gatherer.find_similar_failures(db, payment_id)
         comparison = evidence_gatherer.compare_with_successful(db, payment_id)
 
-        evidence_event_ids = [e["id"] for e in facts_data.get("events_summary", [])]
-
-        # 2. Try LLM Provider if configured
         if settings.is_ai_configured:
             try:
                 llm_response = await AIInvestigator._call_llm(facts_data, similar_failures, comparison, question)
                 if llm_response:
                     llm_response.payment_id = payment_id
+                    llm_response.incident_id = incident_id
                     llm_response.evidence_event_ids = evidence_event_ids[:10]
-                    # Save to DB
                     AIInvestigator._save_investigation(db, llm_response)
                     return llm_response
             except Exception as e:
-                logger.warning(f"AI provider call failed, falling back to deterministic investigator: {e}")
+                logger.warning(f"Simple LLM call failed ({settings.effective_ai_provider}), falling back to deterministic investigator: {e}")
 
-        # 3. Deterministic Evidence-Based Fallback Investigator
+        # 3. Deterministic Evidence-Based Fallback
         fallback_res = AIInvestigator._deterministic_investigate(facts_data, similar_failures, comparison, question)
         fallback_res.payment_id = payment_id
+        fallback_res.incident_id = incident_id
         fallback_res.evidence_event_ids = evidence_event_ids[:10]
         AIInvestigator._save_investigation(db, fallback_res)
         return fallback_res
@@ -303,7 +349,7 @@ class AIInvestigator:
         comparison: Optional[Dict[str, Any]],
         question: str,
     ) -> Optional[AIInvestigationResponse]:
-        """Calls OpenAI or OpenAI-compatible provider with structured JSON output."""
+        """Calls OpenAI, Grok (xAI), or Groq with structured JSON output."""
         prompt = f"""
 You are the PayTrace AI Investigator. Analyze the supplied persisted payment or incident evidence and return structured findings.
 Strictly adhere to the facts provided. Never invent missing events. Separate FACT, INFERENCE, and RECOMMENDATION. A missing webhook record means only that no linked record was found; it does not prove PayPal failed to send one. A local payment status is not an independent live provider check. Never claim a browser-visible outcome unless it is in evidence. For every statement about an API call, event, webhook, or timeline, cite a corresponding evidence record in facts or say it is unknown. Do not present a hypothesis as a confirmed root cause.
@@ -335,12 +381,16 @@ Return ONLY valid JSON matching this exact schema:
   "insufficient_evidence": true | false
 }}
 """
+        model_name = settings.effective_ai_model
+        api_key = settings.effective_ai_api_key
+        endpoint = settings.effective_ai_endpoint
+
         headers = {
-            "Authorization": f"Bearer {settings.AI_API_KEY}",
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
         body = {
-            "model": settings.AI_MODEL or "gpt-4o-mini",
+            "model": model_name,
             "messages": [
                 {"role": "system", "content": "You are PayTrace AI Investigator. Use only supplied persisted evidence. Clearly separate observed facts, inferences, and unknowns. Never invent API responses, webhooks, customer behavior, or causes. Return only JSON."},
                 {"role": "user", "content": prompt}
@@ -348,11 +398,18 @@ Return ONLY valid JSON matching this exact schema:
             "response_format": {"type": "json_object"},
             "temperature": 0.1
         }
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post("https://api.openai.com/v1/chat/completions", headers=headers, json=body)
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            resp = await client.post(endpoint, headers=headers, json=body)
             resp.raise_for_status()
             content = resp.json()["choices"][0]["message"]["content"]
-            parsed = json.loads(content)
+            cleaned = content.strip()
+            if cleaned.startswith("```json"):
+                cleaned = cleaned[7:]
+            elif cleaned.startswith("```"):
+                cleaned = cleaned[3:]
+            if cleaned.endswith("```"):
+                cleaned = cleaned[:-3]
+            parsed = json.loads(cleaned.strip())
             return AIInvestigationResponse(
                 root_cause=parsed.get("root_cause", ""),
                 confidence=float(parsed.get("confidence", 0.8)),
@@ -364,7 +421,7 @@ Return ONLY valid JSON matching this exact schema:
                 recommendation=parsed.get("recommendation", ""),
                 is_incident_likely=bool(parsed.get("is_incident_likely", False)),
                 insufficient_evidence=bool(parsed.get("insufficient_evidence", False)),
-                model_name=settings.AI_MODEL,
+                model_name=model_name,
             )
 
     @staticmethod
@@ -481,6 +538,43 @@ Return ONLY valid JSON matching this exact schema:
                 "PayTrace policy mandates that all refund actions require explicit human operator approval. "
                 "You can initiate a refund proposal from the payment actions panel, which routes into the Human Approval Inbox."
             )
+        elif settings.is_ai_configured:
+            try:
+                system_prompt = (
+                    "You are PayTrace AI Investigator chatting with an authorized payments operator. "
+                    "Answer strictly grounded in the following payment evidence facts. "
+                    "Never invent facts or transactions. "
+                    f"EVIDENCE: {json.dumps(facts_data)}"
+                )
+                chat_msgs = [{"role": "system", "content": system_prompt}]
+                for m in messages[-4:]:
+                    chat_msgs.append({"role": m.get("role", "user"), "content": m.get("content", "")})
+                if question and not any(m.get("content") == question for m in messages):
+                    chat_msgs.append({"role": "user", "content": question})
+
+                headers = {
+                    "Authorization": f"Bearer {settings.effective_ai_api_key}",
+                    "Content-Type": "application/json"
+                }
+                body = {
+                    "model": settings.effective_ai_model,
+                    "messages": chat_msgs,
+                    "temperature": 0.2
+                }
+                async with httpx.AsyncClient(timeout=15.0) as client:
+                    resp = await client.post(settings.effective_ai_endpoint, headers=headers, json=body)
+                    if resp.status_code == 200:
+                        reply = resp.json()["choices"][0]["message"]["content"]
+                    else:
+                        raise ValueError(f"HTTP {resp.status_code}")
+            except Exception as e:
+                logger.warning(f"AI chat call failed ({settings.effective_ai_provider}), falling back to grounded rule engine: {e}")
+                reply = (
+                    f"Based on the cross-signal evidence for payment `{payment_id}` (current status: `{status}`), "
+                    f"the investigation detected {facts_data.get('event_count', 0)} lifecycle events and "
+                    f"{facts_data.get('webhooks_count', 0)} verified webhooks. "
+                    f"Root cause summary: {facts_data.get('failure_reason') or 'Normal settlement or pending outcome.'}"
+                )
         else:
             events = facts_data.get("events_summary", [])
             reply = f"The stored status is {status}. "
