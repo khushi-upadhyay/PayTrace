@@ -15,6 +15,7 @@ import {
   RefreshCw,
   ShoppingBag,
 } from "lucide-react";
+import { RefreshButton } from "@/components/ui/RefreshButton";
 import {
   ShelfSwipeDraftResponse,
   ShelfSwipeDraftProductItem,
@@ -125,7 +126,7 @@ export default function SellerReviewApprovePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+    <div className="light-scale min-h-screen bg-slate-50 text-slate-900 pb-16">
       {/* Top Header */}
       <div className="border-b border-slate-200 bg-white sticky top-0 z-20">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 flex items-center justify-between">
@@ -144,16 +145,7 @@ export default function SellerReviewApprovePage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => fetchShopAndProducts(activeTab)}
-              disabled={loading}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-              title="Refresh"
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">Refresh</span>
-            </button>
+            <RefreshButton onClick={() => fetchShopAndProducts(activeTab)} loading={loading} />
             <button
               type="button"
               onClick={() => setShowManualModal(true)}

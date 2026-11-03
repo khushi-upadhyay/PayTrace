@@ -7,6 +7,7 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user, get_db
+from app.core.rate_limit import rate_limit
 from app.db.models.user import User
 import httpx
 from app.core.config import settings
@@ -87,12 +88,13 @@ def get_demo_shops():
         logger.error(f"Failed to fetch demo shops from MCP server: {exc}")
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"ShelfSwipe MCP client error: {str(exc)}",
+            detail="ShelfSwipe catalog service is unavailable",
         )
 
 
 @router.post(
     "/sellers/onboard",
+    dependencies=[Depends(get_current_user)],
     response_model=ShelfSwipeOnboardResponse,
     status_code=status.HTTP_201_CREATED,
 )
@@ -105,6 +107,12 @@ def onboard_seller(
     Creates or updates seller, shop, extraction job, and imports products as drafts.
     """
     provider_name = (req.provider or "fixture").strip().lower()
+
+    if not req.shop_url.startswith(("http://", "https://", "shelfswipe://")):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="shop_url must be an http(s) or shelfswipe:// URL.",
+        )
 
     if provider_name == "channel3":
         if not req.ownership_attested:
@@ -161,25 +169,25 @@ def onboard_seller(
         logger.error(f"Channel3 rate limit error during onboard: {exc}")
         raise HTTPException(
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail=f"Channel3 rate limit exceeded: {str(exc)}",
+            detail="Channel3 rate limit exceeded. Try again shortly.",
         )
     except Channel3ClientError as exc:
         logger.error(f"Channel3 client error during onboard: {exc}")
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Channel3 client error: {str(exc)}",
+            detail="Channel3 catalog service error",
         )
     except McpClientError as exc:
         logger.error(f"MCP client error during onboard: {exc}")
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"MCP client error: {str(exc)}",
+            detail="ShelfSwipe catalog service error",
         )
     except ValidationError as exc:
         logger.error(f"Schema validation error during onboard: {exc}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Catalog schema validation error: {str(exc)}",
+            detail="Catalog data did not match the expected format",
         )
     except HTTPException:
         raise
@@ -187,12 +195,13 @@ def onboard_seller(
         logger.error(f"Unexpected error during onboarding: {exc}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Onboarding error: {str(exc)}",
+            detail="Onboarding failed due to an unexpected error",
         )
 
 
 @router.get(
     "/sellers/{seller_id}/draft",
+    dependencies=[Depends(get_current_user)],
     response_model=ShelfSwipeDraftResponse,
 )
 def get_seller_draft(
@@ -266,6 +275,7 @@ def get_seller_draft(
 
 @router.post(
     "/sellers/{seller_id}/products",
+    dependencies=[Depends(get_current_user)],
     response_model=ShelfSwipeDraftProductItem,
     status_code=status.HTTP_201_CREATED,
 )
@@ -349,6 +359,7 @@ def create_manual_product(
 
 @router.patch(
     "/sellers/{seller_id}/products/{product_id}",
+    dependencies=[Depends(get_current_user)],
     response_model=ShelfSwipeDraftProductItem,
 )
 def patch_seller_product(
@@ -429,6 +440,7 @@ def patch_seller_product(
 
 @router.patch(
     "/sellers/{seller_id}/shop",
+    dependencies=[Depends(get_current_user)],
     response_model=ShelfSwipeDraftResponse,
 )
 def patch_seller_shop(
@@ -469,6 +481,7 @@ def patch_seller_shop(
 
 @router.post(
     "/sellers/{seller_id}/approve",
+    dependencies=[Depends(get_current_user)],
     response_model=ApproveResponse,
 )
 def approve_seller_draft_products(
@@ -752,7 +765,7 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "recorded", "direction": req.direction, "product_id": req.product_id}
 
-@router.post("/checkout")
+@router.post("/checkout", dependencies=[Depends(rate_limit("shelf-checkout", 20, 60))])
 async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
     """
     Seamless PayPal Checkout for a single ShelfSwipe item, wired with PayTrace's lifecycle and recovery engine.
@@ -784,7 +797,7 @@ def get_cart(buyer_ref: str = Query(...), db: Session = Depends(get_db)):
     return ShelfCartResponse(**get_cart_snapshot(db, buyer_ref))
 
 
-@router.post("/chat", response_model=ShelfChatResponse)
+@router.post("/chat", response_model=ShelfChatResponse, dependencies=[Depends(rate_limit("shelf-chat", 20, 60))])
 async def shelf_chat(req: ShelfChatRequest, db: Session = Depends(get_db)):
     """
     Conversational shopping assistant: one prompt can name multiple products,
@@ -811,7 +824,7 @@ async def shelf_chat(req: ShelfChatRequest, db: Session = Depends(get_db)):
     )
 
 
-@router.post("/checkout/cart")
+@router.post("/checkout/cart", dependencies=[Depends(rate_limit("shelf-checkout", 20, 60))])
 async def checkout_cart(req: ShelfCartCheckoutRequest, db: Session = Depends(get_db)):
     """Checks out everything currently in the buyer's cart as a single multi-item PayPal order."""
     cart_rows = (

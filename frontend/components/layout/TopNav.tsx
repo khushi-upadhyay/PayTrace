@@ -82,7 +82,7 @@ export function TopNav() {
           </div>}
         </div>}
       </div>
-      {searchOpen && <div className="fixed inset-0 z-[70] flex items-start justify-center bg-slate-950/45 px-4 pt-[12vh]" onMouseDown={(event) => { if (event.target === event.currentTarget) setSearchOpen(false); }}>
+      {searchOpen && <div className="light-scale fixed inset-0 z-[70] flex items-start justify-center bg-slate-900/50 px-4 pt-[12vh]" onMouseDown={(event) => { if (event.target === event.currentTarget) setSearchOpen(false); }}>
         <section role="dialog" aria-modal="true" aria-label="Search workspace" className="w-full max-w-2xl overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-2xl">
           <div className="flex items-center gap-3 border-b border-slate-200 px-4"><Search className="h-5 w-5 text-slate-500" /><input ref={inputRef} value={query} onChange={(event) => setQuery(event.target.value)} onKeyDown={(event) => {
             if (event.key === "ArrowDown" && items.length) { event.preventDefault(); setActiveIndex((index) => (index + 1) % items.length); }

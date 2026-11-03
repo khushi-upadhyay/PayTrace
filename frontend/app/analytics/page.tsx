@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { RefreshButton } from "@/components/ui/RefreshButton";
 import { api, AnalyticsData } from "@/lib/api";
 import {
   BarChart3,
@@ -10,7 +11,6 @@ import {
   DollarSign,
   Activity,
   Loader2,
-  RefreshCw,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -93,13 +93,7 @@ export default function AnalyticsPage() {
             Historical payment volume, outcomes, recorded event latency, and failure categories. Settlement metrics are not available in this data model.
           </p>
         </div>
-        <button
-          onClick={fetchAnalytics}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:bg-slate-800 text-xs text-slate-300 font-medium transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          Refresh
-        </button>
+        <RefreshButton onClick={fetchAnalytics} />
       </div>
 
       {/* KPI Row */}

@@ -111,3 +111,41 @@ def test_shelfswipe_cart_checkout_rejects_insufficient_stock(client):
         json={"buyer_ref": "chat-buyer-4"},
     )
     assert response.status_code == 400
+
+
+def test_seller_management_routes_require_login(client):
+    from app.api.dependencies import get_current_user
+    from app.main import app
+    app.dependency_overrides.pop(get_current_user, None)
+    sid = "00000000-0000-0000-0000-000000000000"
+    assert client.post("/api/v1/shelfswipe/sellers/onboard", json={"shop_url": "https://x.example"}).status_code == 401
+    assert client.get(f"/api/v1/shelfswipe/sellers/{sid}/draft").status_code == 401
+    assert client.post(f"/api/v1/shelfswipe/sellers/{sid}/products", json={}).status_code == 401
+    assert client.patch(f"/api/v1/shelfswipe/sellers/{sid}/products/p", json={}).status_code == 401
+    assert client.patch(f"/api/v1/shelfswipe/sellers/{sid}/shop", json={}).status_code == 401
+    assert client.post(f"/api/v1/shelfswipe/sellers/{sid}/approve", json={}).status_code == 401
+
+
+def test_checkout_rejects_non_positive_or_huge_quantity(client):
+    for qty in (0, -5, 101, 10**9):
+        r = client.post("/api/v1/shelfswipe/checkout", json={"buyer_ref": "b", "product_id": "p", "quantity": qty})
+        assert r.status_code == 422, (qty, r.status_code)
+
+
+def test_swipe_direction_is_validated(client):
+    for direction in ("; DROP", "up", ""):
+        r = client.post("/api/v1/shelfswipe/swipe", json={"buyer_ref": "b", "product_id": "p", "direction": direction})
+        assert r.status_code == 422
+
+
+def test_product_edit_limits(client):
+    from pydantic import ValidationError
+    from app.schemas.shelfswipe import ProductPatchRequest, ProductCreateRequest
+    for bad in ({"name": ""}, {"name": "x" * 300}, {"price": "1e400"}, {"price": -1}, {"price": "1.234"},
+                {"tags": ["a"] * 31}, {"stock": 10**9}, {"category": "c" * 65}):
+        try:
+            ProductPatchRequest(**bad)
+        except ValidationError:
+            continue
+        raise AssertionError(f"accepted {bad}")
+    ProductCreateRequest(name="ok", price="19.99", stock=3, tags=["a", "b"])

@@ -120,7 +120,7 @@ def test_session_event_size_limit_and_recording_opt_out(client):
     session = client.post("/api/v1/sessions", json={}).json()
     oversized = client.post(
         f"/api/v1/sessions/{session['id']}/events",
-        json={"events": [{"event_type": "rrweb", "payload": {"text": "x" * 100_001}}]},
+        json={"events": [{"event_type": "rrweb", "payload": {"text": "x" * 1_000_001}}]},
     )
     assert oversized.status_code == 413
 
@@ -256,3 +256,17 @@ def test_missing_timestamp_is_marked_unavailable_and_routes_are_sanitized(client
     assert route_event["attributes"]["timestamp_source"] == "ingestion_fallback"
     assert route_event["session_offset_ms"] is None
     assert route_event["route"] == "/api/v1/customers/:id"
+
+
+def test_redaction_keeps_long_decimals_but_masks_card_numbers():
+    from app.core.security import redact_sensitive_data
+    assert redact_sensitive_data("423.16666666666663") == "423.16666666666663"
+    assert redact_sensitive_data("card 4111111111111111 end") == "card [REDACTED_CARD] end"
+    assert redact_sensitive_data("4111 1111 1111 1111") == "[REDACTED_CARD]"
+
+
+def test_full_dom_snapshot_sized_event_is_accepted(client):
+    sid = client.post("/api/v1/sessions", json={}).json()["id"]
+    snapshot = {"type": 2, "timestamp": 1, "data": {"node": {"text": "x" * 250_000}}}
+    r = client.post(f"/api/v1/sessions/{sid}/events", json={"events": [{"event_type": "rrweb", "payload": snapshot}]})
+    assert r.status_code == 200 and r.json()["events_ingested"] == 1

@@ -85,8 +85,11 @@ class Settings(BaseSettings):
             return configured_model
         return configured_model or "gpt-4o-mini"
 
-    DEMO_OPERATOR_TOKEN: str = "demo-operator-secret-token"
     AUTH_SECRET_KEY: str = "dev-only-change-me-paytrace-auth-secret"
+    RATE_LIMIT_ENABLED: bool = True
+    MAX_ORDER_AMOUNT: float = 10000.00
+    # Session cookie: "lax" works when the web app and API share a registrable domain (localhost, app.x.com + api.x.com).
+    COOKIE_SAMESITE: Literal["lax", "strict", "none"] = "lax"
     AUTH_TOKEN_TTL_MINUTES: int = 720
     FRONTEND_ORIGIN: str = "http://localhost:3000"
     OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
@@ -98,6 +101,14 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore"
     )
+
+    @property
+    def cookie_secure(self) -> bool:
+        return self.COOKIE_SAMESITE == "none" or self.APP_ENV.strip().lower() not in {"development", "test"}
+
+    @property
+    def registration_open(self) -> bool:
+        return self.APP_ENV.strip().lower() in {"development", "test"}
 
     @property
     def is_paypal_configured(self) -> bool:

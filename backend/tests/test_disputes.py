@@ -141,3 +141,14 @@ def test_dispute_endpoints_require_auth(db_session):
             assert res.status_code == 401
     finally:
         raw_app.dependency_overrides.clear()
+
+
+def test_dispute_can_only_be_resolved_once(client):
+    created = client.post("/api/v1/paypal/orders", json={"amount": "30.00"}).json()
+    oid = created["paypal_order_id"]
+    client.post(f"/api/v1/paypal/orders/{oid}/approve")
+    client.post(f"/api/v1/paypal/orders/{oid}/capture", json={})
+    d = client.post("/api/v1/disputes/simulate", json={"payment_id": created["payment_id"], "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED"}).json()
+    body = {"seller_response": "we accept", "accept_liability": True}
+    assert client.post(f"/api/v1/disputes/{d['id']}/respond", json=body).status_code == 200
+    assert client.post(f"/api/v1/disputes/{d['id']}/respond", json=body).status_code == 400

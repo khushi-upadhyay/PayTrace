@@ -51,7 +51,7 @@ function LoginForm() {
       {error && (
         <div
           role="alert"
-          className="mt-6 flex items-start gap-2.5 rounded-xl border border-rose-300 bg-rose-50 px-3.5 py-3 text-sm text-rose-700"
+          className="mt-6 flex items-start gap-2.5 rounded-xl border border-rose-700 bg-rose-950 px-3.5 py-3 text-sm text-rose-300"
         >
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{error}</span>

@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
+from app.core.audit import audit
 from app.api.dependencies import get_current_user, get_db
 from app.db.models.user import User
 from app.db.models.dispute import Dispute
@@ -66,6 +67,7 @@ def simulate_dispute(
 def respond_to_dispute(
     dispute_id: str,
     req: DisputeRespondRequest,
+    request: Request,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
@@ -81,6 +83,7 @@ def respond_to_dispute(
     except DisputeError as exc:
         status_code = 404 if "not found" in str(exc).lower() else 400
         raise HTTPException(status_code=status_code, detail=str(exc)) from exc
+    audit("dispute_response", request, user=user.id, dispute=dispute_id, accept_liability=req.accept_liability)
     return DisputeResponse.model_validate(dispute)
 
 

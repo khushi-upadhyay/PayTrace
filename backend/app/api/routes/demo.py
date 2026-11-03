@@ -1,8 +1,9 @@
 import uuid
 from decimal import Decimal
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+from app.core.audit import audit
 from app.api.dependencies import get_current_user, get_db
 from app.db.models.user import User
 from app.core.time import utc_now
@@ -150,10 +151,11 @@ def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db), us
         raise HTTPException(status_code=400, detail=f"Scenario '{scenario_id}' not supported")
 
 @router.post("/reset", response_model=DemoResetResponse)
-def reset_demo_data(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def reset_demo_data(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Explicitly resets development demo data; unavailable in deployed environments."""
     if settings.APP_ENV.strip().lower() not in {"development", "test"}:
         raise HTTPException(status_code=403, detail="Demo data reset is disabled outside development and tests")
+    audit("demo_reset", request, user=user.id)
     from scripts.seed_demo import run_seed
     counts = run_seed(db)
     return DemoResetResponse(

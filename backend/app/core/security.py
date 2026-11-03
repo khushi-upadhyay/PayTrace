@@ -33,11 +33,13 @@ def redact_sensitive_data(data: Any) -> Any:
     elif isinstance(data, list):
         return [redact_sensitive_data(item) for item in data]
     elif isinstance(data, str):
+        data = data.replace("\x00", "")  # NUL bytes are rejected by Postgres text/JSON columns
         # Credit card pattern masking: either an unbroken 13-19 digit run, or
         # groups of 4 digits joined by a single consistent space/dash (standard
         # card formatting). Deliberately narrower than "any digits with dashes
         # mixed in" so it doesn't also catch UUIDs, order IDs, etc.
-        masked = re.sub(r"\b\d{13,19}\b|\b\d{4}([ -])\d{4}\1\d{4}\1\d{1,7}\b", "[REDACTED_CARD]", data)
+        # (?<!\.) skips the fractional part of decimals (e.g. SVG coordinates such as 423.16666666666663).
+        masked = re.sub(r"(?<!\.)\b\d{13,19}\b|\b\d{4}([ -])\d{4}\1\d{4}\1\d{1,7}\b", "[REDACTED_CARD]", data)
         return masked
     return data
 
@@ -74,6 +76,15 @@ def verify_password(password: str, stored: str) -> bool:
         return hmac.compare_digest(digest, base64.b64decode(hash_b64))
     except Exception:
         return False
+
+
+def create_checkout_token(order_id: str) -> str:
+    """Unguessable per-order capability token, returned only to the buyer who created the order."""
+    return hmac.new(settings.AUTH_SECRET_KEY.encode(), f"checkout:{order_id}".encode(), hashlib.sha256).hexdigest()
+
+
+def verify_checkout_token(order_id: str, token: Optional[str]) -> bool:
+    return bool(token) and hmac.compare_digest(create_checkout_token(order_id), token)
 
 
 def create_access_token(user_id: str) -> str:

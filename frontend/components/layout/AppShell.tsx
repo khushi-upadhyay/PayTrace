@@ -11,7 +11,7 @@ import { PublicNav } from "@/components/layout/PublicNav";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 /** Pages anyone can open. Everything else is the operator console and needs a login. */
-const PUBLIC_ROUTES = ["/", "/checkout", "/shelfswipe", "/demo/approval"];
+const PUBLIC_ROUTES = ["/", "/checkout", "/demo/approval"];
 const AUTH_ROUTES = ["/login", "/signup"];
 
 function Breadcrumbs({ pathname }: { pathname: string }) {
@@ -34,17 +34,17 @@ function Breadcrumbs({ pathname }: { pathname: string }) {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, ready } = useAuth();
+  const { user, ready, serverUnreachable } = useAuth();
 
   const isAuthPage = AUTH_ROUTES.includes(pathname);
   const isPublic = PUBLIC_ROUTES.includes(pathname);
   const needsLogin = !isAuthPage && !isPublic;
 
   useEffect(() => {
-    if (ready && needsLogin && !user) {
+    if (ready && needsLogin && !user && !serverUnreachable) {
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
-  }, [ready, needsLogin, user, pathname, router]);
+  }, [ready, needsLogin, user, serverUnreachable, pathname, router]);
 
   if (isAuthPage) return <>{children}</>;
 
@@ -63,6 +63,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <PublicNav />
         <main className="px-6 py-8">{children}</main>
       </>
+    );
+  }
+
+  if (ready && !user && serverUnreachable) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-6" role="alert">
+        <div className="max-w-md rounded-xl border border-amber-700 bg-amber-950 p-6 text-center">
+          <h1 className="text-lg font-semibold text-amber-300">Can&apos;t reach the PayTrace server</h1>
+          <p className="mt-2 text-sm text-amber-300">
+            The API isn&apos;t responding, so your session can&apos;t be checked. You haven&apos;t been signed out.
+          </p>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="mt-4 rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-black hover:bg-neutral-100"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
     );
   }
 

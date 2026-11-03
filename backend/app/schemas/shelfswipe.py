@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, ConfigDict
-from typing import Optional, List, Dict, Any
+from typing import Annotated, Any, Dict, List, Literal, Optional
 from decimal import Decimal
 
 
@@ -92,25 +92,25 @@ class ShelfSwipeDraftResponse(BaseModel):
 class ProductPatchRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    name: Optional[str] = None
-    price: Optional[Decimal] = Field(default=None, ge=0)
-    description: Optional[str] = None
-    category: Optional[str] = None
-    tags: Optional[List[str]] = None
-    image_url: Optional[str] = None
-    stock: Optional[int] = Field(default=None, ge=0)
+    name: Optional[str] = Field(default=None, min_length=1, max_length=256)
+    price: Optional[Decimal] = Field(default=None, ge=0, le=Decimal("99999999.99"), decimal_places=2)
+    description: Optional[str] = Field(default=None, max_length=5000)
+    category: Optional[str] = Field(default=None, min_length=1, max_length=64)
+    tags: Optional[List[Annotated[str, Field(max_length=64)]]] = Field(default=None, max_length=30)
+    image_url: Optional[str] = Field(default=None, max_length=1024)
+    stock: Optional[int] = Field(default=None, ge=0, le=1_000_000)
 
 
 class ProductCreateRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     name: str = Field(min_length=1, max_length=256)
-    price: Decimal = Field(ge=0)
-    description: Optional[str] = ""
-    category: Optional[str] = "General"
-    tags: Optional[List[str]] = Field(default_factory=list)
-    image_url: Optional[str] = None
-    stock: int = Field(default=0, ge=0)
+    price: Decimal = Field(ge=0, le=Decimal("99999999.99"), decimal_places=2)
+    description: Optional[str] = Field(default="", max_length=5000)
+    category: Optional[str] = Field(default="General", min_length=1, max_length=64)
+    tags: Optional[List[Annotated[str, Field(max_length=64)]]] = Field(default_factory=list, max_length=30)
+    image_url: Optional[str] = Field(default=None, max_length=1024)
+    stock: int = Field(default=0, ge=0, le=1_000_000)
 
 
 class ShopPatchRequest(BaseModel):
@@ -174,15 +174,15 @@ class ShelfProductDeckResponse(BaseModel):
 
 
 class SwipeRecordRequest(BaseModel):
-    buyer_ref: str
-    product_id: str
-    direction: str  # "right" or "left"
+    buyer_ref: str = Field(min_length=1, max_length=64)
+    product_id: str = Field(min_length=1, max_length=64)
+    direction: Literal["right", "left"]
 
 
 class ShelfSwipeCheckoutRequest(BaseModel):
-    product_id: str
-    buyer_ref: str
-    quantity: int = 1
+    product_id: str = Field(max_length=64)
+    buyer_ref: str = Field(min_length=1, max_length=64)
+    quantity: int = Field(default=1, ge=1, le=100)
     session_id: Optional[str] = None
     simulate_scenario: Optional[str] = None # e.g. "timeout_before_response"
 
@@ -217,6 +217,7 @@ class ShelfCheckoutResult(BaseModel):
     amount: float
     currency: str
     is_mock: bool
+    checkout_token: Optional[str] = None
 
 class ShelfChatResponse(BaseModel):
     response: str

@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.db.base import Base
-from app.api.dependencies import get_current_user
+from app.api.dependencies import get_current_user, require_order_access
 from app.db.models.user import User
 from app.db.session import get_db
 from app.core.config import settings
@@ -21,6 +21,7 @@ settings.PAYPAL_CLIENT_SECRET = ""
 settings.PAYPAL_WEBHOOK_ID = ""
 settings.AI_API_KEY = ""
 settings.APP_ENV = "test"
+settings.RATE_LIMIT_ENABLED = False
 
 TEST_DB_URL = "sqlite:///:memory:"
 
@@ -55,6 +56,15 @@ def client(db_session):
     app.dependency_overrides[get_db] = override_get_db
     # Operator routes need a login; individual tests use the auth_client fixture to exercise it.
     app.dependency_overrides[get_current_user] = lambda: User(id="test-user", name="Test", email="t@example.com", password_hash="x", role="Payments Operator")
+    # Checkout-token enforcement is covered explicitly in test_checkout_token.py.
+    app.dependency_overrides[require_order_access] = lambda: None
     with TestClient(app) as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture(autouse=True)
+def _reset_idempotency():
+    from app.core.idempotency import idempotency_store
+    idempotency_store.reset()
+    yield

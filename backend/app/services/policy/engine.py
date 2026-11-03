@@ -14,6 +14,21 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+REFUNDABLE_STATUSES = {"CAPTURED", "REFUNDED"}
+CENTS = Decimal("0.01")
+
+
+def _refund_total(db: Session, payment_id: str, statuses, exclude_ticket_id: Optional[str] = None) -> Decimal:
+    query = db.query(ApprovalTicket).filter(
+        ApprovalTicket.payment_id == payment_id,
+        ApprovalTicket.action_type == "REFUND",
+        ApprovalTicket.status.in_(statuses),
+    )
+    if exclude_ticket_id:
+        query = query.filter(ApprovalTicket.id != exclude_ticket_id)
+    return sum((t.amount or Decimal("0")) for t in query.all()) or Decimal("0")
+
+
 class PolicyEngine:
     """Enforces Human-in-the-Loop policy checks for sensitive financial actions like refunds."""
 
@@ -29,7 +44,23 @@ class PolicyEngine:
         if not payment:
             raise ValueError(f"Payment {payment_id} not found.")
 
-        refund_amt = amount or payment.amount
+        if payment.status not in REFUNDABLE_STATUSES:
+            raise ValueError(f"Payment is {payment.status}; only captured payments can be refunded.")
+
+        # Money already refunded, plus refunds waiting for a decision, is not available again.
+        remaining = payment.amount - _refund_total(db, payment_id, ("EXECUTED", "PENDING", "APPROVED"))
+        if amount is None:
+            refund_amt = remaining
+        else:
+            if not amount.is_finite() or amount <= 0:
+                raise ValueError("Refund amount must be a positive number.")
+            if amount > remaining:
+                raise ValueError(f"Refund exceeds the refundable balance of {remaining:.2f} {payment.currency}.")
+            if amount != amount.quantize(CENTS):
+                raise ValueError("Refund amount can have at most two decimal places.")
+            refund_amt = amount
+        if refund_amt <= 0 or refund_amt > remaining:
+            raise ValueError(f"Refund exceeds the refundable balance of {remaining:.2f} {payment.currency}.")
 
         # Create pending approval ticket
         ticket = ApprovalTicket(
@@ -72,13 +103,32 @@ class PolicyEngine:
         operator_token: Optional[str] = None,
         notes: Optional[str] = None,
     ) -> Tuple[ApprovalTicket, Optional[Dict[str, Any]]]:
-        ticket = db.query(ApprovalTicket).filter(ApprovalTicket.id == ticket_id).first()
+        # Row lock so two simultaneous approvals of one ticket cannot both execute.
+        ticket = db.query(ApprovalTicket).filter(ApprovalTicket.id == ticket_id).with_for_update().first()
         if not ticket:
             raise ValueError(f"Approval ticket {ticket_id} not found.")
 
         if ticket.status != "PENDING":
             raise ValueError(f"Ticket {ticket_id} is already in state {ticket.status}.")
 
+        if decision.upper() not in ("APPROVED", "DENIED"):
+            raise ValueError(f"Invalid decision '{decision}'. Must be APPROVED or DENIED.")
+
+        if decision.upper() == "APPROVED":
+            locked = db.query(Payment).filter(Payment.id == ticket.payment_id).with_for_update().first()
+            if locked is not None:
+                already = _refund_total(db, locked.id, ("EXECUTED",), exclude_ticket_id=ticket.id)
+                if (ticket.amount or Decimal("0")) > locked.amount - already:
+                    raise ValueError("Approving this refund would exceed the amount captured for the payment.")
+
+        # Compare-and-set claim: of several simultaneous decisions, exactly one wins.
+        claimed = db.query(ApprovalTicket).filter(
+            ApprovalTicket.id == ticket_id, ApprovalTicket.status == "PENDING"
+        ).update({"status": decision.upper()}, synchronize_session=False)
+        if not claimed:
+            db.rollback()
+            raise ValueError(f"Ticket {ticket_id} is already in state {ticket.status}.")
+        db.refresh(ticket)
         ticket.decided_by = decided_by
         ticket.decided_at = utc_now()
 

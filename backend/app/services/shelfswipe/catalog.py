@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.db.models.shelfswipe import ShelfProduct, SwipeAction, ShelfOrderItem, ShelfCartItem
 from app.db.models.payment import Payment
 from app.core.config import settings
+from app.core.security import create_checkout_token
 from app.services.lifecycle.engine import lifecycle_engine
 from app.services.paypal.mock_sandbox import mock_paypal
 from app.services.paypal.client import (
@@ -110,6 +111,8 @@ async def create_multi_item_order(
         raise ValueError("At least one line item is required to check out")
 
     for product, quantity in items:
+        if quantity < 1:
+            raise ValueError("Quantity must be at least 1")
         if product.stock < quantity:
             raise InsufficientStockError(product.name, product.stock, quantity)
 
@@ -207,4 +210,5 @@ async def create_multi_item_order(
         "currency": currency,
         "items": line_items_meta,
         "is_mock": is_mock,
+        "checkout_token": create_checkout_token(paypal_order_id),
     }
