@@ -69,6 +69,7 @@ class SSShop(Base):
     latitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     longitude: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     pickup_notes: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    source_domain: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     is_demo: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now
@@ -107,6 +108,8 @@ class SSProduct(Base):
     stock: Mapped[int] = mapped_column(Integer, default=0)
     status: Mapped[str] = mapped_column(String(32), default="draft")  # draft, live
     source: Mapped[str] = mapped_column(String(32), default="demo")   # scraped, manual, demo
+    source_url: Mapped[Optional[str]] = mapped_column(String(512), nullable=True)
+    provider_ref: Mapped[Optional[str]] = mapped_column(String(128), nullable=True)
     review_flags: Mapped[List[str]] = mapped_column(JSON, default=list)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=utc_now
@@ -265,34 +268,4 @@ class SwipeAction(Base):
         String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), index=True
     )
     direction: Mapped[str] = mapped_column(String(16))
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
-
-
-class ShelfCartItem(Base):
-    """A buyer's in-progress cart, built up conversationally via the shopping assistant."""
-    __tablename__ = "shelfswipe_cart_items"
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    buyer_ref: Mapped[str] = mapped_column(String(64), index=True)
-    product_id: Mapped[str] = mapped_column(String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), index=True)
-    quantity: Mapped[int] = mapped_column(Integer, default=1)
-    added_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
-
-    product: Mapped["ShelfProduct"] = relationship("ShelfProduct")
-
-    __table_args__ = (
-        Index("ix_shelfswipe_cart_buyer_product", "buyer_ref", "product_id", unique=True),
-    )
-
-
-class ShelfOrderItem(Base):
-    """Line-item snapshot of a multi-product ShelfSwipe order, linked to the unified Payment ledger."""
-    __tablename__ = "shelfswipe_order_items"
-
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    payment_id: Mapped[str] = mapped_column(String(36), ForeignKey("payments.id", ondelete="CASCADE"), index=True)
-    product_id: Mapped[str] = mapped_column(String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), index=True)
-    quantity: Mapped[int] = mapped_column(Integer, default=1)
-    unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2))
-    name_snapshot: Mapped[str] = mapped_column(String(256))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)

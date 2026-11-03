@@ -382,54 +382,6 @@ export interface ShelfOnboardResponse {
   products_count: number;
 }
 
-export interface ShelfCartItem {
-  product_id: string;
-  name: string;
-  price: number;
-  currency: string;
-  quantity: number;
-  image_url: string | null;
-  line_total: number;
-}
-
-export interface ShelfCartResponse {
-  buyer_ref: string;
-  items: ShelfCartItem[];
-  total: number;
-}
-
-export interface ShelfChatMessage {
-  role: "user" | "assistant";
-  content: string;
-}
-
-export interface ShelfCheckoutResult {
-  payment_id: string;
-  paypal_order_id: string;
-  approval_url: string | null;
-  amount: number;
-  currency: string;
-  is_mock: boolean;
-}
-
-export interface ShelfChatResponse {
-  response: string;
-  cart: ShelfCartItem[];
-  cart_total: number;
-  actions_taken: string[];
-  checkout: ShelfCheckoutResult | null;
-}
-
-export interface ShelfCartCheckoutResponse {
-  payment_id: string;
-  paypal_order_id: string;
-  approval_url: string | null;
-  amount: number;
-  currency: string;
-  items: Array<{ product_id: string; product_name: string; quantity: number }>;
-  is_mock: boolean;
-}
-
 export interface RefundResponse {
   ticket_id: string | null;
   status: string;
@@ -732,33 +684,6 @@ export const api = {
       method: "POST",
       body: JSON.stringify({
         product_id: productId,
-        buyer_ref: buyerRef,
-        session_id: sessionId,
-        simulate_scenario: simulateScenario,
-      }),
-    });
-  },
-
-  getShelfCart(buyerRef: string) {
-    return request<ShelfCartResponse>(`/shelfswipe/cart${toQuery({ buyer_ref: buyerRef })}`);
-  },
-
-  shelfChat(buyerRef: string, message: string, messages: ShelfChatMessage[], sessionId?: string) {
-    return request<ShelfChatResponse>("/shelfswipe/chat", {
-      method: "POST",
-      body: JSON.stringify({
-        buyer_ref: buyerRef,
-        message,
-        messages,
-        session_id: sessionId,
-      }),
-    });
-  },
-
-  checkoutShelfCart(buyerRef: string, simulateScenario?: string, sessionId?: string) {
-    return request<ShelfCartCheckoutResponse>("/shelfswipe/checkout/cart", {
-      method: "POST",
-      body: JSON.stringify({
         buyer_ref: buyerRef,
         session_id: sessionId,
         simulate_scenario: simulateScenario,

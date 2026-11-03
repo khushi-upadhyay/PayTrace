@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BadgeCheck, BarChart3, CircleAlert, CreditCard,
-  LayoutDashboard, ListFilter, MonitorPlay, Scale, Settings, Sparkles,
+  LayoutDashboard, ListFilter, MonitorPlay, Scale, Settings, Sparkles, Store,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
@@ -25,6 +25,7 @@ const GROUPS = [
   ] },
   { label: "Workspace", items: [
     { href: "/investigate", label: "AI Investigator", icon: Sparkles },
+    { href: "/shelfswipe", label: "ShelfSwipe", icon: Store },
     { href: "/settings", label: "Settings", icon: Settings },
   ] },
 ];

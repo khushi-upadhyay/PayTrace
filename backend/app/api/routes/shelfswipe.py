@@ -1,13 +1,15 @@
 import logging
+import re
 import uuid
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
-
-from app.api.dependencies import get_current_user, get_db
-from app.db.models.user import User
+import httpx
+from app.api.dependencies import get_db
+from app.core.config import settings
+from app.db.models.payment import Payment
 from app.db.models.shelfswipe import (
     SSSeller,
     SSShop,
@@ -15,38 +17,47 @@ from app.db.models.shelfswipe import (
     Seller,
     ShelfProduct,
     SwipeAction,
-    ShelfCartItem,
 )
 from app.schemas.shelfswipe import (
     ShelfSwipeOnboardRequest,
     ShelfSwipeOnboardResponse,
     ShelfSwipeDraftResponse,
     ShelfSwipeDraftProductItem,
-    SellerOnboardRequest,
     ShelfProductSchema,
     ShelfProductDeckResponse,
     SwipeRecordRequest,
     ShelfSwipeCheckoutRequest,
-    ShelfCartItemSchema,
-    ShelfCartResponse,
-    ShelfChatRequest,
-    ShelfChatResponse,
-    ShelfCheckoutResult,
-    ShelfCartCheckoutRequest,
+    ProductPatchRequest,
+    ProductCreateRequest,
+    ShopPatchRequest,
+    ApproveRequest,
+    ApproveResponse,
+    ApproveRejectedItem,
 )
+from app.services.lifecycle.engine import lifecycle_engine
+from app.services.paypal.client import (
+    paypal_client,
+    safe_paypal_error_diagnostics,
+    validate_created_order_amount,
+)
+from app.services.paypal.mock_sandbox import mock_paypal
 from app.services.shelfswipe import mcp_client
-from app.services.shelfswipe.catalog import (
-    search_catalog,
-    create_multi_item_order,
-    get_cart_snapshot,
-    InsufficientStockError,
-)
 from app.services.shelfswipe.importer import (
     import_shop,
     ConsentRequiredError,
+    recompute_ss_product_review_flags,
+)
+from app.services.shelfswipe.fixture_provider import FixtureCatalogProvider
+from app.services.shelfswipe.channel3_provider import (
+    Channel3CatalogProvider,
+    Channel3NoProductsError,
+)
+from app.services.shelfswipe.channel3_client import (
+    Channel3ClientError,
+    Channel3RateLimitError,
+    Channel3TimeoutError,
 )
 from app.services.shelfswipe.mcp_client import McpClientError
-from app.agents.shelf_agent import shelf_agent
 
 router = APIRouter(prefix="/shelfswipe", tags=["shelfswipe"])
 logger = logging.getLogger("paytrace.shelfswipe")
@@ -81,15 +92,44 @@ def onboard_seller(
     db: Session = Depends(get_db),
 ):
     """
-    Onboards a merchant shop via MCP catalog extraction.
+    Onboards a merchant shop via MCP catalog extraction or Channel3 lookup.
     Creates or updates seller, shop, extraction job, and imports products as drafts.
     """
+    provider_name = (req.provider or "fixture").strip().lower()
+
+    if provider_name == "channel3":
+        if not req.ownership_attested:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Seller ownership attestation is required for Channel3 onboarding.",
+            )
+        if not (req.shop_url.startswith("http://") or req.shop_url.startswith("https://")):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="shop_url must be a valid http or https URL for Channel3 onboarding.",
+            )
+        if req.product_urls and len(req.product_urls) > 20:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Maximum 20 product URLs allowed per onboarding request.",
+            )
+        provider = Channel3CatalogProvider()
+    elif provider_name == "fixture":
+        provider = FixtureCatalogProvider()
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported catalog provider: '{req.provider}'. Allowed: 'fixture', 'channel3'.",
+        )
+
     try:
         result = import_shop(
             db=db,
             shop_url=req.shop_url,
             consent=req.consent,
             seller_name=req.seller_name,
+            provider=provider,
+            product_urls=req.product_urls,
         )
         return ShelfSwipeOnboardResponse(
             seller_id=str(result.seller_id),
@@ -102,6 +142,23 @@ def onboard_seller(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(exc),
+        )
+    except Channel3NoProductsError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(exc),
+        )
+    except Channel3RateLimitError as exc:
+        logger.error(f"Channel3 rate limit error during onboard: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Channel3 rate limit exceeded: {str(exc)}",
+        )
+    except Channel3ClientError as exc:
+        logger.error(f"Channel3 client error during onboard: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Channel3 client error: {str(exc)}",
         )
     except McpClientError as exc:
         logger.error(f"MCP client error during onboard: {exc}")
@@ -131,11 +188,14 @@ def onboard_seller(
 )
 def get_seller_draft(
     seller_id: str,
+    status_filter: Optional[str] = Query(default="draft", alias="status", pattern="^(draft|live|all)$"),
     db: Session = Depends(get_db),
 ):
     """
-    Returns the seller's shop plus its products currently in 'draft' status,
-    including review flags, made-up demo coordinates, and numeric price.
+    Returns the seller's shop plus its products filtered by status:
+    - 'draft': products currently in draft (default)
+    - 'live': products approved and live
+    - 'all': all products for this seller
     """
     seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
     if not seller:
@@ -151,12 +211,15 @@ def get_seller_draft(
             detail=f"No shop associated with seller '{seller_id}'.",
         )
 
-    draft_products = (
-        db.query(SSProduct)
-        .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
-        .order_by(SSProduct.created_at.asc())
-        .all()
-    )
+    query = db.query(SSProduct).filter(SSProduct.shop_id == shop.id)
+    if status_filter == "draft":
+        query = query.filter(SSProduct.status == "draft")
+    elif status_filter == "live":
+        query = query.filter(SSProduct.status == "live")
+    elif status_filter == "all":
+        pass
+
+    selected_products = query.order_by(SSProduct.created_at.asc()).all()
 
     product_items = [
         ShelfSwipeDraftProductItem(
@@ -171,9 +234,12 @@ def get_seller_draft(
             tags=p.tags or [],
             stock=p.stock,
             status=p.status,
+            data_source=p.source,
+            source_url=p.source_url,
+            provider_ref=p.provider_ref,
             review_flags=p.review_flags or [],
         )
-        for p in draft_products
+        for p in selected_products
     ]
 
     return ShelfSwipeDraftResponse(
@@ -186,6 +252,280 @@ def get_seller_draft(
         pickup_notes=shop.pickup_notes,
         is_demo=shop.is_demo,
         products=product_items,
+    )
+
+
+@router.post(
+    "/sellers/{seller_id}/products",
+    response_model=ShelfSwipeDraftProductItem,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_manual_product(
+    seller_id: str,
+    req: ProductCreateRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Creates a new draft product manually for a specific seller.
+    Ownership is verified via the seller and their associated shop.
+    Assigns source='manual', a guaranteed unique 'manual-<uuid>' external_id,
+    and computes quality review flags like imports (including confirm_stock).
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    flags: List[str] = []
+    if not req.image_url or not str(req.image_url).strip():
+        flags.append("missing_image")
+    if not req.description or not str(req.description).strip():
+        flags.append("missing_description")
+    if not req.tags or len(req.tags) == 0:
+        flags.append("no_tags")
+    if req.price <= Decimal("0.00"):
+        flags.append("invalid_price")
+    flags.append("confirm_stock")
+
+    unique_ext_id = f"manual-{uuid.uuid4()}"
+
+    product = SSProduct(
+        shop_id=shop.id,
+        external_id=unique_ext_id,
+        name=req.name,
+        price=req.price,
+        currency="USD",
+        image_url=req.image_url,
+        description=req.description or "",
+        category=req.category or "General",
+        tags=req.tags or [],
+        stock=req.stock,
+        status="draft",
+        source="manual",
+        source_url=None,
+        provider_ref=None,
+        review_flags=flags,
+    )
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+
+    return ShelfSwipeDraftProductItem(
+        id=str(product.id),
+        external_id=product.external_id,
+        name=product.name,
+        price=float(product.price),
+        currency=product.currency,
+        image_url=product.image_url,
+        description=product.description,
+        category=product.category,
+        tags=product.tags or [],
+        stock=product.stock,
+        status=product.status,
+        data_source=product.source,
+        source_url=product.source_url,
+        provider_ref=product.provider_ref,
+        review_flags=product.review_flags or [],
+    )
+
+
+@router.patch(
+    "/sellers/{seller_id}/products/{product_id}",
+    response_model=ShelfSwipeDraftProductItem,
+)
+def patch_seller_product(
+    seller_id: str,
+    product_id: str,
+    req: ProductPatchRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Edits a draft product for a specific seller.
+    Recomputes quality review flags and validates numeric ranges.
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    product = (
+        db.query(SSProduct)
+        .filter(SSProduct.id == product_id, SSProduct.shop_id == shop.id)
+        .first()
+    )
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Product with ID '{product_id}' not found for seller '{seller_id}'.",
+        )
+
+    updates = req.model_dump(exclude_unset=True)
+    if "name" in updates and updates["name"] is not None:
+        product.name = updates["name"]
+    if "price" in updates and updates["price"] is not None:
+        product.price = updates["price"]
+    if "description" in updates and updates["description"] is not None:
+        product.description = updates["description"]
+    if "category" in updates and updates["category"] is not None:
+        product.category = updates["category"]
+    if "tags" in updates and updates["tags"] is not None:
+        product.tags = updates["tags"]
+    if "image_url" in updates:
+        product.image_url = updates["image_url"]
+    if "stock" in updates and updates["stock"] is not None:
+        product.stock = updates["stock"]
+
+    # Recompute review flags based on updated fields
+    product.review_flags = recompute_ss_product_review_flags(product)
+
+    db.commit()
+    db.refresh(product)
+
+    return ShelfSwipeDraftProductItem(
+        id=str(product.id),
+        external_id=product.external_id,
+        name=product.name,
+        price=float(product.price),
+        currency=product.currency,
+        image_url=product.image_url,
+        description=product.description,
+        category=product.category,
+        tags=product.tags or [],
+        stock=product.stock,
+        status=product.status,
+        data_source=product.source,
+        source_url=product.source_url,
+        provider_ref=product.provider_ref,
+        review_flags=product.review_flags or [],
+    )
+
+
+@router.patch(
+    "/sellers/{seller_id}/shop",
+    response_model=ShelfSwipeDraftResponse,
+)
+def patch_seller_shop(
+    seller_id: str,
+    req: ShopPatchRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Edits shop configuration (pickup location, notes) for a seller.
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    updates = req.model_dump(exclude_unset=True)
+    if "pickup_notes" in updates:
+        shop.pickup_notes = updates["pickup_notes"]
+    if "latitude" in updates:
+        shop.latitude = updates["latitude"]
+    if "longitude" in updates:
+        shop.longitude = updates["longitude"]
+
+    db.commit()
+    db.refresh(shop)
+
+    return get_seller_draft(seller_id=seller_id, db=db)
+
+
+@router.post(
+    "/sellers/{seller_id}/approve",
+    response_model=ApproveResponse,
+)
+def approve_seller_draft_products(
+    seller_id: str,
+    req: ApproveRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Batch approves draft products to live status after confirming stock.
+    Rejects products with critical review flags (e.g. invalid_price) or already live products.
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    approved: List[str] = []
+    rejected: List[ApproveRejectedItem] = []
+
+    for item in req.items:
+        prod = (
+            db.query(SSProduct)
+            .filter(SSProduct.id == item.product_id, SSProduct.shop_id == shop.id)
+            .first()
+        )
+        if not prod:
+            rejected.append(ApproveRejectedItem(id=item.product_id, reason="not_found"))
+            continue
+
+        if prod.status == "live":
+            rejected.append(ApproveRejectedItem(id=item.product_id, reason="already_live"))
+            continue
+
+        flags = list(prod.review_flags or [])
+        if "invalid_price" in flags:
+            rejected.append(ApproveRejectedItem(id=item.product_id, reason="invalid_price"))
+            continue
+
+        # Approve product
+        prod.stock = item.confirmed_stock
+        prod.status = "live"
+        # Remove confirm_stock and stock_unknown flags
+        prod.review_flags = [f for f in flags if f not in ("confirm_stock", "stock_unknown")]
+        approved.append(str(prod.id))
+
+    db.commit()
+
+    still_draft_count = (
+        db.query(SSProduct)
+        .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
+        .count()
+    )
+
+    return ApproveResponse(
+        approved=approved,
+        rejected=rejected,
+        still_draft_count=still_draft_count,
     )
 
 
@@ -279,60 +619,6 @@ def seed_demo_catalog(db: Session) -> None:
     db.commit()
 
 
-@router.post("/onboard")
-def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    """Loads the curated demo catalog without accessing an external merchant site."""
-    seller = db.query(Seller).filter(Seller.source_url == req.shop_url).first()
-    if not seller:
-        seller = Seller(
-            id=str(uuid.uuid4()),
-            name=req.shop_name,
-            contact_email="owner@artisan-local.dev",
-            source_url=req.shop_url,
-        )
-        db.add(seller)
-        db.flush()
-
-        for item in DEMO_CATALOG:
-            prod = ShelfProduct(
-                id=str(uuid.uuid4()),
-                seller_id=seller.id,
-                name=item["name"],
-                price=Decimal(str(item["price"])),
-                currency="USD",
-                image_url=item["image_url"],
-                description=item["description"],
-                category=item["category"],
-                stock=item["stock"],
-                status="live",
-                source="demo",
-                why_matches=item["why_matches"],
-            )
-            db.add(prod)
-        db.commit()
-
-    products = db.query(ShelfProduct).filter(ShelfProduct.seller_id == seller.id).all()
-    return {
-        "status": "demo_loaded",
-        "is_demo": True,
-        "seller_id": seller.id,
-        "seller_name": seller.name,
-        "products_count": len(products),
-        "products": [
-            {
-                "id": p.id,
-                "name": p.name,
-                "price": float(p.price),
-                "category": p.category,
-                "stock": p.stock,
-                "image_url": p.image_url,
-                "why_matches": p.why_matches,
-            }
-            for p in products
-        ]
-    }
-
-
 @router.get("/deck", response_model=ShelfProductDeckResponse)
 def get_swipe_deck(
     query: str = Query("gift", description="Natural language buyer search query"),
@@ -347,18 +633,42 @@ def get_swipe_deck(
     if count == 0:
         seed_demo_catalog(db)
 
-    # Fetch buyer's liked categories (via shared catalog ranking) to annotate the deck
     liked_swipes = db.query(SwipeAction).filter(
         SwipeAction.buyer_ref == buyer_ref,
         SwipeAction.direction == "right"
     ).all()
     liked_product_ids = [s.product_id for s in liked_swipes]
+
     liked_categories = set()
     if liked_product_ids:
         liked_prods = db.query(ShelfProduct.category).filter(ShelfProduct.id.in_(liked_product_ids)).all()
         liked_categories = {c[0] for c in liked_prods}
 
-    ranked = search_catalog(db, query, buyer_ref=buyer_ref)
+    products = db.query(ShelfProduct).filter(ShelfProduct.status == "live", ShelfProduct.stock > 0).all()
+    stop_words = {"the", "and", "for", "with", "under", "nearby", "from"}
+    query_terms = {
+        term for term in re.findall(r"[a-z0-9]+", query.lower())
+        if len(term) > 2 and term not in stop_words
+    }
+
+    def searchable_text(product: ShelfProduct) -> str:
+        return " ".join((product.name, product.category, product.description, product.why_matches or "")).lower()
+
+    if query_terms:
+        products = [
+            product for product in products
+            if query_terms.intersection(re.findall(r"[a-z0-9]+", searchable_text(product)))
+        ]
+
+    def rank_score(p: ShelfProduct):
+        score = 0
+        if p.category in liked_categories:
+            score += 50
+        product_terms = set(re.findall(r"[a-z0-9]+", searchable_text(p)))
+        score += 30 * len(query_terms.intersection(product_terms))
+        return score
+
+    ranked = sorted(products, key=rank_score, reverse=True)
 
     deck_items = [
         ShelfProductSchema(
@@ -406,91 +716,89 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
 @router.post("/checkout")
 async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
     """
-    Seamless PayPal Checkout for a single ShelfSwipe item, wired with PayTrace's lifecycle and recovery engine.
+    Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
     """
     prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
     if not prod:
         raise HTTPException(status_code=404, detail="Product not found")
+    if prod.stock < req.quantity:
+        raise HTTPException(status_code=400, detail="Insufficient stock")
 
-    try:
-        result = await create_multi_item_order(
-            db,
-            buyer_ref=req.buyer_ref,
-            items=[(prod, req.quantity)],
-            session_id=req.session_id,
-            simulate_scenario=req.simulate_scenario,
+    payment_id = str(uuid.uuid4())
+    total_amount = Decimal(str(prod.price)) * req.quantity
+    is_mock = not settings.is_paypal_configured
+
+    paypal_order_id = ""
+    approval_url = None
+
+    if settings.is_paypal_configured:
+        try:
+            order_data = await paypal_client.create_order(
+                amount=total_amount,
+                currency=prod.currency,
+                custom_id=payment_id,
+                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
+                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
+            )
+            if prod.currency != "USD":
+                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
+            validate_created_order_amount(order_data, total_amount, prod.currency)
+            paypal_order_id = order_data["id"]
+            for link in order_data.get("links", []):
+                if link.get("rel") == "approve":
+                    approval_url = link.get("href")
+        except Exception as exc:
+            diagnostics = (
+                safe_paypal_error_diagnostics(exc)
+                if isinstance(exc, httpx.HTTPStatusError)
+                else {"http_status": None, "error_type": type(exc).__name__}
+            )
+            diagnostics.update({"requested_amount": f"{total_amount:.2f}", "requested_currency": prod.currency})
+            logger.error("ShelfSwipe PayPal order creation failed", extra={"paypal_diagnostics": diagnostics})
+            raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
+
+    if is_mock:
+        order_data = mock_paypal.create_order(
+            amount=total_amount,
+            currency=prod.currency,
+            custom_id=payment_id,
         )
-    except InsufficientStockError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    except Exception as exc:
-        logger.error("ShelfSwipe single-item checkout failed", extra={"error": str(exc)})
-        raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
+        paypal_order_id = order_data["id"]
+        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
 
-    return {**result, "product_name": prod.name}
-
-
-@router.get("/cart", response_model=ShelfCartResponse)
-def get_cart(buyer_ref: str = Query(...), db: Session = Depends(get_db)):
-    """Returns the buyer's current in-progress cart, built up via the shopping assistant."""
-    return ShelfCartResponse(**get_cart_snapshot(db, buyer_ref))
-
-
-@router.post("/chat", response_model=ShelfChatResponse)
-async def shelf_chat(req: ShelfChatRequest, db: Session = Depends(get_db)):
-    """
-    Conversational shopping assistant: one prompt can name multiple products,
-    which the agent resolves, adds to the cart, and can check out on request.
-    """
-    count = db.query(ShelfProduct).count()
-    if count == 0:
-        seed_demo_catalog(db)
-
-    result = await shelf_agent.chat(
-        db=db,
-        buyer_ref=req.buyer_ref,
-        message=req.message,
-        messages=[m.model_dump() for m in req.messages],
+    # Register in PayTrace unified payment ledger
+    payment = Payment(
+        id=payment_id,
+        paypal_order_id=paypal_order_id,
+        customer_ref=req.buyer_ref,
         session_id=req.session_id,
+        amount=total_amount,
+        currency=prod.currency,
+        status="CREATED",
+        actor="human",
+        source_mode="SIMULATED" if is_mock else f"PAYPAL_{settings.paypal_mode.upper()}",
+        failure_code=req.simulate_scenario,
     )
-    checkout = ShelfCheckoutResult(**result["checkout"]) if result.get("checkout") else None
-    return ShelfChatResponse(
-        response=result["response"],
-        cart=result["cart"],
-        cart_total=result["cart_total"],
-        actions_taken=result["actions_taken"],
-        checkout=checkout,
+    db.add(payment)
+
+    lifecycle_engine.record_event(
+        db=db,
+        payment=payment,
+        event_type="CHECKOUT_ORDER_CREATED",
+        source="SHELVESWIPE_APP",
+        status="SUCCESS",
+        paypal_order_id=paypal_order_id,
+        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": prod.seller_id},
+        is_simulated=is_mock,
     )
-
-
-@router.post("/checkout/cart")
-async def checkout_cart(req: ShelfCartCheckoutRequest, db: Session = Depends(get_db)):
-    """Checks out everything currently in the buyer's cart as a single multi-item PayPal order."""
-    cart_rows = (
-        db.query(ShelfCartItem, ShelfProduct)
-        .join(ShelfProduct, ShelfCartItem.product_id == ShelfProduct.id)
-        .filter(ShelfCartItem.buyer_ref == req.buyer_ref)
-        .all()
-    )
-    if not cart_rows:
-        raise HTTPException(status_code=400, detail="Cart is empty")
-
-    items = [(product, cart_item.quantity) for cart_item, product in cart_rows]
-    try:
-        result = await create_multi_item_order(
-            db,
-            buyer_ref=req.buyer_ref,
-            items=items,
-            session_id=req.session_id,
-            simulate_scenario=req.simulate_scenario,
-        )
-    except InsufficientStockError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    except Exception as exc:
-        logger.error("ShelfSwipe cart checkout failed", extra={"error": str(exc)})
-        raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
-
-    for cart_item, _ in cart_rows:
-        db.delete(cart_item)
     db.commit()
 
-    return result
+    return {
+        "payment_id": payment_id,
+        "paypal_order_id": paypal_order_id,
+        "approval_url": approval_url,
+        "amount": float(total_amount),
+        "currency": prod.currency,
+        "product_name": prod.name,
+        "is_mock": is_mock,
+    }

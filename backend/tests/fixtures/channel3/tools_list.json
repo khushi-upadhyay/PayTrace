@@ -1,0 +1,149 @@
+[
+  {
+    "name": "search_catalog",
+    "description": "Search Channel3's cross-merchant catalog (dev.ucp.shopping.catalog.search). Arguments: ``meta``, ``catalog`` with optional query, like, context, filters, pagination, collection_id.",
+    "inputSchema": {
+      "properties": {
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        },
+        "catalog": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Catalog"
+        },
+        "extra": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extra"
+        }
+      },
+      "title": "search_catalogArguments",
+      "type": "object"
+    }
+  },
+  {
+    "name": "lookup_catalog",
+    "description": "Lookup products by id or merchant URL (dev.ucp.shopping.catalog.lookup). Arguments: ``meta``, ``catalog`` with ``ids`` and/or ``urls`` (extension).",
+    "inputSchema": {
+      "properties": {
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        },
+        "catalog": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Catalog"
+        },
+        "extra": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extra"
+        }
+      },
+      "title": "lookup_catalogArguments",
+      "type": "object"
+    }
+  },
+  {
+    "name": "get_product",
+    "description": "Get full product detail with optional option selection (dev.ucp.shopping.catalog.lookup). Arguments: ``meta``, ``catalog`` with ``id``.",
+    "inputSchema": {
+      "properties": {
+        "meta": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Meta"
+        },
+        "catalog": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Catalog"
+        },
+        "extra": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extra"
+        }
+      },
+      "title": "get_productArguments",
+      "type": "object"
+    }
+  }
+]

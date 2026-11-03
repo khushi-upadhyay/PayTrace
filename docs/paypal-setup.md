@@ -17,10 +17,10 @@ This guide describes how to configure PayTrace to connect to live PayPal Develop
 
 ### Backend (`backend/.env`)
 ```dotenv
-PAYPAL_CLIENT_ID=your_sandbox_client_id_here
-PAYPAL_CLIENT_SECRET=your_sandbox_client_secret_here
+PAYPAL_CLIENT_ID=<your-sandbox-client-id>
+PAYPAL_CLIENT_SECRET=<your-sandbox-client-secret>
 PAYPAL_MODE=sandbox
-PAYPAL_WEBHOOK_ID=your_webhook_id_here
+PAYPAL_WEBHOOK_ID=<your-webhook-id>
 ```
 
 ### Frontend (`frontend/.env.local`)
