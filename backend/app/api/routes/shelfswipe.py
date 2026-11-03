@@ -14,6 +14,8 @@ from app.db.models.shelfswipe import (
     SSSeller,
     SSShop,
     SSProduct,
+    SSBuyerProfile,
+    SSSwipe,
     Seller,
     ShelfProduct,
     SwipeAction,
@@ -33,6 +35,14 @@ from app.schemas.shelfswipe import (
     ApproveRequest,
     ApproveResponse,
     ApproveRejectedItem,
+    ShelfSwipeSellerSummary,
+    ShelfSwipeSellerListResponse,
+    ShelfSwipeProductWithShop,
+    ShelfSwipeAllProductsResponse,
+    BuyerDeckProductItem,
+    BuyerDeckResponse,
+    BuyerSwipeRequest,
+    BuyerSwipeResponse,
 )
 from app.services.lifecycle.engine import lifecycle_engine
 from app.services.paypal.client import (
@@ -527,6 +537,194 @@ def approve_seller_draft_products(
         rejected=rejected,
         still_draft_count=still_draft_count,
     )
+
+
+# =========================================================
+# Onboarding History / Cross-Shop Views
+# =========================================================
+
+@router.get("/sellers", response_model=ShelfSwipeSellerListResponse)
+def list_sellers(db: Session = Depends(get_db)):
+    """
+    Returns every onboarded seller/shop so far (the 'history' of store URLs
+    that have been imported), each with its draft/live product counts.
+    """
+    rows = (
+        db.query(SSSeller, SSShop)
+        .join(SSShop, SSShop.seller_id == SSSeller.id)
+        .order_by(SSSeller.created_at.desc())
+        .all()
+    )
+
+    summaries: List[ShelfSwipeSellerSummary] = []
+    total_live_products = 0
+    for seller, shop in rows:
+        draft_count = (
+            db.query(SSProduct)
+            .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
+            .count()
+        )
+        live_count = (
+            db.query(SSProduct)
+            .filter(SSProduct.shop_id == shop.id, SSProduct.status == "live")
+            .count()
+        )
+        total_live_products += live_count
+        summaries.append(
+            ShelfSwipeSellerSummary(
+                seller_id=str(seller.id),
+                shop_id=str(shop.id),
+                shop_name=shop.name,
+                source_url=seller.source_url,
+                is_demo=shop.is_demo,
+                draft_count=draft_count,
+                live_count=live_count,
+                created_at=seller.created_at.isoformat(),
+            )
+        )
+
+    return ShelfSwipeSellerListResponse(
+        sellers=summaries,
+        total_shops=len(summaries),
+        total_live_products=total_live_products,
+    )
+
+
+@router.get("/products", response_model=ShelfSwipeAllProductsResponse)
+def list_all_products(
+    status_filter: Optional[str] = Query(default="draft", alias="status", pattern="^(draft|live|all)$"),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns products across ALL onboarded shops (not just one seller), each
+    annotated with which shop/seller it belongs to. Powers the 'All Products'
+    aggregate view; bulk-approving across shops is done by grouping the
+    returned items by seller_id and calling the existing per-seller
+    /sellers/{seller_id}/approve endpoint once per seller.
+    """
+    query = (
+        db.query(SSProduct, SSShop)
+        .join(SSShop, SSProduct.shop_id == SSShop.id)
+    )
+    if status_filter in ("draft", "live"):
+        query = query.filter(SSProduct.status == status_filter)
+
+    rows = query.order_by(SSProduct.created_at.asc()).all()
+
+    items = [
+        ShelfSwipeProductWithShop(
+            id=str(p.id),
+            external_id=p.external_id,
+            name=p.name,
+            price=float(p.price),
+            currency=p.currency,
+            image_url=p.image_url,
+            description=p.description,
+            category=p.category,
+            tags=p.tags or [],
+            stock=p.stock,
+            status=p.status,
+            data_source=p.source,
+            source_url=p.source_url,
+            provider_ref=p.provider_ref,
+            review_flags=p.review_flags or [],
+            seller_id=str(shop.seller_id),
+            shop_id=str(shop.id),
+            shop_name=shop.name,
+        )
+        for p, shop in rows
+    ]
+
+    return ShelfSwipeAllProductsResponse(products=items, total_matches=len(items))
+
+
+# =========================================================
+# Buyer Swipe Deck (live SSProduct only, across onboarded shops)
+# =========================================================
+
+@router.get("/buyer/deck", response_model=BuyerDeckResponse)
+def get_buyer_deck(
+    shop_id: Optional[str] = Query(default=None),
+    query: Optional[str] = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns live (approved) products a buyer can swipe through, optionally
+    scoped to one shop (shop_id) or spanning every onboarded shop, with an
+    optional simple keyword filter.
+    """
+    rows_query = (
+        db.query(SSProduct, SSShop)
+        .join(SSShop, SSProduct.shop_id == SSShop.id)
+        .filter(SSProduct.status == "live")
+    )
+    if shop_id:
+        rows_query = rows_query.filter(SSProduct.shop_id == shop_id)
+
+    rows = rows_query.order_by(SSProduct.created_at.desc()).all()
+
+    if query:
+        terms = {t for t in re.findall(r"[a-z0-9]+", query.lower()) if len(t) > 2}
+        if terms:
+            def matches(p: SSProduct) -> bool:
+                haystack = " ".join((p.name, p.category, p.description or "")).lower()
+                return bool(terms.intersection(re.findall(r"[a-z0-9]+", haystack)))
+            rows = [(p, shop) for p, shop in rows if matches(p)]
+
+    deck_items = [
+        BuyerDeckProductItem(
+            id=str(p.id),
+            shop_id=str(shop.id),
+            shop_name=shop.name,
+            name=p.name,
+            price=float(p.price),
+            currency=p.currency,
+            image_url=p.image_url,
+            description=p.description,
+            category=p.category,
+            tags=p.tags or [],
+            stock=p.stock,
+        )
+        for p, shop in rows
+    ]
+
+    return BuyerDeckResponse(
+        deck=deck_items,
+        total_matches=len(deck_items),
+        shop_id=shop_id,
+        query=query,
+    )
+
+
+@router.post("/buyer/swipe", response_model=BuyerSwipeResponse)
+def record_buyer_swipe(req: BuyerSwipeRequest, db: Session = Depends(get_db)):
+    """
+    Records a buyer's swipe (left=pass, right=interested) against a live
+    SSProduct. Gets-or-creates the SSBuyerProfile row for the client-generated
+    buyer_id so no separate 'create profile' round trip is needed.
+    """
+    if req.direction not in ("left", "right"):
+        raise HTTPException(status_code=400, detail="direction must be 'left' or 'right'")
+
+    product = db.query(SSProduct).filter(SSProduct.id == req.product_id, SSProduct.status == "live").first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Live product not found")
+
+    buyer = db.query(SSBuyerProfile).filter(SSBuyerProfile.id == req.buyer_id).first()
+    if not buyer:
+        buyer = SSBuyerProfile(id=req.buyer_id)
+        db.add(buyer)
+        db.flush()
+
+    db.add(SSSwipe(
+        id=str(uuid.uuid4()),
+        buyer_id=buyer.id,
+        product_id=product.id,
+        direction=req.direction,
+    ))
+    db.commit()
+
+    return BuyerSwipeResponse(status="recorded", direction=req.direction, product_id=req.product_id)
 
 
 # =========================================================

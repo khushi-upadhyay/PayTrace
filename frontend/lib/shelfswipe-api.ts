@@ -95,11 +95,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export interface DemoShopItem {
-  id: string;
-  name: string;
-  url: string;
+  shop_id: string;
+  shop_name: string;
+  shop_url: string;
   description?: string;
-  item_count?: number;
+  product_count?: number;
 }
 
 export interface ShelfSwipeOnboardRequest {
@@ -191,6 +191,79 @@ export interface ApproveResponse {
   still_draft_count: number;
 }
 
+export interface ShelfSwipeSellerSummary {
+  seller_id: string;
+  shop_id: string;
+  shop_name: string;
+  source_url: string;
+  is_demo: boolean;
+  draft_count: number;
+  live_count: number;
+  created_at: string;
+}
+
+export interface ShelfSwipeSellerListResponse {
+  sellers: ShelfSwipeSellerSummary[];
+  total_shops: number;
+  total_live_products: number;
+}
+
+export interface ShelfSwipeProductWithShop extends ShelfSwipeDraftProductItem {
+  seller_id: string;
+  shop_id: string;
+  shop_name: string;
+}
+
+export interface ShelfSwipeAllProductsResponse {
+  products: ShelfSwipeProductWithShop[];
+  total_matches: number;
+}
+
+export interface BuyerDeckProductItem {
+  id: string;
+  shop_id: string;
+  shop_name: string;
+  name: string;
+  price: number;
+  currency: string;
+  image_url: string | null;
+  description: string;
+  category: string;
+  tags: string[];
+  stock: number;
+}
+
+export interface BuyerDeckResponse {
+  deck: BuyerDeckProductItem[];
+  total_matches: number;
+  shop_id: string | null;
+  query: string | null;
+}
+
+export interface BuyerSwipeResponse {
+  status: string;
+  direction: string;
+  product_id: string;
+}
+
+const BUYER_ID_KEY = "paytrace_shelfswipe_buyer_id";
+
+export function getOrCreateBuyerId(): string {
+  try {
+    const existing = localStorage.getItem(BUYER_ID_KEY);
+    if (existing) return existing;
+    const generated =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? crypto.randomUUID()
+        : `buyer-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(BUYER_ID_KEY, generated);
+    return generated;
+  } catch {
+    // storage unavailable (e.g. private mode) - fall back to a session-only id
+    return `buyer-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  }
+}
+
 export const shelfswipeApi = {
   getDemoShops(): Promise<DemoShopItem[]> {
     return request<DemoShopItem[]>("/demo-shops");
@@ -252,6 +325,29 @@ export const shelfswipeApi = {
     return request<ApproveResponse>(`/sellers/${encodeURIComponent(sellerId)}/approve`, {
       method: "POST",
       body: JSON.stringify({ items }),
+    });
+  },
+
+  listSellers(): Promise<ShelfSwipeSellerListResponse> {
+    return request<ShelfSwipeSellerListResponse>("/sellers");
+  },
+
+  listAllProducts(status: "draft" | "live" | "all" = "draft"): Promise<ShelfSwipeAllProductsResponse> {
+    return request<ShelfSwipeAllProductsResponse>(`/products?status=${encodeURIComponent(status)}`);
+  },
+
+  getBuyerDeck(shopId?: string, query?: string): Promise<BuyerDeckResponse> {
+    const params = new URLSearchParams();
+    if (shopId) params.set("shop_id", shopId);
+    if (query) params.set("query", query);
+    const qs = params.toString();
+    return request<BuyerDeckResponse>(`/buyer/deck${qs ? `?${qs}` : ""}`);
+  },
+
+  recordBuyerSwipe(buyerId: string, productId: string, direction: "left" | "right"): Promise<BuyerSwipeResponse> {
+    return request<BuyerSwipeResponse>("/buyer/swipe", {
+      method: "POST",
+      body: JSON.stringify({ buyer_id: buyerId, product_id: productId, direction }),
     });
   },
 };

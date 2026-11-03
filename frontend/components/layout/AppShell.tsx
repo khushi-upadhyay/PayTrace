@@ -11,7 +11,15 @@ import { PublicNav } from "@/components/layout/PublicNav";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 /** Pages anyone can open. Everything else is the operator console and needs a login. */
-const PUBLIC_ROUTES = ["/", "/checkout", "/shelfswipe", "/demo/approval"];
+const PUBLIC_ROUTES = [
+  "/",
+  "/checkout",
+  "/shelfswipe",
+  "/shelfswipe/seller-onboarding",
+  "/shelfswipe/history",
+  "/shelfswipe/buyer-onboarding",
+  "/demo/approval",
+];
 const AUTH_ROUTES = ["/login", "/signup"];
 
 function Breadcrumbs({ pathname }: { pathname: string }) {
