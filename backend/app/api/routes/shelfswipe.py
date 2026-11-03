@@ -28,6 +28,7 @@ from app.schemas.shelfswipe import (
     SwipeRecordRequest,
     ShelfSwipeCheckoutRequest,
     ProductPatchRequest,
+    ProductCreateRequest,
     ShopPatchRequest,
     ApproveRequest,
     ApproveResponse,
@@ -187,11 +188,14 @@ def onboard_seller(
 )
 def get_seller_draft(
     seller_id: str,
+    status_filter: Optional[str] = Query(default="draft", alias="status", pattern="^(draft|live|all)$"),
     db: Session = Depends(get_db),
 ):
     """
-    Returns the seller's shop plus its products currently in 'draft' status,
-    including review flags, made-up demo coordinates, and numeric price.
+    Returns the seller's shop plus its products filtered by status:
+    - 'draft': products currently in draft (default)
+    - 'live': products approved and live
+    - 'all': all products for this seller
     """
     seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
     if not seller:
@@ -207,12 +211,15 @@ def get_seller_draft(
             detail=f"No shop associated with seller '{seller_id}'.",
         )
 
-    draft_products = (
-        db.query(SSProduct)
-        .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
-        .order_by(SSProduct.created_at.asc())
-        .all()
-    )
+    query = db.query(SSProduct).filter(SSProduct.shop_id == shop.id)
+    if status_filter == "draft":
+        query = query.filter(SSProduct.status == "draft")
+    elif status_filter == "live":
+        query = query.filter(SSProduct.status == "live")
+    elif status_filter == "all":
+        pass
+
+    selected_products = query.order_by(SSProduct.created_at.asc()).all()
 
     product_items = [
         ShelfSwipeDraftProductItem(
@@ -232,7 +239,7 @@ def get_seller_draft(
             provider_ref=p.provider_ref,
             review_flags=p.review_flags or [],
         )
-        for p in draft_products
+        for p in selected_products
     ]
 
     return ShelfSwipeDraftResponse(
@@ -245,6 +252,89 @@ def get_seller_draft(
         pickup_notes=shop.pickup_notes,
         is_demo=shop.is_demo,
         products=product_items,
+    )
+
+
+@router.post(
+    "/sellers/{seller_id}/products",
+    response_model=ShelfSwipeDraftProductItem,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_manual_product(
+    seller_id: str,
+    req: ProductCreateRequest,
+    db: Session = Depends(get_db),
+):
+    """
+    Creates a new draft product manually for a specific seller.
+    Ownership is verified via the seller and their associated shop.
+    Assigns source='manual', a guaranteed unique 'manual-<uuid>' external_id,
+    and computes quality review flags like imports (including confirm_stock).
+    """
+    seller = db.query(SSSeller).filter(SSSeller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Seller with ID '{seller_id}' not found.",
+        )
+
+    shop = db.query(SSShop).filter(SSShop.seller_id == seller.id).first()
+    if not shop:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No shop found for seller '{seller_id}'.",
+        )
+
+    flags: List[str] = []
+    if not req.image_url or not str(req.image_url).strip():
+        flags.append("missing_image")
+    if not req.description or not str(req.description).strip():
+        flags.append("missing_description")
+    if not req.tags or len(req.tags) == 0:
+        flags.append("no_tags")
+    if req.price <= Decimal("0.00"):
+        flags.append("invalid_price")
+    flags.append("confirm_stock")
+
+    unique_ext_id = f"manual-{uuid.uuid4()}"
+
+    product = SSProduct(
+        shop_id=shop.id,
+        external_id=unique_ext_id,
+        name=req.name,
+        price=req.price,
+        currency="USD",
+        image_url=req.image_url,
+        description=req.description or "",
+        category=req.category or "General",
+        tags=req.tags or [],
+        stock=req.stock,
+        status="draft",
+        source="manual",
+        source_url=None,
+        provider_ref=None,
+        review_flags=flags,
+    )
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+
+    return ShelfSwipeDraftProductItem(
+        id=str(product.id),
+        external_id=product.external_id,
+        name=product.name,
+        price=float(product.price),
+        currency=product.currency,
+        image_url=product.image_url,
+        description=product.description,
+        category=product.category,
+        tags=product.tags or [],
+        stock=product.stock,
+        status=product.status,
+        data_source=product.source,
+        source_url=product.source_url,
+        provider_ref=product.provider_ref,
+        review_flags=product.review_flags or [],
     )
 
 
@@ -420,8 +510,8 @@ def approve_seller_draft_products(
         # Approve product
         prod.stock = item.confirmed_stock
         prod.status = "live"
-        # Remove confirm_stock flag
-        prod.review_flags = [f for f in flags if f != "confirm_stock"]
+        # Remove confirm_stock and stock_unknown flags
+        prod.review_flags = [f for f in flags if f not in ("confirm_stock", "stock_unknown")]
         approved.append(str(prod.id))
 
     db.commit()

@@ -35,6 +35,7 @@ class McpShopCatalogSchema(BaseModel):
     products: List[McpProductSchema] = Field(default_factory=list)
     source_domain: Optional[str] = None
     source: str = "demo"
+    skipped_count: int = 0
 
 
 # ---------------------------------------------------------
@@ -98,6 +99,18 @@ class ProductPatchRequest(BaseModel):
     tags: Optional[List[str]] = None
     image_url: Optional[str] = None
     stock: Optional[int] = Field(default=None, ge=0)
+
+
+class ProductCreateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str = Field(min_length=1, max_length=256)
+    price: Decimal = Field(ge=0)
+    description: Optional[str] = ""
+    category: Optional[str] = "General"
+    tags: Optional[List[str]] = Field(default_factory=list)
+    image_url: Optional[str] = None
+    stock: int = Field(default=0, ge=0)
 
 
 class ShopPatchRequest(BaseModel):

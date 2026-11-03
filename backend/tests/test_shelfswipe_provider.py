@@ -403,3 +403,232 @@ def test_batch_approve_flow(client, db_session):
     assert data2["rejected"][0]["id"] == str(p1.id)
     assert data2["rejected"][0]["reason"] == "already_live"
 
+
+def test_approve_removes_stock_unknown_flag(client, db_session):
+    seller = SSSeller(name="Stock Test Merchant", source_url="https://stock-unknown-test.com")
+    db_session.add(seller)
+    db_session.flush()
+
+    shop = SSShop(seller_id=seller.id, name="Stock Test Shop", is_demo=False)
+    db_session.add(shop)
+    db_session.flush()
+
+    p = SSProduct(
+        shop_id=shop.id,
+        external_id="channel3-stock-item",
+        name="Channel3 Product",
+        price=Decimal("45.00"),
+        description="Nice item",
+        category="Apparel",
+        stock=0,
+        status="draft",
+        review_flags=["confirm_stock", "stock_unknown"],
+    )
+    db_session.add(p)
+    db_session.commit()
+
+    res = client.post(
+        f"/api/v1/shelfswipe/sellers/{seller.id}/approve",
+        json={"items": [{"product_id": str(p.id), "confirmed_stock": 7}]},
+    )
+    assert res.status_code == 200
+    assert str(p.id) in res.json()["approved"]
+
+    db_session.refresh(p)
+    assert p.status == "live"
+    assert p.stock == 7
+    assert "confirm_stock" not in p.review_flags
+    assert "stock_unknown" not in p.review_flags
+
+
+def test_manual_product_entry_and_validation(client, db_session):
+    seller = SSSeller(name="Manual Merchant", source_url="https://manual-entry.com")
+    db_session.add(seller)
+    db_session.flush()
+
+    shop = SSShop(seller_id=seller.id, name="Manual Shop", is_demo=False)
+    db_session.add(shop)
+    db_session.flush()
+
+    # 1. 404 for unknown seller
+    res_404 = client.post(
+        "/api/v1/shelfswipe/sellers/nonexistent-seller/products",
+        json={"name": "Handmade Bowl", "price": 25.00, "stock": 5},
+    )
+    assert res_404.status_code == 404
+
+    # 2. Validation error for negative price
+    res_invalid_price = client.post(
+        f"/api/v1/shelfswipe/sellers/{seller.id}/products",
+        json={"name": "Handmade Bowl", "price": -5.00, "stock": 5},
+    )
+    assert res_invalid_price.status_code == 422
+
+    # 3. Successful manual product entry
+    res_ok = client.post(
+        f"/api/v1/shelfswipe/sellers/{seller.id}/products",
+        json={
+            "name": "Hand-carved Wooden Spoon",
+            "price": 18.50,
+            "description": "Locally carved maple wood spoon.",
+            "category": "Kitchen",
+            "tags": ["wooden", "handmade"],
+            "image_url": "https://example.com/spoon.jpg",
+            "stock": 4,
+        },
+    )
+    assert res_ok.status_code == 201
+    data = res_ok.json()
+    assert data["name"] == "Hand-carved Wooden Spoon"
+    assert data["price"] == 18.50
+    assert data["data_source"] == "manual"
+    assert data["status"] == "draft"
+    assert data["external_id"].startswith("manual-")
+    # Should have confirm_stock flag
+    assert "confirm_stock" in data["review_flags"]
+    assert "invalid_price" not in data["review_flags"]
+    assert "missing_image" not in data["review_flags"]
+
+    # 4. Product with missing image and 0 price flags
+    res_flags = client.post(
+        f"/api/v1/shelfswipe/sellers/{seller.id}/products",
+        json={
+            "name": "Free Sample",
+            "price": 0.00,
+            "description": "",
+            "tags": [],
+            "stock": 0,
+        },
+    )
+    assert res_flags.status_code == 201
+    flags = res_flags.json()["review_flags"]
+    assert "confirm_stock" in flags
+    assert "missing_image" in flags
+    assert "missing_description" in flags
+    assert "no_tags" in flags
+    assert "invalid_price" in flags
+
+
+def test_get_seller_draft_status_filtering(client, db_session):
+    seller = SSSeller(name="Filter Merchant", source_url="https://filter-test.com")
+    db_session.add(seller)
+    db_session.flush()
+
+    shop = SSShop(seller_id=seller.id, name="Filter Shop", is_demo=False)
+    db_session.add(shop)
+    db_session.flush()
+
+    p_draft = SSProduct(
+        shop_id=shop.id,
+        external_id="prod-draft",
+        name="Draft Product",
+        price=Decimal("15.00"),
+        description="Draft item",
+        category="Home",
+        stock=0,
+        status="draft",
+    )
+    p_live = SSProduct(
+        shop_id=shop.id,
+        external_id="prod-live",
+        name="Live Product",
+        price=Decimal("30.00"),
+        description="Live item",
+        category="Home",
+        stock=10,
+        status="live",
+    )
+    db_session.add_all([p_draft, p_live])
+    db_session.commit()
+
+    # Default (draft)
+    res_default = client.get(f"/api/v1/shelfswipe/sellers/{seller.id}/draft")
+    assert res_default.status_code == 200
+    ids_default = [p["external_id"] for p in res_default.json()["products"]]
+    assert ids_default == ["prod-draft"]
+
+    # Explicit ?status=draft
+    res_draft = client.get(f"/api/v1/shelfswipe/sellers/{seller.id}/draft?status=draft")
+    assert res_draft.status_code == 200
+    ids_draft = [p["external_id"] for p in res_draft.json()["products"]]
+    assert ids_draft == ["prod-draft"]
+
+    # Explicit ?status=live
+    res_live = client.get(f"/api/v1/shelfswipe/sellers/{seller.id}/draft?status=live")
+    assert res_live.status_code == 200
+    ids_live = [p["external_id"] for p in res_live.json()["products"]]
+    assert ids_live == ["prod-live"]
+
+    # Explicit ?status=all
+    res_all = client.get(f"/api/v1/shelfswipe/sellers/{seller.id}/draft?status=all")
+    assert res_all.status_code == 200
+    ids_all = [p["external_id"] for p in res_all.json()["products"]]
+    assert set(ids_all) == {"prod-draft", "prod-live"}
+
+
+def test_channel3_store_search_flow_and_compact_job_summary(db_session):
+    from app.services.shelfswipe.importer import import_shop
+
+    # Mock Channel3 search_catalog tool call with website_ids filter & pagination
+    mock_client = MagicMock()
+
+    page1_data = {
+        "products": [
+            {
+                "id": "prod-1",
+                "title": "Matcha Whisk",
+                "description": {"plain": "Bamboo whisk"},
+                "category": "Tea",
+                "options": [{"name": "Size"}],
+                "variants": [
+                    {
+                        "id": "var-1",
+                        "seller": {"domain": "aprikamatcha.com", "name": "Aprika Matcha"},
+                        "price": {"amount": 2500, "currency": "usd"},
+                        "url": "https://aprikamatcha.com/products/whisk",
+                        "media": [{"url": "https://cdn.example.com/whisk.jpg", "type": "image"}],
+                    }
+                ],
+            },
+            {
+                "id": "prod-2-skip",
+                "title": "Other Seller Mug",
+                "variants": [
+                    {
+                        "id": "var-2",
+                        "seller": {"domain": "diffseller.com", "name": "Diff Seller"},
+                        "price": {"amount": 1500, "currency": "usd"},
+                    }
+                ],
+            },
+        ],
+        "pagination": {"has_next_page": False, "cursor": None},
+    }
+
+    mock_client.call_tool.return_value = page1_data
+
+    provider = Channel3CatalogProvider(client=mock_client)
+    res = import_shop(
+        db=db_session,
+        shop_url="https://aprikamatcha.com",
+        consent=True,
+        seller_name="Aprika Matcha",
+        provider=provider,
+        product_urls=None,
+    )
+
+    assert res.products_created == 1
+    assert res.products_skipped == 1  # prod-2-skip skipped due to seller domain mismatch
+
+    # Verify extraction job raw_result is compact summary (not full catalog payload)
+    job = db_session.query(SSExtractionJob).filter(SSExtractionJob.id == res.job_id).first()
+    assert job is not None
+    assert job.status == "succeeded"
+    assert "total_products_extracted" in job.raw_result
+    assert job.raw_result["total_products_extracted"] == 1
+    assert job.raw_result["products_created"] == 1
+    assert job.raw_result["products_skipped"] == 1
+    assert job.raw_result["provider_refs"] == ["var-1"]
+    assert "products" not in job.raw_result  # compact summary, not full catalog payload!
+
+

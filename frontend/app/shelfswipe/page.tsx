@@ -1,554 +1,511 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { api, ShelfProduct } from "@/lib/api";
-import { useSessionRecording } from "@/components/session/SessionRecordingProvider";
 import {
-  Sparkles,
-  Search,
-  ThumbsUp,
-  ThumbsDown,
-  CheckCircle2,
-  AlertTriangle,
-  Loader2,
-  Lock,
-  ArrowRight,
-  Zap,
   Store,
+  Sparkles,
+  Globe,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+  ArrowRight,
+  Clock,
+  WifiOff,
+  ShieldCheck,
+  PlusCircle,
   Compass,
 } from "lucide-react";
+import {
+  DemoShopItem,
+  ShelfSwipeApiError,
+  shelfswipeApi,
+} from "@/lib/shelfswipe-api";
 
-export default function ShelfSwipePage() {
-  const { sessionId, addSessionMarker } = useSessionRecording();
-  // Search & Deck State
-  const [query, setQuery] = useState("birthday gift under $40 nearby");
-  const [buyerRef] = useState("buyer_demo_01");
-  const [deck, setDeck] = useState<ShelfProduct[]>([]);
-  const [seenProductIds, setSeenProductIds] = useState<string[]>([]);
-  const [totalMatches, setTotalMatches] = useState(0);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [refinements, setRefinements] = useState<string[]>([]);
-  const [loadingDeck, setLoadingDeck] = useState(false);
-  const [deckError, setDeckError] = useState<string | null>(null);
+const LAST_SELLER_KEY = "paytrace_shelfswipe_last_seller_id";
 
-  // Seller Onboard Modal State
-  const [sellerModal, setSellerModal] = useState(false);
-  const [shopUrl, setShopUrl] = useState("https://example.invalid/demo-catalog");
-  const [shopName, setShopName] = useState("PayTrace Demo Catalog");
-  const [onboarding, setOnboarding] = useState(false);
-  const [onboardSuccess, setOnboardSuccess] = useState<string | null>(null);
+export default function ShelfSwipeOnboardingPage() {
+  const router = useRouter();
 
-  // Checkout Execution State
-  const [scenario, setScenario] = useState("normal"); // "normal" or "timeout_before_response"
-  const [processing, setProcessing] = useState(false);
-  const [checkoutResult, setCheckoutResult] = useState<any | null>(null);
-  const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
-  const capturedOrders = useRef<Set<string>>(new Set());
+  // Mode: "demo" (Demo shops) or "channel3" (My own products via Channel3)
+  const [mode, setMode] = useState<"demo" | "channel3">("demo");
 
-  const fetchDeck = async (searchQuery: string, excludedIds = seenProductIds) => {
-    try {
-      setLoadingDeck(true);
-      setDeckError(null);
-      const res = await api.getShelfDeck(searchQuery, buyerRef);
-      setDeck(res.deck.filter((product) => !excludedIds.includes(product.id)));
-      setTotalMatches(res.total_matches);
-      setRefinements(res.refinements_applied || []);
-      setCurrentIndex(0);
-    } catch (err: any) {
-      setDeck([]);
-      setDeckError(err.message || "Unable to load the ShelfSwipe catalog.");
-    } finally {
-      setLoadingDeck(false);
-    }
-  };
+  // Demo Shops state
+  const [demoShops, setDemoShops] = useState<DemoShopItem[]>([]);
+  const [loadingShops, setLoadingShops] = useState(true);
+  const [shopsError, setShopsError] = useState<string | null>(null);
+  const [selectedDemoUrl, setSelectedDemoUrl] = useState<string>("");
+
+  // Channel3 form state
+  const [shopUrl, setShopUrl] = useState<string>("https://aprikamatcha.com");
+  const [productLinksText, setProductLinksText] = useState<string>("");
+
+  // Consent & Attestation Checkbox
+  const [ticked, setTicked] = useState(false);
+
+  // Submission state
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorCode, setErrorCode] = useState<number | null>(null);
+
+  // Remembered seller
+  const [lastSellerId, setLastSellerId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchDeck(query, []);
+    try {
+      const stored = localStorage.getItem(LAST_SELLER_KEY);
+      if (stored) setLastSellerId(stored);
+    } catch {
+      // storage unavailable
+    }
   }, []);
 
+  // Fetch demo shops
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const status = params.get("status");
-    const orderId = params.get("token") || params.get("orderId");
-    if (status === "cancelled" || status === "cancel") {
-      setCheckoutMessage("Payment was cancelled. No capture was requested.");
-      sessionStorage.removeItem("paytrace_shelfswipe_pending_order");
+    let active = true;
+    async function loadDemoShops() {
+      try {
+        setLoadingShops(true);
+        setShopsError(null);
+        const shops = await shelfswipeApi.getDemoShops();
+        if (active) {
+          setDemoShops(shops);
+          if (shops.length > 0) {
+            setSelectedDemoUrl(shops[0].url);
+          }
+        }
+      } catch (err: any) {
+        if (active) {
+          setShopsError(err.message || "Unable to load demo shop catalog.");
+        }
+      } finally {
+        if (active) setLoadingShops(false);
+      }
+    }
+    loadDemoShops();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Reset checkbox when switching modes
+  const handleModeChange = (newMode: "demo" | "channel3") => {
+    setMode(newMode);
+    setTicked(false);
+    setErrorMessage(null);
+    setErrorCode(null);
+  };
+
+  const parseProductUrls = (raw: string): string[] => {
+    return raw
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith("http://") || line.startsWith("https://"))
+      .slice(0, 20);
+  };
+
+  const handleOnboardSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    setErrorCode(null);
+
+    const targetShopUrl = mode === "demo" ? selectedDemoUrl : shopUrl.trim();
+
+    if (!targetShopUrl) {
+      setErrorMessage("Please specify a valid shop URL.");
       return;
     }
-    if ((status === "approved" || orderId) && orderId && !capturedOrders.current.has(orderId)) {
-      void verifyAndCapture(orderId);
-    }
-  }, []);
 
-  const verifyAndCapture = async (orderId: string) => {
-    if (capturedOrders.current.has(orderId)) return;
-    setProcessing(true);
-    setCheckoutMessage("Verifying buyer approval with PayPal...");
+    const productUrls = mode === "channel3" ? parseProductUrls(productLinksText) : undefined;
+
     try {
-      const pending = JSON.parse(sessionStorage.getItem("paytrace_shelfswipe_pending_order") || "{}");
-      if (pending.orderId !== orderId) throw new Error("No matching pending checkout was found.");
-      const providerOrder = await api.getPayPalOrder(orderId);
-      const providerStatus = providerOrder.status;
-      if (providerStatus !== "APPROVED" && providerStatus !== "COMPLETED") {
-        setCheckoutMessage(`PayPal reports ${String(providerStatus || "UNKNOWN")}; approve the order before capture.`);
-        return;
+      setSubmitting(true);
+      const res = await shelfswipeApi.onboardSeller({
+        shop_url: targetShopUrl,
+        consent: true,
+        ownership_attested: mode === "channel3" ? ticked : false,
+        provider: mode === "channel3" ? "channel3" : "fixture",
+        product_urls: productUrls && productUrls.length > 0 ? productUrls : undefined,
+      });
+
+      // Remember seller ID in localStorage as convenience
+      try {
+        localStorage.setItem(LAST_SELLER_KEY, res.seller_id);
+      } catch {
+        // storage ignored
       }
-      capturedOrders.current.add(orderId);
-      const cap = await api.captureOrder(orderId, pending.scenario === "timeout_before_response");
-      addSessionMarker("shelfswipe_capture_response", {
-        payment_id: cap.payment_id,
-        status: cap.status,
-      });
-      setCheckoutResult({
-        payment_id: cap.payment_id,
-        order_id: cap.paypal_order_id,
-        status: cap.status,
-        failure_reason: cap.failure_reason,
-        product_name: pending.productName,
-        is_simulated: pending.isMock === true,
-      });
-      setCheckoutMessage(null);
-      sessionStorage.removeItem("paytrace_shelfswipe_pending_order");
-      void fetchDeck(query);
+
+      // Redirect to review & approve screen
+      router.push(`/shelfswipe/seller/${res.seller_id}`);
     } catch (err: any) {
-      capturedOrders.current.delete(orderId);
-      setCheckoutMessage(`Checkout verification failed: ${err.message}`);
+      const status = err instanceof ShelfSwipeApiError ? err.status : 0;
+      setErrorCode(status);
+
+      if (status === 400) {
+        setErrorMessage(
+          mode === "channel3"
+            ? "Ownership attestation is required. You must attest that you own or are authorised to list products for this shop."
+            : "Consent is required to import this catalog."
+        );
+      } else if (status === 422) {
+        setErrorMessage(
+          err.message ||
+            "No usable products were found for this store domain or URL. You can try a demo shop or add products manually."
+        );
+      } else if (status === 429) {
+        setErrorMessage(
+          "Channel3 rate limit exceeded. The provider is temporarily rate limiting requests. Please wait a moment and try again."
+        );
+      } else if (status === 502) {
+        setErrorMessage(
+          "Catalog provider service is currently unavailable. Please check your network or try again shortly."
+        );
+      } else {
+        setErrorMessage(err.message || "Failed to onboard merchant shop.");
+      }
     } finally {
-      setProcessing(false);
+      setSubmitting(false);
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSeenProductIds([]);
-    fetchDeck(query, []);
+  const handleTryDemoShop = () => {
+    handleModeChange("demo");
+    if (demoShops.length > 0) {
+      setSelectedDemoUrl(demoShops[0].url);
+    }
+    setTicked(true);
   };
 
-  const handleSwipe = async (direction: "right" | "left") => {
-    const currentItem = deck[currentIndex];
-    if (!currentItem) return;
-
-    try {
-      // Record swipe so the backend can adapt category ranking.
-      await api.recordSwipe(buyerRef, currentItem.id, direction);
-
-      const seen = [...seenProductIds, currentItem.id];
-      setSeenProductIds(seen);
-      if (direction === "right") {
-        // Reload the persisted preference-ranked deck, excluding products already reviewed.
-        const res = await api.getShelfDeck(query, buyerRef);
-        setDeck(res.deck.filter((product) => !seen.includes(product.id)));
-        setTotalMatches(res.total_matches);
-        setRefinements(res.refinements_applied || []);
-        setCurrentIndex(0);
-      } else setCurrentIndex((prev) => Math.min(prev + 1, deck.length));
-    } catch (err) {
-      console.error(err);
+  const handleAddProductsManually = async () => {
+    // If we have a last remembered seller, go there
+    if (lastSellerId) {
+      router.push(`/shelfswipe/seller/${lastSellerId}`);
+      return;
+    }
+    // Otherwise onboard the first demo shop so seller and shop exist, then redirect
+    if (demoShops.length > 0) {
+      try {
+        setSubmitting(true);
+        const res = await shelfswipeApi.onboardSeller({
+          shop_url: demoShops[0].url,
+          consent: true,
+          ownership_attested: false,
+          provider: "fixture",
+        });
+        try {
+          localStorage.setItem(LAST_SELLER_KEY, res.seller_id);
+        } catch {}
+        router.push(`/shelfswipe/seller/${res.seller_id}`);
+      } catch (err: any) {
+        setErrorMessage("Unable to initialize seller shop. Please select a demo shop below.");
+      } finally {
+        setSubmitting(false);
+      }
     }
   };
-
-  const handleSellerOnboard = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      setOnboarding(true);
-      const res = await api.onboardShelfSeller(shopUrl, shopName);
-      setOnboardSuccess(`Loaded ${res.products_count} items in the ShelfSwipe demo catalog.`);
-      setTimeout(() => {
-        setSellerModal(false);
-        setOnboardSuccess(null);
-        fetchDeck(query);
-      }, 1500);
-    } catch (err: any) {
-      alert(`Onboarding failed: ${err.message}`);
-    } finally {
-      setOnboarding(false);
-    }
-  };
-
-  const handleBuyCurrent = async () => {
-    const item = deck[currentIndex];
-    if (!item) return;
-
-    try {
-      setProcessing(true);
-      setCheckoutResult(null);
-
-      // 1. Create order in PayTrace backend
-      const res = await api.checkoutShelfItem(
-        item.id,
-        buyerRef,
-        scenario === "timeout_before_response" ? "timeout_before_response" : undefined,
-        sessionId || undefined
-      );
-      addSessionMarker("shelfswipe_order_created", {
-        payment_id: res.payment_id,
-        amount: res.amount,
-        currency: res.currency,
-      });
-      if (!res.approval_url) throw new Error("PayPal did not return an approval URL.");
-      sessionStorage.setItem("paytrace_shelfswipe_pending_order", JSON.stringify({
-        orderId: res.paypal_order_id,
-        isMock: res.is_mock,
-        scenario,
-        productName: item.name,
-      }));
-      window.location.assign(res.approval_url);
-    } catch (err: any) {
-      setCheckoutMessage(`Checkout failed: ${err.message}`);
-      setProcessing(false);
-    }
-  };
-
-  const currentItem = deck[currentIndex];
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto animate-fadeIn pb-16">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-800 border border-blue-200">
-              Agentic Commerce · ShelfSwipe + PayTrace
-            </span>
-          </div>
-          <h1 className="text-2xl font-extrabold text-ink mt-1 flex items-center gap-2">
-            Local Store Discovery Demo
-          </h1>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Describe what you need, review ranked local catalog options, and approve any PayPal Sandbox purchase yourself.
-          </p>
-        </div>
-
-        <button
-          onClick={() => setSellerModal(true)}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 border border-slate-700 hover:border-cyan-500/50 text-slate-200 text-xs font-semibold transition-all shadow-sm"
-        >
-          <Store className="w-4 h-4 text-cyan-400" />
-          Onboard Local Shop
-        </button>
-      </div>
-
-      <div className="grid gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-xs text-slate-700 md:grid-cols-3">
-        <div><strong className="block text-blue-800">1 · Understand intent</strong><span className="mt-1 block">Your search terms filter the persisted catalog.</span></div>
-        <div><strong className="block text-blue-800">2 · Adapt recommendations</strong><span className="mt-1 block">Likes are stored for this demo buyer and influence category ranking.</span></div>
-        <div><strong className="block text-blue-800">3 · Buyer approves checkout</strong><span className="mt-1 block">Purchases still go through explicit PayPal Sandbox approval.</span></div>
-        <p className="md:col-span-3 border-t border-blue-200 pt-2 text-[11px] text-slate-600"><strong className="text-blue-800">Demo catalog:</strong> product records and inventory are local test data, not live merchant listings or stock.</p>
-      </div>
-
-      {/* Natural Language Search Bar */}
-      <form onSubmit={handleSearch} className="flex gap-2.5">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Describe what you want (e.g. 'thoughtful birthday gift under $35')"
-            className="w-full bg-slate-950/80 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
-          />
-        </div>
-          <button
-          type="submit"
-          disabled={loadingDeck}
-          className="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-colors flex items-center gap-1.5"
-        >
-          {loadingDeck ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-          Search Catalog
-        </button>
-      </form>
-
-      {/* Catalog Ranking Notice */}
-      {refinements.length > 0 && (
-        <div className="px-4 py-2.5 rounded-lg bg-cyan-950/40 border border-cyan-800/60 text-cyan-300 text-xs flex items-center gap-2 animate-fadeIn">
-          <Compass className="w-4 h-4 text-cyan-400 shrink-0" />
-          <span>{refinements.join(" • ")}</span>
-        </div>
-      )}
-
-      {/* Main Swipe & Checkout Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Swipe Card Deck */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="flex items-center justify-between text-xs text-slate-400">
-            <span className="font-mono">
-              {loadingDeck ? "Loading catalog..." : deckError ? "Catalog unavailable" : deck.length ? `Reviewing ${seenProductIds.length + currentIndex + 1} · ${totalMatches} matches` : "No unreviewed matches"}
-            </span>
-            <span>Swipes adapt sample catalog ranking</span>
-          </div>
-
-          {loadingDeck ? (
-            <div className="h-[460px] glass-panel rounded-2xl flex flex-col items-center justify-center space-y-3">
-              <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
-                <p className="text-xs text-slate-400">Ranking the demo catalog...</p>
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+      {/* Top Banner / Breadcrumb */}
+      <div className="border-b border-slate-200 bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-paypal-navy text-white shadow-sm">
+              <Store className="h-5 w-5" />
             </div>
-          ) : deckError ? (
-            <div className="h-[460px] glass-panel rounded-2xl flex flex-col items-center justify-center gap-3 p-6 text-center">
-              <AlertTriangle className="w-8 h-8 text-amber-400" />
-              <p className="text-sm font-semibold text-ink">Shelf catalog could not be loaded</p>
-              <p className="text-xs text-slate-400">{deckError}</p>
-              <button onClick={() => fetchDeck(query)} className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink rounded-lg text-xs font-semibold">
-                Retry
-              </button>
-            </div>
-          ) : currentItem ? (
-            <div className="glass-panel rounded-2xl overflow-hidden border border-slate-800 shadow-2xl transition-all duration-300 hover:border-slate-700">
-              <div className="relative h-60 w-full overflow-hidden bg-slate-900">
-                <img
-                  src={currentItem.image_url || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80"}
-                  alt={currentItem.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-slate-700 text-[10px] font-mono font-medium text-cyan-300">
-                  {currentItem.category}
-                </div>
-
-                <div className="absolute top-3 right-3 bg-emerald-950/90 backdrop-blur-md px-2.5 py-1 rounded-full border border-emerald-700 text-[10px] font-bold text-emerald-300">
-                  {currentItem.stock} in stock
-                </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-paypal-blue">
+                  ShelfSwipe Merchant
+                </span>
+                <span className="rounded-full bg-cyan-100 px-2 py-0.5 text-[10px] font-bold text-cyan-800">
+                  Onboarding
+                </span>
               </div>
+              <h1 className="text-lg font-bold text-slate-900">Seller Store Onboarding</h1>
+            </div>
+          </div>
 
-              <div className="p-6 space-y-4">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-ink">{currentItem.name}</h3>
-                    <p className="text-xs text-slate-400 mt-1 line-clamp-2">{currentItem.description}</p>
+          {/* Coming Next note */}
+          <div className="hidden sm:flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs text-slate-500">
+            <Compass className="h-3.5 w-3.5 text-slate-400" />
+            <span>Buyer deck: coming next</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-3xl px-4 pt-8 sm:px-6">
+        {/* Remembered Seller Alert */}
+        {lastSellerId && (
+          <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50/70 p-4 flex items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2.5 text-xs text-blue-900">
+              <CheckCircle className="h-4 w-4 text-paypal-blue shrink-0" />
+              <span>
+                You have a recently onboarded shop (ID:{" "}
+                <code className="font-mono font-semibold">{lastSellerId.slice(0, 8)}...</code>).
+              </span>
+            </div>
+            <Link
+              href={`/shelfswipe/seller/${lastSellerId}`}
+              className="inline-flex items-center gap-1 text-xs font-bold text-paypal-blue hover:underline shrink-0"
+            >
+              Continue to Review & Approve
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        )}
+
+        {/* Main Card */}
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="max-w-xl">
+            <h2 className="text-xl font-bold text-slate-900">Import your merchant catalog</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Select a pre-built demo catalog or connect your online store via Channel3 to import
+              products, review readiness flags, and confirm local pickup stock.
+            </p>
+          </div>
+
+          {/* Data Source Selector Tabs */}
+          <div className="mt-6 grid grid-cols-2 gap-3 p-1 rounded-xl bg-slate-100 border border-slate-200">
+            <button
+              type="button"
+              onClick={() => handleModeChange("demo")}
+              className={`flex items-center justify-center gap-2 rounded-lg py-2.5 px-3 text-xs font-bold transition-all ${
+                mode === "demo"
+                  ? "bg-white text-paypal-navy shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Sparkles className="h-4 w-4 text-amber-500" />
+              Demo shops
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange("channel3")}
+              className={`flex items-center justify-center gap-2 rounded-lg py-2.5 px-3 text-xs font-bold transition-all ${
+                mode === "channel3"
+                  ? "bg-white text-paypal-navy shadow-sm"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <Globe className="h-4 w-4 text-paypal-blue" />
+              My own products via Channel3
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleOnboardSubmit} className="mt-6 space-y-5">
+            {mode === "demo" ? (
+              /* Demo Shops Picker */
+              <div className="space-y-3">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  Select a Curated Demo Shop
+                </label>
+
+                {loadingShops ? (
+                  <div className="rounded-xl border border-slate-200 p-8 flex flex-col items-center justify-center text-slate-500 gap-2">
+                    <Loader2 className="h-6 w-6 animate-spin text-paypal-blue" />
+                    <span className="text-xs">Loading available demo shops...</span>
                   </div>
-                  <span className="text-xl font-extrabold text-cyan-400 font-mono">
-                    ${Number(currentItem.price).toFixed(2)}
-                  </span>
-                </div>
-
-                {/* Sample catalog match note */}
-                {currentItem.why_matches && (
-                  <div className="p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-[11px] text-slate-300 flex items-start gap-2">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
-                    <span><strong>Catalog note:</strong> {currentItem.why_matches}</span>
+                ) : shopsError ? (
+                  <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-xs text-rose-700 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <span>{shopsError}</span>
+                  </div>
+                ) : demoShops.length === 0 ? (
+                  <div className="rounded-xl border border-slate-200 p-6 text-center text-xs text-slate-500">
+                    No demo shops returned from server.
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                    {demoShops.map((shop) => (
+                      <label
+                        key={shop.id}
+                        className={`flex items-start gap-3 rounded-xl border p-3.5 cursor-pointer transition-colors ${
+                          selectedDemoUrl === shop.url
+                            ? "border-paypal-blue bg-blue-50/50 ring-1 ring-paypal-blue"
+                            : "border-slate-200 hover:bg-slate-50"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="demoShop"
+                          value={shop.url}
+                          checked={selectedDemoUrl === shop.url}
+                          onChange={() => setSelectedDemoUrl(shop.url)}
+                          className="mt-0.5 text-paypal-blue focus:ring-paypal-blue"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-bold text-slate-900">{shop.name}</span>
+                            <span className="rounded bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-600">
+                              {shop.item_count || 5} items
+                            </span>
+                          </div>
+                          {shop.description && (
+                            <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                              {shop.description}
+                            </p>
+                          )}
+                          <span className="text-[11px] font-mono text-slate-400 mt-1 block truncate">
+                            {shop.url}
+                          </span>
+                        </div>
+                      </label>
+                    ))}
                   </div>
                 )}
-
-                {/* Swipe Action Buttons */}
-                <div className="pt-2 flex items-center justify-between gap-3 border-t border-slate-800/80">
-                  <button
-                    onClick={() => handleSwipe("left")}
-                    className="flex-1 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-medium text-xs flex items-center justify-center gap-2 transition-all"
-                  >
-                    <ThumbsDown className="w-3.5 h-3.5 text-slate-400" />
-                    Pass (Swipe Left)
-                  </button>
-                  <button
-                    onClick={() => handleSwipe("right")}
-                    className="flex-1 py-2.5 px-4 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-xs flex items-center justify-center gap-2 transition-all"
-                  >
-                    <ThumbsUp className="w-3.5 h-3.5 text-cyan-400" />
-                    Like (Swipe Right)
-                  </button>
-                </div>
               </div>
-            </div>
-          ) : (
-            <div className="h-[460px] glass-panel rounded-2xl flex flex-col items-center justify-center space-y-3 p-6 text-center">
-              <CheckCircle2 className="w-10 h-10 text-emerald-400" />
-              <h4 className="text-sm font-bold text-ink">{deck.length === 0 ? "No matching products found" : "You've explored the shelf!"}</h4>
-              <p className="text-xs text-slate-400">{deck.length === 0 ? "Try a broader search to browse the demo catalog." : "Search another term or reset the deck to keep discovering."}</p>
-              <button
-                onClick={() => { setSeenProductIds([]); fetchDeck(query, []); }}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-ink rounded-lg text-xs font-semibold"
-              >
-                Reset Swipe Deck
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Checkout & PayTrace Recovery Side-Panel */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h2 className="text-sm font-bold text-ink flex items-center gap-2">
-                <Lock className="w-4 h-4 text-cyan-400" />
-                PayPal Sandbox Instant Checkout
-              </h2>
-              <span className="text-[10px] text-emerald-400 font-mono font-medium">Safe Mode</span>
-            </div>
-
-            {currentItem ? (
+            ) : (
+              /* Channel3 Store Input */
               <div className="space-y-4">
-                <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-slate-400 block text-[11px]">Selected Item</span>
-                    <span className="font-semibold text-ink">{currentItem.name}</span>
-                  </div>
-                  <span className="font-mono font-bold text-cyan-300">${Number(currentItem.price).toFixed(2)}</span>
-                </div>
-
-                {/* Scenario Selector for Demo Simulation */}
-                <div className="space-y-1.5">
-                  <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
-                    Payment Safety Test Scenario:
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    Store URL <span className="text-rose-500">*</span>
                   </label>
-                  <select
-                    value={scenario}
-                    onChange={(e) => setScenario(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500"
-                  >
-                    <option value="normal">Normal Verified Checkout (Success)</option>
-                    <option value="timeout_before_response">
-                      Simulate Capture Timeout (PayTrace Duplicate Protection)
-                    </option>
-                  </select>
-                  <p className="text-[10px] text-slate-500">
-                    {scenario === "timeout_before_response"
-                      ? "Demonstrates how PayTrace prevents duplicate charges when the backend times out after capture."
-                      : "Standard real/mock PayPal sandbox transaction with stock decrement on verified webhook."}
+                  <input
+                    type="url"
+                    required
+                    value={shopUrl}
+                    onChange={(e) => setShopUrl(e.target.value)}
+                    placeholder="https://yourstore.com"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                  />
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    Channel3 filters against catalog website domains (e.g. aprikamatcha.com, abchome.com).
                   </p>
                 </div>
 
-                <button
-                  onClick={handleBuyCurrent}
-                  disabled={processing || currentItem.stock <= 0}
-                  className="w-full py-3 px-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 text-xs font-extrabold shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2"
-                >
-                  {processing ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Communicating with PayPal...
-                    </>
-                  ) : (
-                    <>
-                      <Zap className="w-4 h-4 fill-slate-950" />
-                      Buy Now with PayPal (${Number(currentItem.price).toFixed(2)})
-                    </>
-                  )}
-                </button>
-              </div>
-            ) : (
-              <p className="text-xs text-slate-500 text-center py-6">Select a product from the deck to checkout.</p>
-            )}
-
-            {checkoutMessage && (
-              <div className="p-3 rounded-xl bg-amber-950/30 border border-amber-500/40 text-amber-200 text-xs">
-                {checkoutMessage}
-              </div>
-            )}
-
-            {/* Post-Checkout PayTrace Result Box */}
-            {checkoutResult && (
-              <div
-                className={`p-4 rounded-xl border animate-fadeIn space-y-3 ${
-                  checkoutResult.status === "CAPTURE_UNCERTAIN"
-                    ? "bg-amber-950/40 border-amber-800 text-amber-200"
-                    : "bg-emerald-950/40 border-emerald-800 text-emerald-200"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  {checkoutResult.status === "CAPTURE_UNCERTAIN" ? (
-                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
-                  ) : (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                  )}
-                  <h4 className="text-xs font-bold">
-                    {checkoutResult.status === "CAPTURE_UNCERTAIN"
-                      ? "PayTrace Protected: Ambiguous Capture State Detected!"
-                      : "Order Successfully Placed!"}
-                  </h4>
-                </div>
-
-                {checkoutResult.is_simulated && (
-                  <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-300">Simulated demo transaction</p>
-                )}
-
-                <p className="text-[11px] leading-relaxed opacity-90">
-                  {checkoutResult.status === "CAPTURE_UNCERTAIN"
-                    ? "Merchant backend timed out. PayTrace prevented blind retrying to avoid charging the customer twice."
-                    : "Payment captured and order verified."}
-                </p>
-
-                <div className="pt-1 flex items-center justify-between text-[11px] font-mono border-t border-slate-700/50">
-                  <span>ID: {checkoutResult.payment_id.slice(0, 12)}...</span>
-                  <Link
-                    href={`/payments/${checkoutResult.payment_id}`}
-                    className="text-cyan-400 hover:underline inline-flex items-center gap-1 font-bold"
-                  >
-                    Investigate in PayTrace
-                    <ArrowRight className="w-3 h-3" />
-                  </Link>
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    Optional Product Links <span className="text-slate-400 font-normal">(max 20, one per line)</span>
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={productLinksText}
+                    onChange={(e) => setProductLinksText(e.target.value)}
+                    placeholder="https://yourstore.com/products/item-1&#10;https://yourstore.com/products/item-2"
+                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs font-mono focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                  />
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    If left empty, ShelfSwipe automatically executes store-wide catalog import using website filtering.
+                  </p>
                 </div>
               </div>
             )}
-          </div>
-        </div>
-      </div>
 
-      {/* Seller Onboard Modal */}
-      {sellerModal && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="glass-panel max-w-md w-full rounded-2xl p-6 border border-slate-800 space-y-5 animate-scaleUp">
-            <div>
-              <h3 className="text-base font-bold text-ink flex items-center gap-2">
-                <Store className="w-5 h-5 text-cyan-400" />
-                Load a ShelfSwipe Demo Catalog
-              </h3>
-              <p className="text-xs text-slate-400 mt-1">
-                This demo action loads the curated sample catalog. No merchant website is accessed or scraped.
-              </p>
+            {/* Checkbox Section */}
+            <div className="pt-2">
+              <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 cursor-pointer hover:bg-slate-100/60 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={ticked}
+                  onChange={(e) => setTicked(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-slate-300 text-paypal-blue focus:ring-paypal-blue"
+                />
+                <span className="text-xs font-medium text-slate-700 leading-relaxed">
+                  {mode === "demo" ? (
+                    <>
+                      <strong>I consent to importing this demo catalog</strong> into PayTrace ShelfSwipe
+                      for sandbox verification and testing purposes.
+                    </>
+                  ) : (
+                    <>
+                      <strong>I own or am authorised to list these products</strong> on ShelfSwipe and agree
+                      to extract catalog details via Channel3 for merchant review.
+                    </>
+                  )}
+                </span>
+              </label>
             </div>
 
-            <form onSubmit={handleSellerOnboard} className="space-y-4 text-xs">
-              <div>
-                <label className="block text-slate-400 mb-1">Shop Name</label>
-                <input
-                  type="text"
-                  value={shopName}
-                  onChange={(e) => setShopName(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-ink"
-                  required
-                />
-              </div>
+            {/* Error Message with Mapped Action Buttons */}
+            {errorMessage && (
+              <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 space-y-3">
+                <div className="flex items-start gap-2.5 text-xs text-rose-800">
+                  {errorCode === 429 ? (
+                    <Clock className="h-4 w-4 shrink-0 mt-0.5 text-rose-600" />
+                  ) : errorCode === 502 ? (
+                    <WifiOff className="h-4 w-4 shrink-0 mt-0.5 text-rose-600" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5 text-rose-600" />
+                  )}
+                  <div className="flex-1">
+                    <p className="font-semibold">
+                      {errorCode === 400
+                        ? "Attestation / Consent Error"
+                        : errorCode === 422
+                        ? "Catalog Not Found"
+                        : errorCode === 429
+                        ? "Channel3 Rate Limited"
+                        : errorCode === 502
+                        ? "Provider Unavailable"
+                        : "Onboarding Error"}
+                    </p>
+                    <p className="mt-0.5">{errorMessage}</p>
+                  </div>
+                </div>
 
-              <div>
-                  <label className="block text-slate-400 mb-1">Demo Shop Reference</label>
-                <input
-                  type="url"
-                  value={shopUrl}
-                  onChange={(e) => setShopUrl(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-ink"
-                  required
-                />
+                {/* Specific 422 recovery buttons */}
+                {errorCode === 422 && (
+                  <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-rose-200/60">
+                    <button
+                      type="button"
+                      onClick={handleTryDemoShop}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-800 border border-slate-300 hover:bg-slate-50 shadow-xs"
+                    >
+                      <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                      Try a demo shop
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddProductsManually}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-paypal-navy px-3 py-1.5 text-xs font-bold text-white hover:bg-opacity-90 shadow-xs"
+                    >
+                      <PlusCircle className="h-3.5 w-3.5" />
+                      Add products manually
+                    </button>
+                  </div>
+                )}
               </div>
+            )}
 
-              <div className="flex items-center gap-2 p-3 bg-slate-900/60 border border-slate-800 rounded-lg">
-                <input type="checkbox" id="consent" defaultChecked required className="rounded accent-cyan-500" />
-                <label htmlFor="consent" className="text-[11px] text-slate-400">
-                  I understand this loads sample demo products and does not access a real shop.
-                </label>
-              </div>
-
-              {onboardSuccess && (
-                <p className="text-emerald-400 text-xs font-semibold">{onboardSuccess}</p>
+            {/* Submit Button */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={!ticked || submitting || (mode === "demo" && loadingShops)}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-paypal-navy py-3 px-4 text-sm font-bold text-white shadow-sm hover:bg-opacity-90 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Importing & Normalizing Catalog...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldCheck className="h-4 w-4" />
+                    <span>Continue to Review & Approval</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
+              </button>
+              {!ticked && (
+                <p className="text-center text-[11px] text-slate-400 mt-2">
+                  Please tick the attestation checkbox above to enable import.
+                </p>
               )}
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setSellerModal(false)}
-                  className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={onboarding}
-                  className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold flex items-center gap-1.5"
-                >
-                  {onboarding && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-                  Load Demo Shelf
-                </button>
-              </div>
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
-      )}
+
+        {/* Small Bottom Note */}
+        <div className="mt-8 text-center text-xs text-slate-400 flex items-center justify-center gap-1.5">
+          <Compass className="h-3.5 w-3.5" />
+          <span>Buyer deck: coming next</span>
+        </div>
+      </div>
     </div>
   );
 }

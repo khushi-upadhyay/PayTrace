@@ -300,9 +300,20 @@ def import_shop(
             db.add(product_record)
             products_created += 1
 
+        # Add provider-level skipped variants/products
+        products_skipped += getattr(catalog, "skipped_count", 0)
+
         # 6. Mark extraction job succeeded
         job.status = "succeeded"
-        job.raw_result = catalog.model_dump(mode="json")
+        if getattr(catalog, "source", "") == "channel3":
+            job.raw_result = {
+                "total_products_extracted": len(catalog.products),
+                "products_created": products_created,
+                "products_skipped": products_skipped,
+                "provider_refs": [p.provider_ref for p in catalog.products if p.provider_ref],
+            }
+        else:
+            job.raw_result = catalog.model_dump(mode="json")
         job.review_flags = all_job_review_flags
         db.commit()
 
