@@ -1,0 +1,438 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "01KS60YE3565XDZ9C2PBQFEVTK",
+      "title": "Giza 45 Percale",
+      "description": {
+        "plain": "The Giza Percale Duvet by Sferra is a luxurious, year-round duvet cover crafted from 100% Giza 45 cotton. Renowned for its long staple fibers, the fabric provides a cool, crisp sleeping experience with exceptional smoothness and enduring strength. This duvet cover is designed with Italian craftsmanship and sophistication, available in classic White and Ivory colorways to complement various bedding styles."
+      },
+      "price_range": {
+        "min": {
+          "amount": 168800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 168800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "7sKv82a:AUIg:01M2RDMXHBNG0YQQ639G15GQQ0",
+          "title": "Giza 45 Percale Duvet Cover",
+          "description": {
+            "plain": "The Giza Percale Duvet by Sferra is a luxurious, year-round duvet cover crafted from 100% Giza 45 cotton. Renowned for its long staple fibers, the fabric provides a cool, crisp sleeping experience with exceptional smoothness and enduring strength. This duvet cover is designed with Italian craftsmanship and sophistication, available in classic White and Ivory colorways to complement various bedding styles."
+          },
+          "price": {
+            "amount": 168800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/7sKv82a-AUIg-public_ucp?o=01M2RDMXHBNG0YQQ639G15GQQ0",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/0535c2b3-6430-402c-929a-2d4241a222d8"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/0535c2b3-6430-402c-929a-2d4241a222d8",
+          "alt_text": "Giza 45 Percale"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Fabrication: Percale",
+          "Fiber: 100% Giza 45 Egyptian Cotton",
+          "Feel: Light & Airy, Extremely Soft, Matte",
+          "Weight: Ultralight",
+          "Origin: Italy",
+          "Duvet Cover",
+          "Long staple fibers for smooth yarn and enduring strength",
+          "Year-round duvet cover",
+          "Cool, crisp sleeping experience",
+          "Italian craftsmanship"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Q5HBuCB",
+      "title": "Dune Bowl",
+      "description": {
+        "plain": "The Dune Bowl, part of the Dune Tableware Collection, is a sculptural porcelain piece designed by Kelly Wearstler. It serves as an elegant nod to ancient pottery, featuring a combination of matte and glossy finishes to create striking volumes. This versatile bowl can be used as a standalone accent or mixed and matched with other porcelain pieces from the collection to create a unique dinnerware set."
+      },
+      "price_range": {
+        "min": {
+          "amount": 20000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 20000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Q5HBuCB:AUIg:01M2QS1E8TC3Y81RA6KBEGN2C1",
+          "title": "Dune Bowl",
+          "description": {
+            "plain": "The Dune Bowl, part of the Dune Tableware Collection, is a sculptural porcelain piece designed by Kelly Wearstler. It serves as an elegant nod to ancient pottery, featuring a combination of matte and glossy finishes to create striking volumes. This versatile bowl can be used as a standalone accent or mixed and matched with other porcelain pieces from the collection to create a unique dinnerware set."
+          },
+          "price": {
+            "amount": 20000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Q5HBuCB-AUIg-public_ucp?o=01M2QS1E8TC3Y81RA6KBEGN2C1",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/265ac2cd-2475-403e-9dc9-a198a154c871"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/265ac2cd-2475-403e-9dc9-a198a154c871",
+          "alt_text": "Dune Bowl"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Combination of matte and glossy finishes",
+          "Sculptural shape inspired by ancient pottery",
+          "Dishwasher safe",
+          "Sculptural porcelain shape"
+        ]
+      }
+    },
+    {
+      "id": "01M0YHBR2ZNKY7HEMQSJ5GC9K7",
+      "title": "Plaid Watamu in Wool Blend Zig Zag",
+      "description": {
+        "plain": "Add a touch of Missoni's iconic style to your home with the Watamu Throw. This luxurious throw features a vibrant zigzag pattern in a multicolor palette, perfect for adding a pop of color and texture to any living space. Crafted from a blend of wool and polyamide, it offers both warmth and durability, making it an ideal accent piece for your sofa or bed. The fringed edges add a classic finishing touch."
+      },
+      "price_range": {
+        "min": {
+          "amount": 38300,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 53000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "TvqxPMC:AUIg:01KQWNNMD6EMA5JE85129Z4XPZ",
+          "title": "Plaid Watamu 130x190 Cm In Wool Blend Zig Zag",
+          "description": {
+            "plain": "Add a touch of Missoni's iconic style to your home with the Watamu Throw. This luxurious throw features a vibrant zigzag pattern in a multicolor palette, perfect for adding a pop of color and texture to any living space. Crafted from a blend of wool and polyamide, it offers both warmth and durability, making it an ideal accent piece for your sofa or bed. The fringed edges add a classic finishing touch."
+          },
+          "price": {
+            "amount": 53000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/TvqxPMC-AUIg-public_ucp?o=01KQWNNMD6EMA5JE85129Z4XPZ",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/3b8d8aaf-5be3-4075-aa9c-75e34aa2b445"
+            }
+          ]
+        },
+        {
+          "id": "P62TzHv:zv19:01M31GPMJBAS4GZ2B2CYA967MC",
+          "title": "Plaid Watamu 130x190 Cm In Wool Blend Zig Zag",
+          "description": {
+            "plain": "The Missoni Home Watamu throw is a luxurious, warm blanket crafted in Italy from a wool-polyamide blend. It features the brand's signature bold zigzag chevron pattern in a beige multicolour palette, bringing a striking graphic element and personality to any living space. The throw is finished with fringed edges for a textured, sophisticated look."
+          },
+          "price": {
+            "amount": 38300,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/P62TzHv-zv19-public_ucp?o=01M31GPMJBAS4GZ2B2CYA967MC",
+          "seller": {
+            "id": "zv19",
+            "domain": "finnishdesignshop.com",
+            "url": "https://www.finnishdesignshop.com",
+            "name": "Finnish Design Shop"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/fb0c9b67-15da-43cf-98fe-7a97e92d13c6"
+            }
+          ]
+        },
+        {
+          "id": "P62TzHv:PE3e:01M0TF0MMBFTMYBVFTZ4PWXQEB",
+          "title": "Plaid Watamu 130x190 Cm In Wool Blend Zig Zag",
+          "description": {
+            "plain": "The Missoni Home Watamu throw is a luxurious, warm blanket crafted in Italy from a wool-polyamide blend. It features the brand's signature bold zigzag chevron pattern in a beige multicolour palette, bringing a striking graphic element and personality to any living space. The throw is finished with fringed edges for a textured, sophisticated look."
+          },
+          "price": {
+            "amount": 53000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/P62TzHv-PE3e-public_ucp?o=01M0TF0MMBFTMYBVFTZ4PWXQEB",
+          "seller": {
+            "id": "PE3e",
+            "domain": "missoni.com",
+            "url": "https://www.missoni.com",
+            "name": "Missoni"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/fb0c9b67-15da-43cf-98fe-7a97e92d13c6"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/3b8d8aaf-5be3-4075-aa9c-75e34aa2b445",
+          "alt_text": "Plaid Watamu in Wool Blend Zig Zag"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "TvqxPMC",
+              "label": "Beige & Multicoloured"
+            },
+            {
+              "id": "P62TzHv",
+              "label": "Multicoloured"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "130x190 cm",
+          "Wool blend",
+          "Signature zig zag pattern",
+          "Decorative fringes",
+          "Made in Italy",
+          "Material: 80% Wool, 20% Polyamide",
+          "Weight: 5.0 lb",
+          "Care Instructions: Dry clean"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Color",
+          "label": "Beige & Multicoloured"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:g9aazHS",
+      "title": "MB5 Outdoor Ottoman",
+      "description": {
+        "plain": "Discover the MB5 Outdoor Ottoman by Heller. Designed in 2005 by Mario Bellini, this modern icon couples technological innovation with bold, minimalist form. The MB5 Outdoor Ottoman is crafted in self-cushioning polymer and intended for indoor-outdoor use. Try it poolside with the MB2 Outdoor Sofa. Made in the USA. Available in white and dark gray. It features a sleek, minimalist design and is constructed from durable polyethylene using Worry Free Plastics technology, making it suitable for both indoor and outdoor environments."
+      },
+      "price_range": {
+        "min": {
+          "amount": 37500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 37500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "g9aazHS:AUIg:01KBPCXFVFCHZ1D01RDDMWPNQK",
+          "title": "Heller Mb 5 Pouf Or Table By Mario Bellini In White Polyethylene",
+          "description": {
+            "plain": "Discover the MB5 Outdoor Ottoman by Heller. Designed in 2005 by Mario Bellini, this modern icon couples technological innovation with bold, minimalist form. The MB5 Outdoor Ottoman is crafted in self-cushioning polymer and intended for indoor-outdoor use. Try it poolside with the MB2 Outdoor Sofa. Made in the USA. Available in white and dark gray. It features a sleek, minimalist design and is constructed from durable polyethylene using Worry Free Plastics technology, making it suitable for both indoor and outdoor environments."
+          },
+          "price": {
+            "amount": 37500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/g9aazHS-AUIg-public_ucp?o=01KBPCXFVFCHZ1D01RDDMWPNQK",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/0bcc5b77-e062-4062-96d9-3564f7d44abc"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/0bcc5b77-e062-4062-96d9-3564f7d44abc",
+          "alt_text": "MB5 Outdoor Ottoman"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Versatile use as either a pouf or a table",
+          "Suitable for indoor and outdoor use",
+          "Designed by Mario Bellini",
+          "Multifunctional design: can be used as a pouf, coffee table, or stool",
+          "Made in the United States",
+          "Lightweight and durable",
+          "Fully recyclable at the end of its life cycle",
+          "Materialica Design Award (2003)",
+          "BIFMA certifications"
+        ]
+      }
+    },
+    {
+      "id": "01KS4T51M10454SK4R5RCNDF31",
+      "title": "Simple Terry Bath Mat",
+      "description": {
+        "plain": "Experience ultimate comfort and absorbency with the Simple Terry Bath Mat from Hawkins New York. Made from 100% cotton and Oeko-Tex Standard 100 certified, this plush bath mat is machine washable for easy care. Its thick, terry texture provides a soft and cozy feel, making it a luxurious addition to any bathroom."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6500,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "3fxqOqd:AUIg:01M2RE70YPZ5XQJDJYHNGKE5WC",
+          "title": "Simple Terry Bath Mat - White",
+          "description": {
+            "plain": "The Simple Terry Bath Mat by Hawkins New York is a practical and absorbent addition to any bathroom. Crafted from 100% cotton terry with a looped pile, it provides a soft underfoot experience and effective moisture trapping. Measuring 20\" x 32\", it is designed to fit seamlessly in front of tubs, showers, or sinks. The mat features finished edges to maintain its shape and comes in a variety of color options to coordinate with existing bathroom textiles."
+          },
+          "price": {
+            "amount": 6500,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/3fxqOqd-AUIg-public_ucp?o=01M2RE70YPZ5XQJDJYHNGKE5WC",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/09b349b3-be6d-477e-9b5c-b094edc18f31"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/09b349b3-be6d-477e-9b5c-b094edc18f31",
+          "alt_text": "Simple Terry Bath Mat"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "100% cotton",
+          "Oeko-Tex Standard 100 certified",
+          "Machine washable",
+          "Looped pile for enhanced absorbency",
+          "Finished edges to maintain shape",
+          "Low-profile design"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOmU5MWVmZTk3MjhlYmI0NzEiLCAib2Zmc2V0IjogNDB9"
+  },
+  "messages": []
+}

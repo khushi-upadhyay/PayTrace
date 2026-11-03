@@ -1,0 +1,371 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "canonical_product_id:vNdqlNo",
+      "title": "The Triple Play skincare set",
+      "description": {
+        "plain": "A comprehensive 3-piece men's grooming set from Jack Black designed for daily skincare. The kit includes a Daily-use face wash (88 ml) with sage leaf and aloe vera for deep cleansing, a Double-Action face moisturizer (251 ml) providing hydration and SPF 20 protection, and a multi-use cleansing lotion (88 ml) for face, hair, and body. These pH-balanced, paraben, and sulfate-free formulas are not tested on animals and are made in the U.S."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "vNdqlNo:DyQi:01M61GHYVFM1KQXNPT9ZT9NWD4",
+          "title": "Jack Black The Triple Play Moisturizer & Cleansers Gift Set ($75 Value)",
+          "description": {
+            "plain": "The Triple Play set by Jack Black is a trio of bestselling skincare products designed to keep skin cleansed, hydrated, and protected. The set includes Pure Clean Daily Facial Cleanser (3 fl. oz.), Double-Duty Face Moisturizer SPF 20 (8.5 fl. oz.), and All-Over Wash (3 fl. oz.)."
+          },
+          "price": {
+            "amount": 5400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/vNdqlNo-DyQi-public_ucp?o=01M61GHYVFM1KQXNPT9ZT9NWD4",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/bd279f8b-d65f-46d9-a3b3-de5aa2353e23"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/bd279f8b-d65f-46d9-a3b3-de5aa2353e23",
+          "alt_text": "The Triple Play skincare set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes Pure Clean Daily Facial Cleanser (3 oz.)",
+          "Includes Double-Duty Face Moisturizer (8.5 oz.) with Broad Spectrum SPF 20",
+          "Includes All-Over Wash for Face, Hair & Body (3 oz.)",
+          "A $75 value",
+          "Made in USA"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:UUFaAgP",
+      "title": "The Foundational Serum, Moisturizer, + Treatment Skincare Gift Set",
+      "description": {
+        "plain": "WHAT IT IS U Beauty The Foundational set is a high-performance skincare trio designed to streamline your routine for visibly brighter, smoother, and firmer-looking skin. 3 x 0.5 oz. Made in Italy. THREE-PIECE SET INCLUDES • RESURFACING Compound • THE SUPER Hydrator • THE SCULPT Neck + Décolleté Concentrate HOW TO USE IT 1. Apply 2 3 pumps of the RESURFACING Compound to dry skin after cleansing, gently massaging all over the face. Use in the morning, evening, or both. 2. Allow skin to fully dry and seal it in with 2 3 pumps of THE SUPER Hydrator. Apply as desired throughout the day for an added boost of hydration. 3. Apply THE SCULPT Neck + Décolleté Concentrate onto clean, dry skin on the neck, massaging gently in an upward motion from décolleté up to the jawline morning and evening."
+      },
+      "price_range": {
+        "min": {
+          "amount": 17200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 17200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "UUFaAgP:DyQi:01M41EVCM138T68FJARJQ5FNNN",
+          "title": "The Foundational Serum, Moisturizer, + Treatment Skincare Gift Set - U Beauty",
+          "description": {
+            "plain": "WHAT IT IS U Beauty The Foundational set is a high-performance skincare trio designed to streamline your routine for visibly brighter, smoother, and firmer-looking skin. 3 x 0.5 oz. Made in Italy. THREE-PIECE SET INCLUDES • RESURFACING Compound • THE SUPER Hydrator • THE SCULPT Neck + Décolleté Concentrate HOW TO USE IT 1. Apply 2 3 pumps of the RESURFACING Compound to dry skin after cleansing, gently massaging all over the face. Use in the morning, evening, or both. 2. Allow skin to fully dry and seal it in with 2 3 pumps of THE SUPER Hydrator. Apply as desired throughout the day for an added boost of hydration. 3. Apply THE SCULPT Neck + Décolleté Concentrate onto clean, dry skin on the neck, massaging gently in an upward motion from décolleté up to the jawline morning and evening."
+          },
+          "price": {
+            "amount": 17200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/UUFaAgP-DyQi-public_ucp?o=01M41EVCM138T68FJARJQ5FNNN",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/076c4855-cdc5-448d-94fb-8f2ebb417ee5"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/076c4855-cdc5-448d-94fb-8f2ebb417ee5",
+          "alt_text": "The Foundational Serum, Moisturizer, + Treatment Skincare Gift Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Contains three high-performance bestsellers: Resurfacing Compound, The SUPER Hydrator, and The SCULPT Neck + Décolleté Concentrate",
+          "Powered by proprietary SIREN Capsule Technology™ for adaptive delivery",
+          "Resurfacing Compound focuses on reducing pore size and improving skin texture",
+          "The SUPER Hydrator provides deep hydration (28% increase in 15 minutes)",
+          "The SCULPT concentrate improves skin elasticity on the neck and décolleté",
+          "Free of parabens, formaldehydes, phthalates, mineral oil, and sulfates",
+          "Provides up to 48 hours of multilevel hydration",
+          "Targets texture, pores, discoloration, and fine lines",
+          "Cruelty-free (not tested on animals)",
+          "Targeted contouring effects for face to décolleté"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:EECx6RL",
+      "title": "Coastal Indoor/Outdoor Area Rug",
+      "description": {
+        "plain": "This handwoven indoor/outdoor rug features a contemporary yet transitional style with a textured chevron design in marled blue and ecru. Crafted from durable, performance polyester yarns, it is designed to be sun-, rain-, dog-, and child-proof, making it ideal for open-air living. The flatweave construction offers a classic herringbone rhythm, and the material is hosed-down and scrubbable for easy maintenance."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "EECx6RL:DyQi:01M358HHWNTC8NCHNNAA0Q3057",
+          "title": "Da1336 Coastal Indoor/outdoor Area Rug, 5'0\"x8'0\"",
+          "description": {
+            "plain": "This handwoven indoor/outdoor rug features a contemporary yet transitional style with a textured chevron design in marled blue and ecru. Crafted from durable, performance polyester yarns, it is designed to be sun-, rain-, dog-, and child-proof, making it ideal for open-air living. The flatweave construction offers a classic herringbone rhythm, and the material is hosed-down and scrubbable for easy maintenance."
+          },
+          "price": {
+            "amount": 7800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/EECx6RL-DyQi-public_ucp?o=01M358HHWNTC8NCHNNAA0Q3057",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/eb9f4638-0364-4368-9eaa-ac12359e722f"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/eb9f4638-0364-4368-9eaa-ac12359e722f",
+          "alt_text": "Coastal Indoor/Outdoor Area Rug"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Reversible",
+          "Stain Resistant",
+          "Pet Friendly",
+          "Handwoven",
+          "Washable and scrubbable",
+          "Eco-friendly (made from recycled plastic bottles)",
+          "Indoor/Outdoor",
+          "Weather-resistant",
+          "Flatweave",
+          "Sun-, rain-, dog- and child-proof performance yarns"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:AatvSJk",
+      "title": "The Super Hydrator",
+      "description": {
+        "plain": "This luxurious and intuitive moisturizer from U Beauty deeply hydrates and resolves compromised barrier function where skin is most parched. Powered by U Beauty's proprietary HYDRA-SIREN Capsule, it effectively transports water to the deeper layers of the skin. Advanced hydration is immediate, while the five unique types of hyaluronic acid continue to hydrate throughout the day. SIRENS neutralize free radicals as they arise, expediting visible skin repair. Anti-aging ingredients provide a radiant glow, resulting in groundbreaking, long-lasting hydration. It is clean, hypoallergenic, cruelty-free, gluten-free, and non-GMO. Tested for safe use on all skin types and tones, and around the eyes. Dermatologically tested for sensitivity. Made in Italy."
+      },
+      "price_range": {
+        "min": {
+          "amount": 6800,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6800,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "AatvSJk:DyQi:01M3TCEPMDT21ZG8WPTY10FYEV",
+          "title": "U Beauty The Super Hydrator 1.7 Oz",
+          "description": {
+            "plain": "This luxurious and intuitive moisturizer from U Beauty deeply hydrates and resolves compromised barrier function where skin is most parched. Powered by U Beauty's proprietary HYDRA-SIREN Capsule, it effectively transports water to the deeper layers of the skin. Advanced hydration is immediate, while the five unique types of hyaluronic acid continue to hydrate throughout the day. SIRENS neutralize free radicals as they arise, expediting visible skin repair. Anti-aging ingredients provide a radiant glow, resulting in groundbreaking, long-lasting hydration. It is clean, hypoallergenic, cruelty-free, gluten-free, and non-GMO. Tested for safe use on all skin types and tones, and around the eyes. Dermatologically tested for sensitivity. Made in Italy."
+          },
+          "price": {
+            "amount": 6800,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/AatvSJk-DyQi-public_ucp?o=01M3TCEPMDT21ZG8WPTY10FYEV",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/89530c92-0655-4ec4-8bfa-121ee1ec36b1"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/89530c92-0655-4ec4-8bfa-121ee1ec36b1",
+          "alt_text": "The Super Hydrator"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "HYDRA-SIREN Capsule",
+          "five unique types of hyaluronic acid",
+          "SIRENS neutralize free radicals",
+          "anti-aging ingredients",
+          "Clean",
+          "Hypoallergenic",
+          "Cruelty-Free",
+          "Gluten-Free",
+          "Non-GMO",
+          "Tested for safe use on all skin types and skin tones"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:aL8SasG",
+      "title": "Radiant Reveal Brightening Serum",
+      "description": {
+        "plain": "The Rose Inc Radiant Reveal Brightening Serum is a powerful hydrating serum designed to instantly brighten the complexion and reveal healthy-looking skin without clogging pores. Its lightweight, fast-absorbing formula contains a blend of Squalane to soothe and moisturize, sea fennel extract to encourage luminosity, and Vitamin C to combat dullness and provide antioxidant protection. It is suitable for all skin types and specifically targets dryness, dullness, and a weak skin barrier, leaving the skin plumped and with a more even tone."
+      },
+      "price_range": {
+        "min": {
+          "amount": 7400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 7400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "aL8SasG:DyQi:01M39QDMRQQZ1QNDCQ4TF6S6RH",
+          "title": "Radiant Reveal Brightening Serum",
+          "description": {
+            "plain": "The Rose Inc Radiant Reveal Brightening Serum is a powerful hydrating serum designed to instantly brighten the complexion and reveal healthy-looking skin without clogging pores. Its lightweight, fast-absorbing formula contains a blend of Squalane to soothe and moisturize, sea fennel extract to encourage luminosity, and Vitamin C to combat dullness and provide antioxidant protection. It is suitable for all skin types and specifically targets dryness, dullness, and a weak skin barrier, leaving the skin plumped and with a more even tone."
+          },
+          "price": {
+            "amount": 7400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/aL8SasG-DyQi-public_ucp?o=01M39QDMRQQZ1QNDCQ4TF6S6RH",
+          "seller": {
+            "id": "DyQi",
+            "domain": "bloomingdales.com",
+            "url": "https://www.bloomingdales.com",
+            "name": "Bloomingdale's"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/e6430cd4-ee18-4269-8e45-546a37dc23b4"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/e6430cd4-ee18-4269-8e45-546a37dc23b4",
+          "alt_text": "Radiant Reveal Brightening Serum"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Brightens and hydrates for a luminous complexion",
+          "Lightweight, quick-absorbing formula",
+          "Softens and plumps the skin",
+          "Creates a smooth, light-reflecting finish",
+          "Vegan and Cruelty-free",
+          "Non-pore clogging",
+          "Contains vitamin C and luminosity-enhancing ingredients",
+          "Includes Squalane to soothe and moisturize the complexion",
+          "Sea fennel extract helps brighten and encourage luminosity",
+          "Clinically shown to increase hydration by 70% and improve the skin barrier"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOmYxYzZmNmE3OTk0NGE2YjgiLCAib2Zmc2V0IjogMjB9"
+  },
+  "messages": []
+}

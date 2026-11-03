@@ -1,0 +1,450 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "canonical_product_id:LSpUQh0",
+      "title": "Sol de Janeiro Beija Flor™ Jet Set Bodycare Gift Set",
+      "description": {
+        "plain": "The Sol de Janeiro Beija Flor™ Jet Set is a travel-friendly bodycare gift set designed to plump and renew the skin. This curated collection features a pink carrying pouch containing three mini-sized products: the Beija Flor™ Elasti-Cream (50ml), which uses retinol-mimicking Cacay Oil and Vegan Collagen to visibly plump skin; the Brazilian Crush Cheirosa 68 Perfume Mist (30ml) for a light floral scent; and the Beija Flor™ Skin-Renewing Body Wash (90ml)."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "LSpUQh0:gb5P:01M6F9CP9RG93NCN1VFEH0DH9F",
+          "title": "Sol De Janeiro Beija Flor Jet Set: Elasti Cream 1.7oz + Body Wash 3oz + Brazilian Crush Cheirosa 68 Hair & Body Mist 1oz --3pcs",
+          "description": {
+            "plain": "The Sol de Janeiro Beija Flor™ Jet Set is a travel-friendly bodycare gift set designed to plump and renew the skin. This curated collection features a pink carrying pouch containing three mini-sized products: the Beija Flor™ Elasti-Cream (50ml), which uses retinol-mimicking Cacay Oil and Vegan Collagen to visibly plump skin; the Brazilian Crush Cheirosa 68 Perfume Mist (30ml) for a light floral scent; and the Beija Flor™ Skin-Renewing Body Wash (90ml)."
+          },
+          "price": {
+            "amount": 3400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/LSpUQh0-gb5P-public_ucp?o=01M6F9CP9RG93NCN1VFEH0DH9F",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/9106323f-9bcf-4815-adbb-56d33f88197a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/9106323f-9bcf-4815-adbb-56d33f88197a",
+          "alt_text": "Sol de Janeiro Beija Flor™ Jet Set Bodycare Gift Set"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Contains Beija Flor™ Elasti-Cream (50ml) with retinol-mimicking Cacay Oil and Vegan Collagen",
+          "Includes Brazilian Crush Cheirosa 68 Perfume Mist (30ml)",
+          "Includes Beija Flor™ Skin-Renewing Body Wash (90ml)",
+          "Suitable for vegans",
+          "Free from alcohol, gluten, mineral oil, parabens, silicone, and sulphates",
+          "Comes with a translucent pink zippered travel pouch",
+          "Beija Flor scent profile (Jasmine & Pink Dragonfruit)",
+          "Fragrance: Brazilian Crush Cheirosa 68"
+        ]
+      }
+    },
+    {
+      "id": "01M0WDNWPCKQYGBSY02Y8QZKNW",
+      "title": "Legendary Lip Oil",
+      "description": {
+        "plain": "RMS Beauty Legendary Lip Oil is a nourishing, vanilla-flavored lip treatment that combines the hydration of a balm with the high-shine finish of a gloss. Infused with organic jojoba oil, bitter cherry seed oil, and the RMS Adaptogenic Herbal Blend, it works to soothe, balance, and revitalize dry lips. The non-sticky, lightweight formula provides rich color and can be worn alone or layered over lip color for added dimension."
+      },
+      "price_range": {
+        "min": {
+          "amount": 2600,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 2999,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Jud3Z6t:gb5P:01KKPHBQJY45R1PMCZ1CD8JGR6",
+          "title": "Legendary Lip Oil",
+          "description": {
+            "plain": "RMS Beauty Legendary Lip Oil is a nourishing, vanilla-flavored lip treatment that combines the hydration of a balm with the high-shine finish of a gloss. Infused with organic jojoba oil, bitter cherry seed oil, and the RMS Adaptogenic Herbal Blend, it works to soothe, balance, and revitalize dry lips. The non-sticky, lightweight formula provides rich color and can be worn alone or layered over lip color for added dimension."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Jud3Z6t-gb5P-public_ucp?o=01KKPHBQJY45R1PMCZ1CD8JGR6",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/d2728022-5826-41a8-80cf-d027df18b19d"
+            }
+          ]
+        },
+        {
+          "id": "BYAMSs5:lJxY:01KSJVECER3Z51F9F6XVQD6FV1",
+          "title": "Legendary Lip Oil | Nourishing Color With Non‑sticky Finish | Rms Beauty",
+          "description": {
+            "plain": "This RMS Beauty Legendary Lip Oil in the shade Alessandra is a luxurious, nourishing lip treatment that provides a vibrant color and a high-shine finish without feeling sticky. It's formulated with beneficial ingredients like Bitter Cherry Seed Oil for hydration and antioxidants, Organic Vanilla Extract for a soothing aroma, an RMS Adaptogenic Herbal Blend to balance and hydrate the skin, and Organic Jojoba Oil to mimic natural skin oils for easy absorption and protection. The product comes in a cylindrical tube with a ribbed top and features the 'rms' logo in white. It includes a doe-foot applicator for precise application."
+          },
+          "price": {
+            "amount": 2600,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/BYAMSs5-lJxY-public_ucp?o=01KSJVECER3Z51F9F6XVQD6FV1",
+          "seller": {
+            "id": "lJxY",
+            "domain": "dermstore.com",
+            "url": "https://www.dermstore.com",
+            "name": "Dermstore"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ea78b7ec-1227-49ab-b5a1-fc294e893726"
+            }
+          ]
+        },
+        {
+          "id": "BYAMSs5:MMoD:01M3TGSBHN06FCHFZA6THWVME1",
+          "title": "Legendary Lip Oil | Nourishing Color With Non‑sticky Finish | Rms Beauty",
+          "description": {
+            "plain": "This RMS Beauty Legendary Lip Oil in the shade Alessandra is a luxurious, nourishing lip treatment that provides a vibrant color and a high-shine finish without feeling sticky. It's formulated with beneficial ingredients like Bitter Cherry Seed Oil for hydration and antioxidants, Organic Vanilla Extract for a soothing aroma, an RMS Adaptogenic Herbal Blend to balance and hydrate the skin, and Organic Jojoba Oil to mimic natural skin oils for easy absorption and protection. The product comes in a cylindrical tube with a ribbed top and features the 'rms' logo in white. It includes a doe-foot applicator for precise application."
+          },
+          "price": {
+            "amount": 2999,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/BYAMSs5-MMoD-public_ucp?o=01M3TGSBHN06FCHFZA6THWVME1",
+          "seller": {
+            "id": "MMoD",
+            "domain": "fragrancenet.com",
+            "url": "https://www.fragrancenet.com",
+            "name": "FragranceNet.com"
+          },
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/ea78b7ec-1227-49ab-b5a1-fc294e893726"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/d2728022-5826-41a8-80cf-d027df18b19d",
+          "alt_text": "Legendary Lip Oil"
+        }
+      ],
+      "options": [
+        {
+          "name": "Color",
+          "values": [
+            {
+              "id": "Jud3Z6t",
+              "label": "Bright Pink"
+            },
+            {
+              "id": "BYAMSs5",
+              "label": "Nude"
+            }
+          ]
+        },
+        {
+          "name": "Style",
+          "values": [
+            {
+              "id": "BYAMSs5",
+              "label": "Amber"
+            },
+            {
+              "id": "FuKhKLU",
+              "label": "Adrianna"
+            },
+            {
+              "id": "Jud3Z6t",
+              "label": "Karolina"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Includes a jumbo doe-foot wand applicator",
+          "Delivers richly-tinted color and high shine",
+          "Available in eight shades",
+          "Lightweight and comfortable to wear",
+          "Formula is nourishing and hydrating",
+          "Non-sticky",
+          "Flavoured with a hint of vanilla",
+          "Rich pigmentation with one‑swipe color payoff",
+          "Enriched with Jojoba Oil, Bitter Cherry Seed Oil, and a proprietary RMS Adaptogenic Herbal Blend",
+          "Vegan, cruelty‑free, gluten‑free, paraben‑free, phthalate‑free, sulfate‑free, alcohol‑free, silicone‑free, and free of synthetic fragrances or flavors"
+        ]
+      },
+      "selected": [
+        {
+          "name": "Style",
+          "label": "Karolina"
+        },
+        {
+          "name": "Color",
+          "label": "Bright Pink"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:9K6ok7h",
+      "title": "Delícia Drench Body Butter Travel Size",
+      "description": {
+        "plain": "This ultra-rich body butter cocoons extra-dry skin in a blend of nutrient-rich butters, soothing botanicals and prebiotics, finished with the woody vanilla warmth of Cheirosa 59. It offers up to 48 hours of moisture while supporting the skin barrier for a velvety-soft, never-greasy finish. Delícia Drench Body Butter Travel Size by Sol De Janeiro in Purple at Anthropologie"
+      },
+      "price_range": {
+        "min": {
+          "amount": 2400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 2400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "9K6ok7h:gb5P:01M6DC4VWE6T4XBWDX7QJVWP5Z",
+          "title": "Delícia Drench Body Butter Travel Size",
+          "description": {
+            "plain": "This ultra-rich body butter cocoons extra-dry skin in a blend of nutrient-rich butters, soothing botanicals and prebiotics, finished with the woody vanilla warmth of Cheirosa 59. It offers up to 48 hours of moisture while supporting the skin barrier for a velvety-soft, never-greasy finish. Delícia Drench Body Butter Travel Size by Sol De Janeiro in Purple at Anthropologie"
+          },
+          "price": {
+            "amount": 2400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/9K6ok7h-gb5P-public_ucp?o=01M6DC4VWE6T4XBWDX7QJVWP5Z",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/5cfa32ca-5249-4912-9927-a3643017f963"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/5cfa32ca-5249-4912-9927-a3643017f963",
+          "alt_text": "Delícia Drench Body Butter Travel Size"
+        }
+      ]
+    },
+    {
+      "id": "canonical_product_id:6Qk8JRA",
+      "title": "Deluxe Gradual Tan",
+      "description": {
+        "plain": "The Deluxe Gradual Tan is a luxurious lightweight lotion designed to enhance or extend a mousse tan for up to two weeks or to build a perfect shade on its own. It is formulated for medium‑to‑dark skin tones with antioxidant‑rich Acai Berry and Coffee Extract, hydrating Shea Butter, and a built‑in instant colour guide for precise application. The product comes in a 150 ml bottle and is sold in a solid, tinted formula that is nourishing, buildable, and suitable for adult females."
+      },
+      "price_range": {
+        "min": {
+          "amount": 3000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 3000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "6Qk8JRA:gb5P:01KYGS59WT9BZD50J3W4N7DA0Y",
+          "title": "Loving Tan 8 Hr Deluxe Gradual Self-tanning Lotion",
+          "description": {
+            "plain": "This is a gradual self-tanning lotion from Loving Tan, designed to provide a natural-looking, buildable tan. It's formulated for professional strength and a dark shade, offering a flawless, streak-free application that dries in as little as 60 seconds. The lotion is enriched with antioxidants to keep skin hydrated and radiant."
+          },
+          "price": {
+            "amount": 3000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/6Qk8JRA-gb5P-public_ucp?o=01KYGS59WT9BZD50J3W4N7DA0Y",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/290673b6-c893-43ea-a483-b307a569701d"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/290673b6-c893-43ea-a483-b307a569701d",
+          "alt_text": "Deluxe Gradual Tan"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Features antioxidant-rich skin-care actives that leave skin ultra-hydrated and radiant",
+          "Customizable, gradual, buildable formula",
+          "Flawless, streak-free application",
+          "Quick-drying formula dries in as little as 60 seconds"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:ivAsVzA",
+      "title": "Mighty Patch Variety Pack",
+      "description": {
+        "plain": "The Hero Cosmetics Mighty Patch Variety Pack is a comprehensive acne treatment set designed for various breakout situations. This kit includes 12 Original patches for overnight whitehead reduction, 12 Invisible+ patches for discreet daytime wear, and 2 XL Surface patches for larger breakout areas. Made from hydrocolloid material, these patches work to absorb pimple gunk within 6-8 hours while shielding the skin from popping and picking to support a healing environment. The patches are dermatologist-tested and suitable for sensitive skin."
+      },
+      "price_range": {
+        "min": {
+          "amount": 1400,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 1400,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "ivAsVzA:gb5P:01M6F73J47BA0ADXG9T635R82Y",
+          "title": "Mighty Patch Variety Pack",
+          "description": {
+            "plain": "The Hero Cosmetics Mighty Patch Variety Pack is a comprehensive acne treatment set designed for various breakout situations. This kit includes 12 Original patches for overnight whitehead reduction, 12 Invisible+ patches for discreet daytime wear, and 2 XL Surface patches for larger breakout areas. Made from hydrocolloid material, these patches work to absorb pimple gunk within 6-8 hours while shielding the skin from popping and picking to support a healing environment. The patches are dermatologist-tested and suitable for sensitive skin."
+          },
+          "price": {
+            "amount": 1400,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/ivAsVzA-gb5P-public_ucp?o=01M6F73J47BA0ADXG9T635R82Y",
+          "seller": {
+            "id": "gb5P",
+            "domain": "anthropologie.com",
+            "url": "https://www.anthropologie.com",
+            "name": "Anthropologie"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/b55a9faa-c7b2-43ae-bba1-377a03639044"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/b55a9faa-c7b2-43ae-bba1-377a03639044",
+          "alt_text": "Mighty Patch Variety Pack"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Medical-grade hydrocolloid absorbs impurities and fluid from whiteheads",
+          "Protects blemishes from picking, popping, and external bacteria",
+          "Drug-free, vegan-friendly, and latex-free formula",
+          "Includes three patch types: Original (nighttime), Invisible+ (daytime), and Surface (large areas)",
+          "Safe for sensitive skin, pregnant women, and nursing mothers",
+          "Visibly changes from transparent to opaque white when saturated with fluid",
+          "Gently absorbs pimple gunk in 6-8 hours",
+          "Supports a healing environment",
+          "Dermatologist-tested",
+          "HSA/FSA Eligible"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOmQ3ZTZiMjFmOGI4YTc1YjYiLCAib2Zmc2V0IjogMjB9"
+  },
+  "messages": []
+}

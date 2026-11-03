@@ -1,0 +1,408 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.search": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "canonical_product_id:q5IHJb4",
+      "title": "Simple Waffle Bath Towel",
+      "description": {
+        "plain": "This bath towel from Hawkins New York features a textured waffle weave for enhanced absorbency and quick drying. Made from 100% cotton, it measures 32\" L x 59\" W and is machine washable for easy care. Its honeycomb texture allows it to lay flat and fold compactly, offering a modern look and feel for everyday use."
+      },
+      "price_range": {
+        "min": {
+          "amount": 5200,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 5200,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "q5IHJb4:AUIg:01KRZ4HQTNF0KG9AJH7JX2TW4S",
+          "title": "Simple Waffle Bath Towel",
+          "description": {
+            "plain": "This bath towel from Hawkins New York features a textured waffle weave for enhanced absorbency and quick drying. Made from 100% cotton, it measures 32\" L x 59\" W and is machine washable for easy care. Its honeycomb texture allows it to lay flat and fold compactly, offering a modern look and feel for everyday use."
+          },
+          "price": {
+            "amount": 5200,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 6500,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/q5IHJb4-AUIg-public_ucp?o=01KRZ4HQTNF0KG9AJH7JX2TW4S",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/f6233ff2-faab-4c54-b0ae-28335e9f8b6a"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/f6233ff2-faab-4c54-b0ae-28335e9f8b6a",
+          "alt_text": "Simple Waffle Bath Towel"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 6500,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 6500,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Textured waffle weave",
+          "100% cotton construction",
+          "Measures 32\" L x 59\" W",
+          "Enhances surface area for quicker drying and effective water absorption",
+          "Low-profile honeycomb texture",
+          "Lays flat and folds compactly for easy storage",
+          "Neatly finished edges",
+          "Consistent weave",
+          "Steady absorbency",
+          "Clean, modern look"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:mrqefuP",
+      "title": "U Desk",
+      "description": {
+        "plain": "The Ethnicraft Oak U Desk is a minimalist workspace crafted from solid oak. Featuring a sleek design with clean lines, this desk is handcrafted in Serbia and includes integrated cable management in the desktop for a tidy workspace. Its robust construction ensures durability while providing a sophisticated, professional look suitable for home or office environments."
+      },
+      "price_range": {
+        "min": {
+          "amount": 124900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 124900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "mrqefuP:AUIg:01M5ZKRTZ9GBBHYPKGHT9PG3SS",
+          "title": "U Desk - Varnished Oak - Black - Rectangular - With Cable Management",
+          "description": {
+            "plain": "The Ethnicraft Oak U Desk is a minimalist workspace crafted from solid oak. Featuring a sleek design with clean lines, this desk is handcrafted in Serbia and includes integrated cable management in the desktop for a tidy workspace. Its robust construction ensures durability while providing a sophisticated, professional look suitable for home or office environments."
+          },
+          "price": {
+            "amount": 124900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 249900,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/mrqefuP-AUIg-public_ucp?o=01M5ZKRTZ9GBBHYPKGHT9PG3SS",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/5554b37f-ecd0-4e89-b836-c0ba08c42746"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/5554b37f-ecd0-4e89-b836-c0ba08c42746",
+          "alt_text": "U Desk"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 249900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 249900,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Integrated cable management possibility in desktop",
+          "Made from solid oak",
+          "Varnish finish",
+          "Minimalist rectangular design",
+          "Indoor use only",
+          "Handcrafted in Serbia"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:iaV0uq5",
+      "title": "U Desk",
+      "description": {
+        "plain": "The U desk is a solid and dependable office desk crafted from solid oak with a varnish finish. Its minimalist, rectangular design provides a sturdy yet elegant workspace that encourages creativity and personalization. The desk features an integrated cable management system in the desktop to keep workspaces tidy, though power circles and metal cable trays are sold separately. As a hand-created piece, each desk possesses unique characteristics in the wood grain."
+      },
+      "price_range": {
+        "min": {
+          "amount": 275900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 275900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "iaV0uq5:AUIg:01M5ZKRHM132ATTHYJP9FF55GD",
+          "title": "U Desk - Varnished Oak - Rectangular - With Cable Management",
+          "description": {
+            "plain": "The U desk is a solid and dependable office desk crafted from solid oak with a varnish finish. Its minimalist, rectangular design provides a sturdy yet elegant workspace that encourages creativity and personalization. The desk features an integrated cable management system in the desktop to keep workspaces tidy, though power circles and metal cable trays are sold separately. As a hand-created piece, each desk possesses unique characteristics in the wood grain."
+          },
+          "price": {
+            "amount": 275900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/iaV0uq5-AUIg-public_ucp?o=01M5ZKRHM132ATTHYJP9FF55GD",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/2f54c23b-e45a-4fd7-9653-7e02af52b2d6"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/2f54c23b-e45a-4fd7-9653-7e02af52b2d6",
+          "alt_text": "U Desk"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Integrated cable management possibility in desktop",
+          "Hand-created unique design",
+          "Designed for indoor use",
+          "Crafted from solid wood for a durable design",
+          "Arrives fully assembled and ready to use",
+          "Scandinavian minimalist design",
+          "Optional Power Circles and Metal Cable Trays available",
+          "Sustainably and ethically sourced materials",
+          "Varnish finish",
+          "Handcrafted in Serbia"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:aBq5isq",
+      "title": "Jute Blend Rug",
+      "description": {
+        "plain": "A durable and texturally rich area rug crafted from a blend of 60% jute and 40% cotton. It features a flatweave construction, giving it a low profile ideal for high-traffic areas. The design is contemporary, showcasing a natural brown base color overlaid with a striking, repeating geometric pattern resembling stylized hourglass or bowtie shapes in a dark contrasting color. This rug is handcrafted in India and is suitable for modern, casual, or transitional decor styles."
+      },
+      "price_range": {
+        "min": {
+          "amount": 16000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 16000,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "aBq5isq:AUIg:01KBPABHH3AJS2137RM3JX5K8V",
+          "title": "Contemporary Jute Blend Rug - 9' X 12'/brown",
+          "description": {
+            "plain": "A durable and texturally rich area rug crafted from a blend of 60% jute and 40% cotton. It features a flatweave construction, giving it a low profile ideal for high-traffic areas. The design is contemporary, showcasing a natural brown base color overlaid with a striking, repeating geometric pattern resembling stylized hourglass or bowtie shapes in a dark contrasting color. This rug is handcrafted in India and is suitable for modern, casual, or transitional decor styles."
+          },
+          "price": {
+            "amount": 16000,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "list_price": {
+            "amount": 20000,
+            "currency": "USD"
+          },
+          "url": "https://buy.trychannel3.com/aBq5isq-AUIg-public_ucp?o=01KBPABHH3AJS2137RM3JX5K8V",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/4bebb67a-66e5-4411-b8bf-b7147276e08b"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/4bebb67a-66e5-4411-b8bf-b7147276e08b",
+          "alt_text": "Jute Blend Rug"
+        }
+      ],
+      "list_price_range": {
+        "min": {
+          "amount": 20000,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 20000,
+          "currency": "USD"
+        }
+      },
+      "metadata": {
+        "top_features": [
+          "Flatweave construction",
+          "Made from 60% Jute and 40% Cotton blend",
+          "Features a geometric pattern of stylized hourglass/bowtie shapes",
+          "Handcrafted in India",
+          "Durable and suitable for high-traffic areas",
+          "Low profile design",
+          "Geometric pattern in natural brown and dark contrast color",
+          "Low maintenance, vacuum regularly",
+          "Natural brown base color with dark contrasting motif",
+          "Hand Woven"
+        ]
+      }
+    },
+    {
+      "id": "canonical_product_id:Sxs3eca",
+      "title": "Bok Dining Table",
+      "description": {
+        "plain": "The Bok Dining Table by Ethnicraft is a sculptural piece that balances airy refinement with quiet strength. Crafted in Serbia from solid natural oak or teak, it features a broad, stable tabletop resting on subtly tapered legs that curve into the frame. This minimalist design is available in various sizes and finishes, blending seamlessly into contemporary, Scandinavian, and minimalist interiors."
+      },
+      "price_range": {
+        "min": {
+          "amount": 219900,
+          "currency": "USD"
+        },
+        "max": {
+          "amount": 219900,
+          "currency": "USD"
+        }
+      },
+      "variants": [
+        {
+          "id": "Sxs3eca:AUIg:01M289TB464KGV10D7FT3JD7R3",
+          "title": "Ethnicraft Bok Dining Table - Oak Brown/large : 200cm",
+          "description": {
+            "plain": "The Bok Dining Table by Ethnicraft is a sculptural piece that balances airy refinement with quiet strength. Crafted in Serbia from solid natural oak or teak, it features a broad, stable tabletop resting on subtly tapered legs that curve into the frame. This minimalist design is available in various sizes and finishes, blending seamlessly into contemporary, Scandinavian, and minimalist interiors."
+          },
+          "price": {
+            "amount": 219900,
+            "currency": "USD"
+          },
+          "availability": {
+            "available": true
+          },
+          "url": "https://buy.trychannel3.com/Sxs3eca-AUIg-public_ucp?o=01M289TB464KGV10D7FT3JD7R3",
+          "seller": {
+            "id": "AUIg",
+            "domain": "abchome.com",
+            "url": "https://abchome.com",
+            "name": "abc home"
+          },
+          "condition": [
+            "new"
+          ],
+          "media": [
+            {
+              "type": "image",
+              "url": "https://cdn.trychannel3.com/c17c863f-725a-44cb-9ec9-d725e9dfe468"
+            }
+          ]
+        }
+      ],
+      "media": [
+        {
+          "type": "image",
+          "url": "https://cdn.trychannel3.com/c17c863f-725a-44cb-9ec9-d725e9dfe468",
+          "alt_text": "Bok Dining Table"
+        }
+      ],
+      "metadata": {
+        "top_features": [
+          "Crafted from responsibly sourced hardwood",
+          "Subtly tapered legs that curve into the frame",
+          "Available in sizes from 55 to 95 inches",
+          "Made in Serbia"
+        ]
+      }
+    }
+  ],
+  "pagination": {
+    "has_next_page": true,
+    "cursor": "eyJjYWNoZV9rZXkiOiAic2VhcmNoOmU5MWVmZTk3MjhlYmI0NzEiLCAib2Zmc2V0IjogMjB9"
+  },
+  "messages": []
+}

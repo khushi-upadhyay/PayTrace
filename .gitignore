@@ -34,12 +34,13 @@ build/
 .npm
 .eslintcache
 
-# Environment variables
+# Environment variables -- never commit real .env files
+# Match .env and all .env.* at any directory depth; allow only *.example
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+**/.env
+**/.env.*
+!**/*.example
 
 # IDE
 .vscode/
@@ -56,3 +57,5 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+*.tsbuildinfo
