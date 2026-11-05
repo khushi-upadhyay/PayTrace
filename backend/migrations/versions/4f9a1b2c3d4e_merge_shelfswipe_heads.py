@@ -1,11 +1,11 @@
 """merge shelfswipe provider and cart heads
 
-Revision ID: a1b2c3d4e5f6
+Revision ID: 4f9a1b2c3d4e
 Revises: 3238f488c39d, e7a4f21b9c3d
 """
 from typing import Sequence, Union
 
-revision: str = "a1b2c3d4e5f6"
+revision: str = "4f9a1b2c3d4e"
 down_revision: Union[str, Sequence[str], None] = ("3238f488c39d", "e7a4f21b9c3d")
 branch_labels = None
 depends_on = None
