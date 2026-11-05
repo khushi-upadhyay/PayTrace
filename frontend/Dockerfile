@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm ci
 
 COPY . .
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
 RUN npm run build
 
 FROM node:20-alpine AS runner
