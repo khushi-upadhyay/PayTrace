@@ -1,55 +1,57 @@
 import logging
+import re
 import uuid
 from decimal import Decimal
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
-
-from app.api.dependencies import get_current_user, get_db
-from app.db.models.user import User
 import httpx
+from app.api.dependencies import get_db
 from app.core.config import settings
 from app.db.models.payment import Payment
 from app.db.models.shelfswipe import (
     SSSeller,
     SSShop,
     SSProduct,
+    SSBuyerProfile,
+    SSSwipe,
     Seller,
     ShelfProduct,
     SwipeAction,
-    ShelfCartItem,
 )
 from app.schemas.shelfswipe import (
     ShelfSwipeOnboardRequest,
     ShelfSwipeOnboardResponse,
     ShelfSwipeDraftResponse,
     ShelfSwipeDraftProductItem,
-    SellerOnboardRequest,
     ShelfProductSchema,
     ShelfProductDeckResponse,
     SwipeRecordRequest,
     ShelfSwipeCheckoutRequest,
-    ShelfCartItemSchema,
-    ShelfCartResponse,
-    ShelfChatRequest,
-    ShelfChatResponse,
-    ShelfCheckoutResult,
-    ShelfCartCheckoutRequest,
     ProductPatchRequest,
     ProductCreateRequest,
     ShopPatchRequest,
     ApproveRequest,
     ApproveResponse,
     ApproveRejectedItem,
+    ShelfSwipeSellerSummary,
+    ShelfSwipeSellerListResponse,
+    ShelfSwipeProductWithShop,
+    ShelfSwipeAllProductsResponse,
+    BuyerDeckProductItem,
+    BuyerDeckResponse,
+    BuyerSwipeRequest,
+    BuyerSwipeResponse,
 )
+from app.services.lifecycle.engine import lifecycle_engine
+from app.services.paypal.client import (
+    paypal_client,
+    safe_paypal_error_diagnostics,
+    validate_created_order_amount,
+)
+from app.services.paypal.mock_sandbox import mock_paypal
 from app.services.shelfswipe import mcp_client
-from app.services.shelfswipe.catalog import (
-    search_catalog,
-    create_multi_item_order,
-    get_cart_snapshot,
-    InsufficientStockError,
-)
 from app.services.shelfswipe.importer import (
     import_shop,
     ConsentRequiredError,
@@ -66,7 +68,6 @@ from app.services.shelfswipe.channel3_client import (
     Channel3TimeoutError,
 )
 from app.services.shelfswipe.mcp_client import McpClientError
-from app.agents.shelf_agent import shelf_agent
 
 router = APIRouter(prefix="/shelfswipe", tags=["shelfswipe"])
 logger = logging.getLogger("paytrace.shelfswipe")
@@ -539,6 +540,194 @@ def approve_seller_draft_products(
 
 
 # =========================================================
+# Onboarding History / Cross-Shop Views
+# =========================================================
+
+@router.get("/sellers", response_model=ShelfSwipeSellerListResponse)
+def list_sellers(db: Session = Depends(get_db)):
+    """
+    Returns every onboarded seller/shop so far (the 'history' of store URLs
+    that have been imported), each with its draft/live product counts.
+    """
+    rows = (
+        db.query(SSSeller, SSShop)
+        .join(SSShop, SSShop.seller_id == SSSeller.id)
+        .order_by(SSSeller.created_at.desc())
+        .all()
+    )
+
+    summaries: List[ShelfSwipeSellerSummary] = []
+    total_live_products = 0
+    for seller, shop in rows:
+        draft_count = (
+            db.query(SSProduct)
+            .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
+            .count()
+        )
+        live_count = (
+            db.query(SSProduct)
+            .filter(SSProduct.shop_id == shop.id, SSProduct.status == "live")
+            .count()
+        )
+        total_live_products += live_count
+        summaries.append(
+            ShelfSwipeSellerSummary(
+                seller_id=str(seller.id),
+                shop_id=str(shop.id),
+                shop_name=shop.name,
+                source_url=seller.source_url,
+                is_demo=shop.is_demo,
+                draft_count=draft_count,
+                live_count=live_count,
+                created_at=seller.created_at.isoformat(),
+            )
+        )
+
+    return ShelfSwipeSellerListResponse(
+        sellers=summaries,
+        total_shops=len(summaries),
+        total_live_products=total_live_products,
+    )
+
+
+@router.get("/products", response_model=ShelfSwipeAllProductsResponse)
+def list_all_products(
+    status_filter: Optional[str] = Query(default="draft", alias="status", pattern="^(draft|live|all)$"),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns products across ALL onboarded shops (not just one seller), each
+    annotated with which shop/seller it belongs to. Powers the 'All Products'
+    aggregate view; bulk-approving across shops is done by grouping the
+    returned items by seller_id and calling the existing per-seller
+    /sellers/{seller_id}/approve endpoint once per seller.
+    """
+    query = (
+        db.query(SSProduct, SSShop)
+        .join(SSShop, SSProduct.shop_id == SSShop.id)
+    )
+    if status_filter in ("draft", "live"):
+        query = query.filter(SSProduct.status == status_filter)
+
+    rows = query.order_by(SSProduct.created_at.asc()).all()
+
+    items = [
+        ShelfSwipeProductWithShop(
+            id=str(p.id),
+            external_id=p.external_id,
+            name=p.name,
+            price=float(p.price),
+            currency=p.currency,
+            image_url=p.image_url,
+            description=p.description,
+            category=p.category,
+            tags=p.tags or [],
+            stock=p.stock,
+            status=p.status,
+            data_source=p.source,
+            source_url=p.source_url,
+            provider_ref=p.provider_ref,
+            review_flags=p.review_flags or [],
+            seller_id=str(shop.seller_id),
+            shop_id=str(shop.id),
+            shop_name=shop.name,
+        )
+        for p, shop in rows
+    ]
+
+    return ShelfSwipeAllProductsResponse(products=items, total_matches=len(items))
+
+
+# =========================================================
+# Buyer Swipe Deck (live SSProduct only, across onboarded shops)
+# =========================================================
+
+@router.get("/buyer/deck", response_model=BuyerDeckResponse)
+def get_buyer_deck(
+    shop_id: Optional[str] = Query(default=None),
+    query: Optional[str] = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns live (approved) products a buyer can swipe through, optionally
+    scoped to one shop (shop_id) or spanning every onboarded shop, with an
+    optional simple keyword filter.
+    """
+    rows_query = (
+        db.query(SSProduct, SSShop)
+        .join(SSShop, SSProduct.shop_id == SSShop.id)
+        .filter(SSProduct.status == "live")
+    )
+    if shop_id:
+        rows_query = rows_query.filter(SSProduct.shop_id == shop_id)
+
+    rows = rows_query.order_by(SSProduct.created_at.desc()).all()
+
+    if query:
+        terms = {t for t in re.findall(r"[a-z0-9]+", query.lower()) if len(t) > 2}
+        if terms:
+            def matches(p: SSProduct) -> bool:
+                haystack = " ".join((p.name, p.category, p.description or "")).lower()
+                return bool(terms.intersection(re.findall(r"[a-z0-9]+", haystack)))
+            rows = [(p, shop) for p, shop in rows if matches(p)]
+
+    deck_items = [
+        BuyerDeckProductItem(
+            id=str(p.id),
+            shop_id=str(shop.id),
+            shop_name=shop.name,
+            name=p.name,
+            price=float(p.price),
+            currency=p.currency,
+            image_url=p.image_url,
+            description=p.description,
+            category=p.category,
+            tags=p.tags or [],
+            stock=p.stock,
+        )
+        for p, shop in rows
+    ]
+
+    return BuyerDeckResponse(
+        deck=deck_items,
+        total_matches=len(deck_items),
+        shop_id=shop_id,
+        query=query,
+    )
+
+
+@router.post("/buyer/swipe", response_model=BuyerSwipeResponse)
+def record_buyer_swipe(req: BuyerSwipeRequest, db: Session = Depends(get_db)):
+    """
+    Records a buyer's swipe (left=pass, right=interested) against a live
+    SSProduct. Gets-or-creates the SSBuyerProfile row for the client-generated
+    buyer_id so no separate 'create profile' round trip is needed.
+    """
+    if req.direction not in ("left", "right"):
+        raise HTTPException(status_code=400, detail="direction must be 'left' or 'right'")
+
+    product = db.query(SSProduct).filter(SSProduct.id == req.product_id, SSProduct.status == "live").first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Live product not found")
+
+    buyer = db.query(SSBuyerProfile).filter(SSBuyerProfile.id == req.buyer_id).first()
+    if not buyer:
+        buyer = SSBuyerProfile(id=req.buyer_id)
+        db.add(buyer)
+        db.flush()
+
+    db.add(SSSwipe(
+        id=str(uuid.uuid4()),
+        buyer_id=buyer.id,
+        product_id=product.id,
+        direction=req.direction,
+    ))
+    db.commit()
+
+    return BuyerSwipeResponse(status="recorded", direction=req.direction, product_id=req.product_id)
+
+
+# =========================================================
 # Legacy Compatibility Endpoints (retained for test_shelfswipe)
 # =========================================================
 
@@ -628,60 +817,6 @@ def seed_demo_catalog(db: Session) -> None:
     db.commit()
 
 
-@router.post("/onboard")
-def onboard_seller(req: SellerOnboardRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    """Loads the curated demo catalog without accessing an external merchant site."""
-    seller = db.query(Seller).filter(Seller.source_url == req.shop_url).first()
-    if not seller:
-        seller = Seller(
-            id=str(uuid.uuid4()),
-            name=req.shop_name,
-            contact_email="owner@artisan-local.dev",
-            source_url=req.shop_url,
-        )
-        db.add(seller)
-        db.flush()
-
-        for item in DEMO_CATALOG:
-            prod = ShelfProduct(
-                id=str(uuid.uuid4()),
-                seller_id=seller.id,
-                name=item["name"],
-                price=Decimal(str(item["price"])),
-                currency="USD",
-                image_url=item["image_url"],
-                description=item["description"],
-                category=item["category"],
-                stock=item["stock"],
-                status="live",
-                source="demo",
-                why_matches=item["why_matches"],
-            )
-            db.add(prod)
-        db.commit()
-
-    products = db.query(ShelfProduct).filter(ShelfProduct.seller_id == seller.id).all()
-    return {
-        "status": "demo_loaded",
-        "is_demo": True,
-        "seller_id": seller.id,
-        "seller_name": seller.name,
-        "products_count": len(products),
-        "products": [
-            {
-                "id": p.id,
-                "name": p.name,
-                "price": float(p.price),
-                "category": p.category,
-                "stock": p.stock,
-                "image_url": p.image_url,
-                "why_matches": p.why_matches,
-            }
-            for p in products
-        ]
-    }
-
-
 @router.get("/deck", response_model=ShelfProductDeckResponse)
 def get_swipe_deck(
     query: str = Query("gift", description="Natural language buyer search query"),
@@ -696,18 +831,42 @@ def get_swipe_deck(
     if count == 0:
         seed_demo_catalog(db)
 
-    # Fetch buyer's liked categories (via shared catalog ranking) to annotate the deck
     liked_swipes = db.query(SwipeAction).filter(
         SwipeAction.buyer_ref == buyer_ref,
         SwipeAction.direction == "right"
     ).all()
     liked_product_ids = [s.product_id for s in liked_swipes]
+
     liked_categories = set()
     if liked_product_ids:
         liked_prods = db.query(ShelfProduct.category).filter(ShelfProduct.id.in_(liked_product_ids)).all()
         liked_categories = {c[0] for c in liked_prods}
 
-    ranked = search_catalog(db, query, buyer_ref=buyer_ref)
+    products = db.query(ShelfProduct).filter(ShelfProduct.status == "live", ShelfProduct.stock > 0).all()
+    stop_words = {"the", "and", "for", "with", "under", "nearby", "from"}
+    query_terms = {
+        term for term in re.findall(r"[a-z0-9]+", query.lower())
+        if len(term) > 2 and term not in stop_words
+    }
+
+    def searchable_text(product: ShelfProduct) -> str:
+        return " ".join((product.name, product.category, product.description, product.why_matches or "")).lower()
+
+    if query_terms:
+        products = [
+            product for product in products
+            if query_terms.intersection(re.findall(r"[a-z0-9]+", searchable_text(product)))
+        ]
+
+    def rank_score(p: ShelfProduct):
+        score = 0
+        if p.category in liked_categories:
+            score += 50
+        product_terms = set(re.findall(r"[a-z0-9]+", searchable_text(p)))
+        score += 30 * len(query_terms.intersection(product_terms))
+        return score
+
+    ranked = sorted(products, key=rank_score, reverse=True)
 
     deck_items = [
         ShelfProductSchema(
@@ -755,91 +914,89 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
 @router.post("/checkout")
 async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
     """
-    Seamless PayPal Checkout for a single ShelfSwipe item, wired with PayTrace's lifecycle and recovery engine.
+    Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
     """
     prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
     if not prod:
         raise HTTPException(status_code=404, detail="Product not found")
+    if prod.stock < req.quantity:
+        raise HTTPException(status_code=400, detail="Insufficient stock")
 
-    try:
-        result = await create_multi_item_order(
-            db,
-            buyer_ref=req.buyer_ref,
-            items=[(prod, req.quantity)],
-            session_id=req.session_id,
-            simulate_scenario=req.simulate_scenario,
+    payment_id = str(uuid.uuid4())
+    total_amount = Decimal(str(prod.price)) * req.quantity
+    is_mock = not settings.is_paypal_configured
+
+    paypal_order_id = ""
+    approval_url = None
+
+    if settings.is_paypal_configured:
+        try:
+            order_data = await paypal_client.create_order(
+                amount=total_amount,
+                currency=prod.currency,
+                custom_id=payment_id,
+                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
+                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
+            )
+            if prod.currency != "USD":
+                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
+            validate_created_order_amount(order_data, total_amount, prod.currency)
+            paypal_order_id = order_data["id"]
+            for link in order_data.get("links", []):
+                if link.get("rel") == "approve":
+                    approval_url = link.get("href")
+        except Exception as exc:
+            diagnostics = (
+                safe_paypal_error_diagnostics(exc)
+                if isinstance(exc, httpx.HTTPStatusError)
+                else {"http_status": None, "error_type": type(exc).__name__}
+            )
+            diagnostics.update({"requested_amount": f"{total_amount:.2f}", "requested_currency": prod.currency})
+            logger.error("ShelfSwipe PayPal order creation failed", extra={"paypal_diagnostics": diagnostics})
+            raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
+
+    if is_mock:
+        order_data = mock_paypal.create_order(
+            amount=total_amount,
+            currency=prod.currency,
+            custom_id=payment_id,
         )
-    except InsufficientStockError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    except Exception as exc:
-        logger.error("ShelfSwipe single-item checkout failed", extra={"error": str(exc)})
-        raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
+        paypal_order_id = order_data["id"]
+        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
 
-    return {**result, "product_name": prod.name}
-
-
-@router.get("/cart", response_model=ShelfCartResponse)
-def get_cart(buyer_ref: str = Query(...), db: Session = Depends(get_db)):
-    """Returns the buyer's current in-progress cart, built up via the shopping assistant."""
-    return ShelfCartResponse(**get_cart_snapshot(db, buyer_ref))
-
-
-@router.post("/chat", response_model=ShelfChatResponse)
-async def shelf_chat(req: ShelfChatRequest, db: Session = Depends(get_db)):
-    """
-    Conversational shopping assistant: one prompt can name multiple products,
-    which the agent resolves, adds to the cart, and can check out on request.
-    """
-    count = db.query(ShelfProduct).count()
-    if count == 0:
-        seed_demo_catalog(db)
-
-    result = await shelf_agent.chat(
-        db=db,
-        buyer_ref=req.buyer_ref,
-        message=req.message,
-        messages=[m.model_dump() for m in req.messages],
+    # Register in PayTrace unified payment ledger
+    payment = Payment(
+        id=payment_id,
+        paypal_order_id=paypal_order_id,
+        customer_ref=req.buyer_ref,
         session_id=req.session_id,
+        amount=total_amount,
+        currency=prod.currency,
+        status="CREATED",
+        actor="human",
+        source_mode="SIMULATED" if is_mock else f"PAYPAL_{settings.paypal_mode.upper()}",
+        failure_code=req.simulate_scenario,
     )
-    checkout = ShelfCheckoutResult(**result["checkout"]) if result.get("checkout") else None
-    return ShelfChatResponse(
-        response=result["response"],
-        cart=result["cart"],
-        cart_total=result["cart_total"],
-        actions_taken=result["actions_taken"],
-        checkout=checkout,
+    db.add(payment)
+
+    lifecycle_engine.record_event(
+        db=db,
+        payment=payment,
+        event_type="CHECKOUT_ORDER_CREATED",
+        source="SHELVESWIPE_APP",
+        status="SUCCESS",
+        paypal_order_id=paypal_order_id,
+        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": prod.seller_id},
+        is_simulated=is_mock,
     )
-
-
-@router.post("/checkout/cart")
-async def checkout_cart(req: ShelfCartCheckoutRequest, db: Session = Depends(get_db)):
-    """Checks out everything currently in the buyer's cart as a single multi-item PayPal order."""
-    cart_rows = (
-        db.query(ShelfCartItem, ShelfProduct)
-        .join(ShelfProduct, ShelfCartItem.product_id == ShelfProduct.id)
-        .filter(ShelfCartItem.buyer_ref == req.buyer_ref)
-        .all()
-    )
-    if not cart_rows:
-        raise HTTPException(status_code=400, detail="Cart is empty")
-
-    items = [(product, cart_item.quantity) for cart_item, product in cart_rows]
-    try:
-        result = await create_multi_item_order(
-            db,
-            buyer_ref=req.buyer_ref,
-            items=items,
-            session_id=req.session_id,
-            simulate_scenario=req.simulate_scenario,
-        )
-    except InsufficientStockError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-    except Exception as exc:
-        logger.error("ShelfSwipe cart checkout failed", extra={"error": str(exc)})
-        raise HTTPException(status_code=502, detail="Failed to create PayPal Sandbox order") from exc
-
-    for cart_item, _ in cart_rows:
-        db.delete(cart_item)
     db.commit()
 
-    return result
+    return {
+        "payment_id": payment_id,
+        "paypal_order_id": paypal_order_id,
+        "approval_url": approval_url,
+        "amount": float(total_amount),
+        "currency": prod.currency,
+        "product_name": prod.name,
+        "is_mock": is_mock,
+    }

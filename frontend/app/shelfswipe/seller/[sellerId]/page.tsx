@@ -125,19 +125,19 @@ export default function SellerReviewApprovePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 pb-16">
+    <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] pb-16">
       {/* Top Header */}
-      <div className="border-b border-slate-200 bg-white sticky top-0 z-20">
+      <div className="border-b border-[#e2e8f0] bg-white sticky top-0 z-20">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
-              href="/shelfswipe"
-              className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+              href="/shelfswipe/seller-onboarding"
+              className="inline-flex items-center gap-1 rounded-lg border border-[#cbd5e1] px-2.5 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f1f5f9] transition-colors"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Back to Onboarding</span>
             </Link>
-            <div className="h-4 w-px bg-slate-200 hidden sm:block" />
+            <div className="h-4 w-px bg-[#e2e8f0] hidden sm:block" />
             <span className="text-xs font-bold uppercase tracking-wider text-paypal-navy hidden sm:inline">
               Catalog Readiness & Approval
             </span>
@@ -148,7 +148,7 @@ export default function SellerReviewApprovePage() {
               type="button"
               onClick={() => fetchShopAndProducts(activeTab)}
               disabled={loading}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#cbd5e1] px-2.5 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] disabled:opacity-50"
               title="Refresh"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -169,20 +169,20 @@ export default function SellerReviewApprovePage() {
       <main className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 space-y-6">
         {/* Loading State */}
         {loading && !shopData ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-16 flex flex-col items-center justify-center text-slate-500 gap-3">
+          <div className="rounded-2xl border border-[#e2e8f0] bg-white p-16 flex flex-col items-center justify-center text-[#64748b] gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-paypal-blue" />
             <p className="text-sm font-semibold">Loading merchant catalog and shop details...</p>
           </div>
         ) : error ? (
           /* Error State */
-          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 flex flex-col items-center justify-center text-center gap-3">
-            <AlertCircle className="h-10 w-10 text-rose-600" />
-            <h2 className="text-base font-bold text-rose-900">Failed to Load Seller Shop</h2>
-            <p className="text-xs text-rose-700 max-w-md">{error}</p>
+          <div className="rounded-2xl border border-[#fecdd3] bg-[#fff1f2] p-8 flex flex-col items-center justify-center text-center gap-3">
+            <AlertCircle className="h-10 w-10 text-[#e11d48]" />
+            <h2 className="text-base font-bold text-[#881337]">Failed to Load Seller Shop</h2>
+            <p className="text-xs text-[#be123c] max-w-md">{error}</p>
             <button
               type="button"
               onClick={() => fetchShopAndProducts(activeTab)}
-              className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-rose-600 px-4 py-2 text-xs font-bold text-white hover:bg-rose-700"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-[#e11d48] px-4 py-2 text-xs font-bold text-white hover:bg-[#be123c]"
             >
               <RefreshCw className="h-3.5 w-3.5" />
               Retry Loading
@@ -196,14 +196,14 @@ export default function SellerReviewApprovePage() {
             {/* Catalog Control Bar with Tabs */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2">
               {/* Tab Navigation */}
-              <div className="flex items-center gap-2 border-b border-slate-200 sm:border-0 pb-2 sm:pb-0">
+              <div className="flex items-center gap-2 border-b border-[#e2e8f0] sm:border-0 pb-2 sm:pb-0">
                 <button
                   type="button"
                   onClick={() => setActiveTab("draft")}
                   className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                     activeTab === "draft"
                       ? "bg-paypal-navy text-white shadow-xs"
-                      : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+                      : "bg-white text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
                   }`}
                 >
                   <Layers className="h-4 w-4" />
@@ -212,7 +212,7 @@ export default function SellerReviewApprovePage() {
                     className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
                       activeTab === "draft"
                         ? "bg-white/20 text-white"
-                        : "bg-slate-100 text-slate-700"
+                        : "bg-[#f1f5f9] text-[#334155]"
                     }`}
                   >
                     {activeTab === "draft" ? products.length : ""}
@@ -224,17 +224,17 @@ export default function SellerReviewApprovePage() {
                   onClick={() => setActiveTab("live")}
                   className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all ${
                     activeTab === "live"
-                      ? "bg-emerald-700 text-white shadow-xs"
-                      : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+                      ? "bg-[#047857] text-white shadow-xs"
+                      : "bg-white text-[#475569] border border-[#e2e8f0] hover:bg-[#f1f5f9]"
                   }`}
                 >
-                  <CheckCircle className="h-4 w-4 text-emerald-300" />
+                  <CheckCircle className="h-4 w-4 text-[#6ee7b7]" />
                   <span>Live Store</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
                       activeTab === "live"
                         ? "bg-white/20 text-white"
-                        : "bg-slate-100 text-slate-700"
+                        : "bg-[#f1f5f9] text-[#334155]"
                     }`}
                   >
                     {activeTab === "live" ? products.length : ""}
@@ -249,7 +249,7 @@ export default function SellerReviewApprovePage() {
                     type="button"
                     onClick={handleApproveAllValid}
                     disabled={approvingAll}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-xs disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-[#059669] px-4 py-2 text-xs font-bold text-white hover:bg-[#047857] transition-colors shadow-xs disabled:opacity-50"
                   >
                     {approvingAll ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -264,7 +264,7 @@ export default function SellerReviewApprovePage() {
 
             {/* Batch error notification */}
             {batchError && (
-              <div className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700 flex items-center gap-2">
+              <div className="rounded-xl border border-[#fecdd3] bg-[#fff1f2] p-3 text-xs text-[#be123c] flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 shrink-0" />
                 <span>{batchError}</span>
               </div>
@@ -272,12 +272,12 @@ export default function SellerReviewApprovePage() {
 
             {/* Products Grid / Empty States */}
             {products.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center">
+              <div className="rounded-2xl border border-dashed border-[#cbd5e1] bg-white p-12 text-center">
                 {activeTab === "draft" ? (
-                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-slate-500">
-                    <ShoppingBag className="h-12 w-12 text-slate-300 stroke-[1.5] mb-2" />
-                    <h3 className="text-sm font-bold text-slate-900">No Draft Products</h3>
-                    <p className="mt-1 text-xs text-slate-500">
+                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-[#64748b]">
+                    <ShoppingBag className="h-12 w-12 text-[#cbd5e1] stroke-[1.5] mb-2" />
+                    <h3 className="text-sm font-bold text-[#0f172a]">No Draft Products</h3>
+                    <p className="mt-1 text-xs text-[#64748b]">
                       All products in this catalog have been reviewed and approved to Live status, or
                       none have been imported yet.
                     </p>
@@ -291,17 +291,17 @@ export default function SellerReviewApprovePage() {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-slate-500">
-                    <CheckCircle className="h-12 w-12 text-slate-300 stroke-[1.5] mb-2" />
-                    <h3 className="text-sm font-bold text-slate-900">No Live Products Yet</h3>
-                    <p className="mt-1 text-xs text-slate-500">
+                  <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-[#64748b]">
+                    <CheckCircle className="h-12 w-12 text-[#cbd5e1] stroke-[1.5] mb-2" />
+                    <h3 className="text-sm font-bold text-[#0f172a]">No Live Products Yet</h3>
+                    <p className="mt-1 text-xs text-[#64748b]">
                       Confirm stock and approve draft products in the Draft tab to make them available
                       in your live ShelfSwipe local catalog.
                     </p>
                     <button
                       type="button"
                       onClick={() => setActiveTab("draft")}
-                      className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                      className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-[#cbd5e1] px-3.5 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
                     >
                       <Layers className="h-3.5 w-3.5" />
                       Go to Draft Review
@@ -327,9 +327,11 @@ export default function SellerReviewApprovePage() {
         ) : null}
 
         {/* Small Bottom Note */}
-        <div className="mt-12 text-center text-xs text-slate-400 flex items-center justify-center gap-1.5">
+        <div className="mt-12 text-center text-xs text-[#94a3b8] flex items-center justify-center gap-1.5">
           <Compass className="h-3.5 w-3.5" />
-          <span>Buyer deck: coming next</span>
+          <Link href="/shelfswipe/buyer-onboarding" className="hover:text-paypal-blue hover:underline">
+            Approved products just like this one show up in the buyer swipe deck &mdash; take a look
+          </Link>
         </div>
       </main>
 

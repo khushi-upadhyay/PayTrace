@@ -72,17 +72,17 @@ export function ManualProductModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-xs">
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a]/50 p-4 backdrop-blur-xs">
+      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-[#e2e8f0] overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-[#f1f5f9] px-6 py-4">
           <div>
-            <h2 className="text-base font-bold text-slate-900">Add Product Manually</h2>
-            <p className="text-xs text-slate-500">Create a new local merchant catalog item</p>
+            <h2 className="text-base font-bold text-[#0f172a]">Add Product Manually</h2>
+            <p className="text-xs text-[#64748b]">Create a new local merchant catalog item</p>
           </div>
           <button
             onClick={onClose}
-            className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1 text-[#94a3b8] hover:bg-[#f1f5f9] hover:text-[#475569]"
           >
             <X className="h-5 w-5" />
           </button>
@@ -91,15 +91,15 @@ export function ManualProductModal({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-4">
           {error && (
-            <div className="rounded-lg bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700 flex items-center gap-2">
+            <div className="rounded-lg bg-[#fff1f2] border border-[#fecdd3] p-3 text-xs text-[#be123c] flex items-center gap-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Product Name <span className="text-rose-500">*</span>
+            <label className="block text-xs font-semibold text-[#334155] mb-1">
+              Product Name <span className="text-[#f43f5e]">*</span>
             </label>
             <input
               type="text"
@@ -107,14 +107,14 @@ export function ManualProductModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Handmade Ceramic Matcha Bowl"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+              className="w-full rounded-lg border border-[#cbd5e1] px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Price (USD) <span className="text-rose-500">*</span>
+              <label className="block text-xs font-semibold text-[#334155] mb-1">
+                Price (USD) <span className="text-[#f43f5e]">*</span>
               </label>
               <input
                 type="number"
@@ -124,12 +124,12 @@ export function ManualProductModal({
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 placeholder="24.99"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                className="w-full rounded-lg border border-[#cbd5e1] px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Initial Stock <span className="text-rose-500">*</span>
+              <label className="block text-xs font-semibold text-[#334155] mb-1">
+                Initial Stock <span className="text-[#f43f5e]">*</span>
               </label>
               <input
                 type="number"
@@ -138,64 +138,64 @@ export function ManualProductModal({
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
                 placeholder="10"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                className="w-full rounded-lg border border-[#cbd5e1] px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Category</label>
+              <label className="block text-xs font-semibold text-[#334155] mb-1">Category</label>
               <input
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="Kitchen & Pottery"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                className="w-full rounded-lg border border-[#cbd5e1] px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Tags <span className="text-slate-400 font-normal">(comma-separated)</span>
+              <label className="block text-xs font-semibold text-[#334155] mb-1">
+                Tags <span className="text-[#94a3b8] font-normal">(comma-separated)</span>
               </label>
               <input
                 type="text"
                 value={tags}
                 onChange={(e) => setTags(e.target.value)}
                 placeholder="handmade, artisan, gift"
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                className="w-full rounded-lg border border-[#cbd5e1] px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Image URL</label>
+            <label className="block text-xs font-semibold text-[#334155] mb-1">Image URL</label>
             <input
               type="url"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
               placeholder="https://images.unsplash.com/..."
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+              className="w-full rounded-lg border border-[#cbd5e1] px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
+            <label className="block text-xs font-semibold text-[#334155] mb-1">Description</label>
             <textarea
               rows={3}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Detailed product description, materials, sizing..."
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+              className="w-full rounded-lg border border-[#cbd5e1] px-3 py-2 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
             />
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#f1f5f9]">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="rounded-lg border border-[#cbd5e1] px-4 py-2 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
             >
               Cancel
             </button>

@@ -66,7 +66,7 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
   };
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-xl border border-[#e2e8f0] bg-white p-6 shadow-sm">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
@@ -74,15 +74,15 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
               <Store className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-slate-900">{shop.name}</h1>
+              <h1 className="text-xl font-bold text-[#0f172a]">{shop.name}</h1>
               <div className="flex items-center gap-2 mt-0.5">
                 <SourceBadge source={shop.is_demo ? "demo" : "channel3"} />
-                <span className="text-xs text-slate-500">Seller ID: {shop.seller_id}</span>
+                <span className="text-xs text-[#64748b]">Seller ID: {shop.seller_id}</span>
               </div>
             </div>
           </div>
           {shop.description && (
-            <p className="text-sm text-slate-600 mt-2 max-w-2xl">{shop.description}</p>
+            <p className="text-sm text-[#475569] mt-2 max-w-2xl">{shop.description}</p>
           )}
         </div>
 
@@ -90,7 +90,7 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
           <button
             type="button"
             onClick={startEdit}
-            className="inline-flex items-center gap-1.5 self-start rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+            className="inline-flex items-center gap-1.5 self-start rounded-lg border border-[#cbd5e1] px-3 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc] transition-colors"
           >
             <Edit3 className="h-3.5 w-3.5" />
             Edit Location & Notes
@@ -99,17 +99,17 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
       </div>
 
       {!editing ? (
-        <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div className="mt-4 pt-4 border-t border-[#f1f5f9] grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div>
-            <span className="font-semibold text-slate-500 uppercase tracking-wider block">Pickup Notes</span>
-            <span className="text-slate-800 text-sm mt-0.5 block">
+            <span className="font-semibold text-[#64748b] uppercase tracking-wider block">Pickup Notes</span>
+            <span className="text-[#1e293b] text-sm mt-0.5 block">
               {shop.pickup_notes || "No pickup notes set"}
             </span>
           </div>
           <div>
-            <span className="font-semibold text-slate-500 uppercase tracking-wider block">Coordinates</span>
-            <span className="text-slate-800 text-sm mt-0.5 flex items-center gap-1">
-              <MapPin className="h-3.5 w-3.5 text-slate-400" />
+            <span className="font-semibold text-[#64748b] uppercase tracking-wider block">Coordinates</span>
+            <span className="text-[#1e293b] text-sm mt-0.5 flex items-center gap-1">
+              <MapPin className="h-3.5 w-3.5 text-[#94a3b8]" />
               {shop.latitude !== null && shop.longitude !== null
                 ? `${shop.latitude.toFixed(4)}, ${shop.longitude.toFixed(4)}`
                 : "Not configured"}
@@ -117,27 +117,27 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSave} className="mt-4 pt-4 border-t border-slate-100 space-y-3">
+        <form onSubmit={handleSave} className="mt-4 pt-4 border-t border-[#f1f5f9] space-y-3">
           {error && (
-            <div className="rounded-lg bg-rose-50 border border-rose-200 p-2.5 text-xs text-rose-700 flex items-center gap-2">
+            <div className="rounded-lg bg-[#fff1f2] border border-[#fecdd3] p-2.5 text-xs text-[#be123c] flex items-center gap-2">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Pickup Notes</label>
+            <label className="block text-xs font-semibold text-[#334155] mb-1">Pickup Notes</label>
             <textarea
               value={pickupNotes}
               onChange={(e) => setPickupNotes(e.target.value)}
               placeholder="e.g. Curbside pickup at the storefront entrance, 10am-5pm"
               rows={2}
-              className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+              className="w-full rounded-lg border border-[#cbd5e1] px-3 py-1.5 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Latitude <span className="text-slate-400 font-normal">(-90 to 90)</span>
+              <label className="block text-xs font-semibold text-[#334155] mb-1">
+                Latitude <span className="text-[#94a3b8] font-normal">(-90 to 90)</span>
               </label>
               <input
                 type="number"
@@ -145,12 +145,12 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
                 value={latitude}
                 onChange={(e) => setLatitude(e.target.value)}
                 placeholder="37.7749"
-                className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                className="w-full rounded-lg border border-[#cbd5e1] px-3 py-1.5 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Longitude <span className="text-slate-400 font-normal">(-180 to 180)</span>
+              <label className="block text-xs font-semibold text-[#334155] mb-1">
+                Longitude <span className="text-[#94a3b8] font-normal">(-180 to 180)</span>
               </label>
               <input
                 type="number"
@@ -158,7 +158,7 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
                 value={longitude}
                 onChange={(e) => setLongitude(e.target.value)}
                 placeholder="-122.4194"
-                className="w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
+                className="w-full rounded-lg border border-[#cbd5e1] px-3 py-1.5 text-sm focus:border-paypal-blue focus:outline-none focus:ring-1 focus:ring-paypal-blue"
               />
             </div>
           </div>
@@ -174,7 +174,7 @@ export function ShopCard({ shop, onUpdate }: ShopCardProps) {
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#cbd5e1] px-3 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f8fafc]"
             >
               <X className="h-3.5 w-3.5" />
               Cancel
