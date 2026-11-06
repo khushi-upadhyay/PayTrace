@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -209,7 +209,7 @@ export default function ShelfSwipePage() {
         <div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-800 border border-blue-200">
-              Agentic Commerce ┬╖ ShelfSwipe + PayTrace
+              Agentic Commerce · ShelfSwipe + PayTrace
             </span>
           </div>
           <h1 className="text-2xl font-extrabold text-ink mt-1 flex items-center gap-2">
@@ -239,9 +239,9 @@ export default function ShelfSwipePage() {
       </div>
 
       <div className="grid gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-xs text-slate-700 md:grid-cols-3">
-        <div><strong className="block text-blue-800">1 ┬╖ Understand intent</strong><span className="mt-1 block">Your search terms filter the persisted catalog.</span></div>
-        <div><strong className="block text-blue-800">2 ┬╖ Adapt recommendations</strong><span className="mt-1 block">Likes are stored for this demo buyer and influence category ranking.</span></div>
-        <div><strong className="block text-blue-800">3 ┬╖ Buyer approves checkout</strong><span className="mt-1 block">Purchases still go through explicit PayPal Sandbox approval.</span></div>
+        <div><strong className="block text-blue-800">1 · Understand intent</strong><span className="mt-1 block">Your search terms filter the persisted catalog.</span></div>
+        <div><strong className="block text-blue-800">2 · Adapt recommendations</strong><span className="mt-1 block">Likes are stored for this demo buyer and influence category ranking.</span></div>
+        <div><strong className="block text-blue-800">3 · Buyer approves checkout</strong><span className="mt-1 block">Purchases still go through explicit PayPal Sandbox approval.</span></div>
         <p className="md:col-span-3 border-t border-blue-200 pt-2 text-[11px] text-slate-600"><strong className="text-blue-800">Demo catalog:</strong> product records and inventory are local test data, not live merchant listings or stock.</p>
       </div>
 
@@ -271,7 +271,7 @@ export default function ShelfSwipePage() {
       {refinements.length > 0 && (
         <div className="px-4 py-2.5 rounded-lg bg-cyan-950/40 border border-cyan-800/60 text-cyan-300 text-xs flex items-center gap-2 animate-fadeIn">
           <Compass className="w-4 h-4 text-cyan-400 shrink-0" />
-          <span>{refinements.join(" ΓÇó ")}</span>
+          <span>{refinements.join(" • ")}</span>
         </div>
       )}
 
@@ -281,7 +281,7 @@ export default function ShelfSwipePage() {
         <div className="lg:col-span-7 space-y-4">
           <div className="flex items-center justify-between text-xs text-slate-400">
             <span className="font-mono">
-              {loadingDeck ? "Loading catalog..." : deckError ? "Catalog unavailable" : deck.length ? `Reviewing ${seenProductIds.length + currentIndex + 1} ┬╖ ${totalMatches} matches` : "No unreviewed matches"}
+              {loadingDeck ? "Loading catalog..." : deckError ? "Catalog unavailable" : deck.length ? `Reviewing ${seenProductIds.length + currentIndex + 1} · ${totalMatches} matches` : "No unreviewed matches"}
             </span>
             <span>Swipes adapt sample catalog ranking</span>
           </div>

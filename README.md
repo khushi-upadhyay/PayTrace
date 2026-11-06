@@ -8,7 +8,7 @@ An evidence-grounded AI investigator explains root causes, cites supporting fact
 
 ---
 
-## ðŸŒŸ Key Features
+## 🌟 Key Features
 
 1. **Cross-Signal Payment Lifecycle**
    - Correlates frontend interaction events, PayPal REST API requests/responses, and verified webhooks into an append-only chronological timeline.
@@ -37,7 +37,7 @@ An evidence-grounded AI investigator explains root causes, cites supporting fact
 
 ---
 
-## ðŸ—ï¸ Architecture & Technology Stack
+## 🏗️ Architecture & Technology Stack
 
 ```mermaid
 flowchart TD
@@ -67,43 +67,43 @@ flowchart TD
 
 ---
 
-## ðŸ“ Repository Structure
+## 📁 Repository Structure
 
 ```text
 paytrace/
-â”œâ”€â”€ frontend/                     # Next.js 14 TypeScript Frontend
-â”‚   â”œâ”€â”€ app/                      # App router pages (dashboard, payments, incidents, checkout, ShelfSwipe, etc.)
-â”‚   â”œâ”€â”€ components/               # Layout, headers, navigation, and visual panels
-â”‚   â”œâ”€â”€ lib/                      # Type-safe API client and data contracts
-â”‚   â””â”€â”€ .env.example              # Frontend environment template
-â”œâ”€â”€ backend/                      # Python FastAPI Backend
-â”‚   â”œâ”€â”€ app/
-â”‚   â”‚   â”œâ”€â”€ main.py               # FastAPI entrypoint, middleware, routers
-â”‚   â”‚   â”œâ”€â”€ api/routes/           # Versioned API routes (/api/v1) and webhooks
-â”‚   â”‚   â”œâ”€â”€ agents/               # AI Investigator & server-side evidence tools
-â”‚   â”‚   â”œâ”€â”€ core/                 # Settings, security redaction, logging, time helpers
-â”‚   â”‚   â”œâ”€â”€ db/                   # SQLAlchemy models, session factory, base
-â”‚   â”‚   â”œâ”€â”€ schemas/              # Pydantic v2 request & response validation schemas
-â”‚   â”‚   â””â”€â”€ services/             # PayPal client, mock sandbox, lifecycle, policy, detector
-â”‚   â”œâ”€â”€ migrations/               # Alembic versioned migrations
-â”‚   â”œâ”€â”€ scripts/                  # Seed demo script & CLI scenario simulator
-â”‚   â”œâ”€â”€ tests/                    # Pytest test suite (11 unit & integration tests)
-â”‚   â””â”€â”€ .env.example              # Backend environment template
-â”œâ”€â”€ docs/                         # Extended documentation
-â”‚   â”œâ”€â”€ architecture.md           # System architecture & trust boundaries
-â”‚   â”œâ”€â”€ paypal-setup.md           # PayPal developer portal setup & webhook tunneling
-â”‚   â”œâ”€â”€ ai-investigator.md        # AI investigation design & evidence tools
-â”‚   â””â”€â”€ demo-script.md            # 3-minute hackathon presentation script
-â”œâ”€â”€ postman/                      # Postman collection for reproducible API requests
-â”‚   â””â”€â”€ PayTrace.postman_collection.json
-â”œâ”€â”€ docker-compose.yml            # Multi-container orchestration (PostgreSQL, Backend, Frontend)
-â”œâ”€â”€ LICENSE                       # MIT License
-â””â”€â”€ README.md
+├── frontend/                     # Next.js 14 TypeScript Frontend
+│   ├── app/                      # App router pages (dashboard, payments, incidents, checkout, ShelfSwipe, etc.)
+│   ├── components/               # Layout, headers, navigation, and visual panels
+│   ├── lib/                      # Type-safe API client and data contracts
+│   └── .env.example              # Frontend environment template
+├── backend/                      # Python FastAPI Backend
+│   ├── app/
+│   │   ├── main.py               # FastAPI entrypoint, middleware, routers
+│   │   ├── api/routes/           # Versioned API routes (/api/v1) and webhooks
+│   │   ├── agents/               # AI Investigator & server-side evidence tools
+│   │   ├── core/                 # Settings, security redaction, logging, time helpers
+│   │   ├── db/                   # SQLAlchemy models, session factory, base
+│   │   ├── schemas/              # Pydantic v2 request & response validation schemas
+│   │   └── services/             # PayPal client, mock sandbox, lifecycle, policy, detector
+│   ├── migrations/               # Alembic versioned migrations
+│   ├── scripts/                  # Seed demo script & CLI scenario simulator
+│   ├── tests/                    # Pytest test suite (11 unit & integration tests)
+│   └── .env.example              # Backend environment template
+├── docs/                         # Extended documentation
+│   ├── architecture.md           # System architecture & trust boundaries
+│   ├── paypal-setup.md           # PayPal developer portal setup & webhook tunneling
+│   ├── ai-investigator.md        # AI investigation design & evidence tools
+│   └── demo-script.md            # 3-minute hackathon presentation script
+├── postman/                      # Postman collection for reproducible API requests
+│   └── PayTrace.postman_collection.json
+├── docker-compose.yml            # Multi-container orchestration (PostgreSQL, Backend, Frontend)
+├── LICENSE                       # MIT License
+└── README.md
 ```
 
 ---
 
-## ðŸš€ Quick Start Guide
+## 🚀 Quick Start Guide
 
 You can run PayTrace using **Docker Compose** or directly on your **local machine**.
 
@@ -201,7 +201,7 @@ You can run PayTrace using **Docker Compose** or directly on your **local machin
 
 ---
 
-## ðŸ§ª Testing
+## 🧪 Testing
 
 ### Running Backend Unit & Integration Tests
 
@@ -234,7 +234,7 @@ npm run build
 
 ---
 
-## ðŸ’³ PayPal Developer Sandbox Integration & Setup
+## 💳 PayPal Developer Sandbox Integration & Setup
 
 PayTrace integrates directly with the official PayPal Sandbox REST v2 APIs and Webhooks while preserving zero-setup mock fallback when credentials are not supplied.
 
@@ -291,7 +291,7 @@ PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver 
 
 ---
 
-## ðŸŽ¬ Step-by-Step Verification Procedure
+## 🎬 Step-by-Step Verification Procedure
 
 ### A. End-to-End Sandbox Checkout
 1. Open **PayPal Checkout** at [http://localhost:3000/checkout](http://localhost:3000/checkout). The separate sample catalog is at [http://localhost:3000/shelfswipe](http://localhost:3000/shelfswipe).
@@ -316,20 +316,20 @@ PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver 
 
 ---
 
-## ðŸ”’ Security & Privacy
+## 🔒 Security & Privacy
 
 - **Zero Secret Exposure**: No PayPal client secrets or AI keys are ever transmitted to the frontend or exposed in API responses.
 - **Privacy Masking**: Browser interaction sessions redact credit card numbers, passwords, CVV, and authentication tokens before storage.
 - **Privacy-Masked Session Replay**: Recording starts automatically unless a visitor explicitly stops it from the in-app notice. rrweb masks inputs and excludes PayPal-hosted pages. Fetch/XHR and console capture records safe metadata only; it does not collect request/response bodies, authorization headers, cookies, or credentials. Checkout remains available when recording is disabled or unavailable.
 - **Session Review**: Open **Session Replay** in the sidebar to browse recent sessions, review masked recordings and lifecycle markers, and follow linked payments. Session uploads are limited to 500 events per batch, 100 KB per event, and 10,000 events per session.
 - **Session and Tab Identity**: The cryptographically random session ID is shared across tabs and survives refreshes; each tab has its own sessionStorage ID and an expiring shared lease to detect copied tab state. The default idle timeout is 30 minutes. Configure `SESSION_IDLE_TIMEOUT_SECONDS` in the backend and `NEXT_PUBLIC_SESSION_IDLE_TIMEOUT_MS` in the frontend to the same duration. If browser storage is blocked, recording falls back to per-tab in-memory identity and cannot guarantee cross-tab continuity. A browser cannot reliably signal that a tab was permanently closed; tab end times are therefore best-effort.
-- **Timeline Semantics**: Event occurrence and ingestion times are stored separately and serialized in UTC (`Z`). Replay is separated by tab/recording segment; events outside a segmentâ€™s occurrence range remain visible without being seekable. Older events without reliable timestamps remain marked as unavailable instead of being assigned a fabricated zero offset.
+- **Timeline Semantics**: Event occurrence and ingestion times are stored separately and serialized in UTC (`Z`). Replay is separated by tab/recording segment; events outside a segment’s occurrence range remain visible without being seekable. Older events without reliable timestamps remain marked as unavailable instead of being assigned a fabricated zero offset.
 - **Human Approval**: Consequential money movements (such as refunds) cannot be executed by AI agents; they require explicit human approval via `/approvals`.
 - **Honest Evidence Boundaries**: Simulated events are tagged with `source_mode="SIMULATED"` and visibly labelled in the UI.
 
 ---
 
-## ðŸ“„ License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -348,7 +348,7 @@ cp backend/.env.example backend/.env
 # 2. Fill in real values in backend/.env
 #    PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID, AI_API_KEY, etc.
 #    Never commit this file.
-`
+```
 
 ### If a secret is accidentally exposed
 
@@ -360,5 +360,5 @@ cp backend/.env.example backend/.env
 
 - [ ] ackend/.env is in .gitignore ✅
 - [ ] ackend/.env.example has **empty** values for all secrets ✅
-- [ ] docker-compose.yml uses \ — no hardcoded secrets ✅
+- [ ] docker-compose.yml uses `${VAR}` substitution — no hardcoded secrets ✅
 - [ ] CI/CD: inject secrets via environment variables or a secrets manager, never via committed files
