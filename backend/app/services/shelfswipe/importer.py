@@ -15,6 +15,8 @@ from app.db.models.shelfswipe import (
 )
 from app.schemas.shelfswipe import McpShopCatalogSchema, McpProductSchema
 from app.services.shelfswipe import mcp_client
+from app.services.shelfswipe.catalog_provider import CatalogProvider
+from app.services.shelfswipe.fixture_provider import FixtureCatalogProvider
 
 logger = logging.getLogger("paytrace.shelfswipe.importer")
 
@@ -78,6 +80,7 @@ def compute_product_review_flags(product: McpProductSchema) -> List[str]:
     - 'no_tags': empty tag list
     - 'invalid_price': price <= 0
     - 'confirm_stock': always added, requiring seller to confirm stock before going live
+    - 'stock_unknown': added if product source is channel3
     """
     flags: List[str] = []
 
@@ -96,6 +99,56 @@ def compute_product_review_flags(product: McpProductSchema) -> List[str]:
     # Sellers must always verify stock availability at onboarding approval
     flags.append("confirm_stock")
 
+    if product.source == "channel3":
+        flags.append("stock_unknown")
+
+    return flags
+
+
+def recompute_ss_product_review_flags(product: SSProduct) -> List[str]:
+    """
+    Recomputes review flags for an SSProduct upon merchant edits:
+    - Clears missing_image if image_url is populated.
+    - Clears missing_description if description is populated.
+    - Clears no_tags if tags are present.
+    - Clears invalid_price if price > 0.
+    - Retains confirm_stock until explicitly approved.
+    - Retains stock_unknown if from channel3.
+    """
+    flags = list(product.review_flags or [])
+
+    # missing_image
+    if not product.image_url or not str(product.image_url).strip():
+        if "missing_image" not in flags:
+            flags.append("missing_image")
+    else:
+        flags = [f for f in flags if f != "missing_image"]
+
+    # missing_description
+    if not product.description or not str(product.description).strip():
+        if "missing_description" not in flags:
+            flags.append("missing_description")
+    else:
+        flags = [f for f in flags if f != "missing_description"]
+
+    # no_tags
+    if not product.tags or len(product.tags) == 0:
+        if "no_tags" not in flags:
+            flags.append("no_tags")
+    else:
+        flags = [f for f in flags if f != "no_tags"]
+
+    # invalid_price
+    if product.price <= Decimal("0.00"):
+        if "invalid_price" not in flags:
+            flags.append("invalid_price")
+    else:
+        flags = [f for f in flags if f != "invalid_price"]
+
+    # confirm_stock is retained while in draft
+    if product.status == "draft" and "confirm_stock" not in flags:
+        flags.append("confirm_stock")
+
     return flags
 
 
@@ -104,9 +157,11 @@ def import_shop(
     shop_url: str,
     consent: bool,
     seller_name: Optional[str] = None,
+    provider: Optional[CatalogProvider] = None,
+    product_urls: Optional[List[str]] = None,
 ) -> ImportResult:
     """
-    Imports a seller and their product catalog from the ShelfSwipe MCP server.
+    Imports a seller and their product catalog via a CatalogProvider.
     - Raises ConsentRequiredError if consent is False.
     - Idempotently creates or updates seller and shop.
     - Records an extraction job with status tracking.
@@ -114,6 +169,9 @@ def import_shop(
     """
     if not consent:
         raise ConsentRequiredError("Seller consent is required to import and onboard this shop catalog.")
+
+    if provider is None:
+        provider = FixtureCatalogProvider()
 
     # 1. Get or create seller
     seller = db.query(SSSeller).filter(SSSeller.source_url == shop_url).first()
@@ -145,11 +203,8 @@ def import_shop(
     db.refresh(job)
 
     try:
-        # 3. Call MCP client tool
-        raw_catalog = mcp_client.fetch_catalog(shop_url)
-
-        # 4. Validate with Pydantic v2 schema
-        catalog = McpShopCatalogSchema.model_validate(raw_catalog)
+        # 3. Fetch normalized catalog via provider
+        catalog = provider.fetch_catalog(shop_url=shop_url, product_urls=product_urls)
 
         # Update seller contact email if present in catalog and not yet set
         if catalog.contact_email and not seller.contact_email:
@@ -161,13 +216,19 @@ def import_shop(
             seller.name = catalog.shop_name
             db.flush()
 
-        # 5. Create or update shop
+        # 4. Create or update shop
         ext_shop_id = catalog.shop_id or f"shop-{seller.id[:8]}"
         shop = db.query(SSShop).filter(
             (SSShop.seller_id == seller.id) | (SSShop.external_shop_id == ext_shop_id)
         ).first()
 
-        lat, lng = get_demo_location_for_shop(catalog.shop_id)
+        is_demo = (catalog.source == "demo")
+        if is_demo:
+            lat, lng = get_demo_location_for_shop(catalog.shop_id)
+            pickup_notes = "Demo pickup location"
+        else:
+            lat, lng = None, None
+            pickup_notes = "Pending seller pickup notes"
 
         if not shop:
             shop = SSShop(
@@ -177,21 +238,25 @@ def import_shop(
                 description=catalog.description or "",
                 latitude=lat,
                 longitude=lng,
-                pickup_notes="Demo pickup location",
-                is_demo=True,
+                pickup_notes=pickup_notes,
+                source_domain=catalog.source_domain,
+                is_demo=is_demo,
             )
             db.add(shop)
             db.flush()
         else:
             shop.name = catalog.shop_name
             shop.description = catalog.description or ""
-            shop.latitude = lat
-            shop.longitude = lng
-            shop.pickup_notes = "Demo pickup location"
-            shop.is_demo = True
+            if is_demo:
+                shop.latitude = lat
+                shop.longitude = lng
+                shop.pickup_notes = pickup_notes
+            if catalog.source_domain:
+                shop.source_domain = catalog.source_domain
+            shop.is_demo = is_demo
             db.flush()
 
-        # 6. Idempotently insert products (skip already imported products)
+        # 5. Idempotently insert products (skip already imported products)
         products_created = 0
         products_skipped = 0
         all_job_review_flags: List[str] = []
@@ -227,15 +292,28 @@ def import_shop(
                 tags=p.tags,
                 stock=p.stock or 0,
                 status="draft",
-                source="demo",
+                source=p.source or ("demo" if is_demo else "channel3"),
+                source_url=p.source_url,
+                provider_ref=p.provider_ref,
                 review_flags=review_flags,
             )
             db.add(product_record)
             products_created += 1
 
-        # 7. Mark extraction job succeeded
+        # Add provider-level skipped variants/products
+        products_skipped += getattr(catalog, "skipped_count", 0)
+
+        # 6. Mark extraction job succeeded
         job.status = "succeeded"
-        job.raw_result = raw_catalog
+        if getattr(catalog, "source", "") == "channel3":
+            job.raw_result = {
+                "total_products_extracted": len(catalog.products),
+                "products_created": products_created,
+                "products_skipped": products_skipped,
+                "provider_refs": [p.provider_ref for p in catalog.products if p.provider_ref],
+            }
+        else:
+            job.raw_result = catalog.model_dump(mode="json")
         job.review_flags = all_job_review_flags
         db.commit()
 

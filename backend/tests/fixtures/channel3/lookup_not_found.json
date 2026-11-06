@@ -1,0 +1,27 @@
+{
+  "ucp": {
+    "version": "2026-04-08",
+    "capabilities": {
+      "dev.ucp.shopping.catalog.lookup": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    },
+    "extensions": {
+      "com.trychannel3.catalog.global": [
+        {
+          "version": "2026-04-08"
+        }
+      ]
+    }
+  },
+  "products": [],
+  "messages": [
+    {
+      "type": "info",
+      "code": "not_found",
+      "content": "https://example.com/products/missing-item-999"
+    }
+  ]
+}

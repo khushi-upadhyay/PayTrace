@@ -256,9 +256,9 @@ In `backend/.env` (or root `.env`):
 
 ```bash
 PAYPAL_MODE=sandbox
-PAYPAL_CLIENT_ID=your_sandbox_client_id_here
-PAYPAL_CLIENT_SECRET=your_sandbox_client_secret_here
-PAYPAL_WEBHOOK_ID=your_registered_webhook_id_here
+PAYPAL_CLIENT_ID=<your-sandbox-client-id>
+PAYPAL_CLIENT_SECRET=<your-sandbox-client-secret>
+PAYPAL_WEBHOOK_ID=<your-webhook-id>
 ```
 
 > **Security Note:** Secrets are strictly server-side. Never set secrets in `frontend/.env.local` or expose them to `NEXT_PUBLIC_*` variables.
@@ -332,3 +332,33 @@ PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Secrets
+
+**Never commit .env files.** The .gitignore already excludes .env and .env.* at every directory depth (but tracks *.example files, which must contain only empty values or safe defaults).
+
+### Setup
+
+`ash
+# 1. Copy the example file — do this once per environment
+cp backend/.env.example backend/.env
+
+# 2. Fill in real values in backend/.env
+#    PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID, AI_API_KEY, etc.
+#    Never commit this file.
+```
+
+### If a secret is accidentally exposed
+
+1. **Rotate immediately** — invalidate the key in the provider's dashboard and issue a new one.
+2. Update ackend/.env with the new key.
+3. If the secret was committed to git history, purge history (see your team lead for git filter-repo instructions) and force-push. Every teammate must then git fetch --all and git reset --hard origin/<branch> (or re-clone).
+
+### Checklist
+
+- [ ] ackend/.env is in .gitignore ✅
+- [ ] ackend/.env.example has **empty** values for all secrets ✅
+- [ ] docker-compose.yml uses `${VAR}` substitution — no hardcoded secrets ✅
+- [ ] CI/CD: inject secrets via environment variables or a secrets manager, never via committed files

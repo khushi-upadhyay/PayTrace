@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 
 type LegacyCheckoutProps = {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default function LegacyPayPalCheckoutPage({ searchParams }: LegacyCheckoutProps) {
+export default async function LegacyPayPalCheckoutPage({ searchParams }: LegacyCheckoutProps) {
   const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(searchParams)) {
+  for (const [key, value] of Object.entries(await searchParams)) {
     if (Array.isArray(value)) {
       value.forEach((entry) => params.append(key, entry));
     } else if (value !== undefined) {

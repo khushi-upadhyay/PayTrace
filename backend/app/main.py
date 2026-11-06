@@ -26,12 +26,16 @@ from app.api.routes.disputes import router as disputes_router
 setup_logging()
 logger = logging.getLogger("paytrace")
 
+_is_dev = settings.APP_ENV.strip().lower() in {"development", "test"}
+
 app = FastAPI(
     title="PayTrace API",
     description="Cross-Signal AI Payment Investigation & Observability Platform for PayPal",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    # Interactive API docs expose the full route map; keep them to development only.
+    docs_url="/docs" if _is_dev else None,
+    redoc_url="/redoc" if _is_dev else None,
+    openapi_url="/openapi.json" if _is_dev else None,
 )
 
 # CORS configuration. Credentialed requests (Authorization header) must never be paired
@@ -41,9 +45,26 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.FRONTEND_ORIGIN],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept", "X-Requested-With", "X-Checkout-Token", "Idempotency-Key"],
 )
+
+_DOCS_PATHS = ("/docs", "/redoc", "/openapi.json")
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()")
+    if request.url.path not in _DOCS_PATHS:
+        # The API serves JSON only; the interactive docs load assets from a CDN so they are exempt.
+        response.headers.setdefault("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
+    if settings.APP_ENV.strip().lower() not in {"development", "test"}:
+        response.headers.setdefault("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+    return response
 
 # Global error handler
 @app.exception_handler(Exception)

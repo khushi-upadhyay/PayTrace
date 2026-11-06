@@ -1,4 +1,8 @@
+import re
+
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+_EMAIL = re.compile(r"^[^@\s\x00]+@[^@\s\x00]+\.[^@\s\x00]+$")
 
 
 class RegisterRequest(BaseModel):
@@ -10,15 +14,14 @@ class RegisterRequest(BaseModel):
     @classmethod
     def _valid_email(cls, v: str) -> str:
         v = v.strip().lower()
-        local, _, domain = v.partition("@")
-        if not local or "." not in domain or " " in v:
+        if not _EMAIL.match(v):
             raise ValueError("Enter a valid email address")
         return v
 
     @field_validator("name")
     @classmethod
     def _strip_name(cls, v: str) -> str:
-        v = v.strip()
+        v = v.replace("\x00", "").strip()
         if not v:
             raise ValueError("Name is required")
         return v
@@ -27,6 +30,7 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
+    remember: bool = True
 
 
 class UserResponse(BaseModel):

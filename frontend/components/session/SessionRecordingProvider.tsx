@@ -109,7 +109,7 @@ export function SessionRecordingProvider({ children }: { children: ReactNode }) 
   const enqueue = useCallback((raw: BrowserSessionEvent) => {
     const event = decorate(raw);
     try {
-      if (new TextEncoder().encode(JSON.stringify({ payload: event.payload ?? {}, attributes: event.attributes ?? {} })).byteLength > 95_000) {
+      if (new TextEncoder().encode(JSON.stringify({ payload: event.payload ?? {}, attributes: event.attributes ?? {} })).byteLength > 950_000) {
         setRecordingError("An oversized replay event was skipped to stay within the server's per-event limit.");
         return;
       }

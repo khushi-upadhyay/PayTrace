@@ -171,7 +171,7 @@ export default function InvestigateHubPage() {
           <p className="mb-2 text-xs font-medium text-slate-600">Suggested questions</p>
           <div className="flex flex-wrap gap-2">{promptSuggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => setQuestion(suggestion)} className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:border-cyan-500 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">{suggestion}</button>)}</div>
         </div>
-        {error && <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{error}</div>}
+        {error && <div role="alert" className="rounded-lg border border-rose-700 bg-rose-950 px-3 py-2 text-sm text-rose-300">{error}</div>}
 
         {incidentContext && <section aria-label="Incident investigation context" className="rounded-xl border border-blue-200 bg-blue-50 p-4 text-slate-800">
           <div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-[10px] font-semibold uppercase tracking-wider text-blue-700">Incident context · {incidentContext.severity} · {incidentContext.status}</p><h2 className="mt-1 text-sm font-bold">{incidentContext.title}</h2><p className="mt-1 text-xs text-slate-600">Rule: {incidentContext.detection_rule || "not recorded"} · {incidentContext.affected_payment_count} affected · {incidentContext.revenue_at_risk} {incidentContext.currency}</p></div><Link href={`/incidents/${incidentContext.id}`} className="text-xs font-semibold text-blue-700 hover:underline">Open incident record →</Link></div>

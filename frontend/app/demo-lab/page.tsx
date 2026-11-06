@@ -39,19 +39,19 @@ export default function DemoLabPage() {
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">Generate controlled, labelled payment failure scenarios using PayTrace’s observability pipeline. These records are simulated evidence, not PayPal Sandbox transactions or verified provider events.</p>
       </div>
     </header>
-    {error && <div role="alert" className="rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-800"><AlertTriangle className="mr-2 inline h-4 w-4" />{error}</div>}
-    {notice && <div role="status" className="rounded-xl border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-800"><CheckCircle2 className="mr-2 inline h-4 w-4" />{notice.message}{notice.paymentId && <> <Link className="ml-2 underline" href={`/payments/${notice.paymentId}`}>Inspect payment</Link></>}</div>}
+    {error && <div role="alert" className="rounded-xl border border-rose-700 bg-rose-950 p-4 text-sm text-rose-300"><AlertTriangle className="mr-2 inline h-4 w-4" />{error}</div>}
+    {notice && <div role="status" className="rounded-xl border border-emerald-700 bg-emerald-950 p-4 text-sm text-emerald-300"><CheckCircle2 className="mr-2 inline h-4 w-4" />{notice.message}{notice.paymentId && <> <Link className="ml-2 underline" href={`/payments/${notice.paymentId}`}>Inspect payment</Link></>}</div>}
     <section className="grid gap-4 md:grid-cols-2" aria-label="Demo scenarios">
       {SCENARIOS.map(({ id, title, detail, icon: Icon }) => <article key={id} className="glass-panel rounded-xl border border-slate-800 p-5">
-        <div className="flex items-start gap-3"><span className="rounded-lg bg-slate-100 p-2 text-paypal-blue"><Icon className="h-5 w-5" /></span><div><h2 className="font-semibold text-ink">{title}</h2><p className="mt-1 text-sm leading-relaxed text-slate-500">{detail}</p></div></div>
+        <div className="flex items-start gap-3"><span className="rounded-lg bg-cyan-950 p-2 text-paypal-blue"><Icon className="h-5 w-5" /></span><div><h2 className="font-semibold text-ink">{title}</h2><p className="mt-1 text-sm leading-relaxed text-slate-500">{detail}</p></div></div>
         <button type="button" disabled={!!busy} onClick={() => void run(id)} className="mt-5 inline-flex items-center gap-2 rounded-lg bg-paypal-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-paypal-blue disabled:opacity-50">
           {busy === id ? <Loader2 className="h-4 w-4 animate-spin" /> : <FlaskConical className="h-4 w-4" />} Generate scenario
         </button>
       </article>)}
     </section>
-    <section className="rounded-xl border border-rose-300/70 bg-rose-50/70 p-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="font-semibold text-rose-900">Reset demo data</h2><p className="mt-1 max-w-2xl text-sm text-rose-800/80">Available only where the backend explicitly enables development/test resets. The server protects other environments.</p></div>
-        <button type="button" disabled={!!busy} onClick={() => void reset()} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-rose-400 px-4 py-2.5 text-sm font-semibold text-rose-900 hover:bg-rose-100 disabled:opacity-50">{busy === "reset" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />} Reset demo dataset</button></div>
+    <section className="rounded-xl border border-rose-700 bg-rose-950 p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="font-semibold text-rose-300">Reset demo data</h2><p className="mt-1 max-w-2xl text-sm text-rose-400">Available only where the backend explicitly enables development/test resets. The server protects other environments.</p></div>
+        <button type="button" disabled={!!busy} onClick={() => void reset()} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-rose-500 bg-rose-900 px-4 py-2.5 text-sm font-semibold text-rose-300 hover:bg-rose-800 disabled:opacity-50">{busy === "reset" ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCcw className="h-4 w-4" />} Reset demo dataset</button></div>
     </section>
   </div>;
 }

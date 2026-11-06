@@ -96,6 +96,16 @@ class DisputeEngine:
         if dispute.status not in ("OPEN", "UNDER_REVIEW"):
             raise DisputeError(f"Dispute {dispute_id} is already in a terminal state ({dispute.status}).")
 
+        if accept_liability:
+            # Compare-and-set claim: of several simultaneous responses, exactly one may resolve the dispute.
+            claimed = db.query(Dispute).filter(
+                Dispute.id == dispute_id, Dispute.status.in_(("OPEN", "UNDER_REVIEW"))
+            ).update({"status": "RESOLVED_BUYER_FAVOUR"}, synchronize_session=False)
+            if not claimed:
+                db.rollback()
+                raise DisputeError(f"Dispute {dispute_id} is already in a terminal state.")
+            db.refresh(dispute)
+
         payment = db.query(Payment).filter(Payment.id == dispute.payment_id).first()
         now = utc_now()
         dispute.seller_response = redact_sensitive_data(seller_response.strip())

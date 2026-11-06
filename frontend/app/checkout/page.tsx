@@ -55,6 +55,7 @@ function CheckoutContent() {
   const [unapprovedWarning, setUnapprovedWarning] = useState<string | null>(null);
 
   const capturedOrders = useRef<Set<string>>(new Set());
+  const orderAttempt = useRef<{ fingerprint: string; key: string } | null>(null);
   const inFlightOrders = useRef<Set<string>>(new Set());
 
   // Restore pending active order from localStorage if available
@@ -124,14 +125,20 @@ function CheckoutContent() {
       setCancelledMessage(null);
       setUnapprovedWarning(null);
 
-      // 1. Create Order via FastAPI
-      const orderRes = await api.createOrder({
+      // 1. Create Order via FastAPI. The same key is reused while the request is unchanged, so a retry or
+      // double submit returns the original order instead of creating a second one.
+      const orderRequest = {
         amount: selectedProduct.price,
         currency: CHECKOUT_CURRENCY,
         customer_ref: buyerEmail,
         session_id: sessionId || undefined,
         simulate_scenario: scenario === "normal" ? undefined : scenario,
-      });
+      };
+      const fingerprint = JSON.stringify(orderRequest);
+      if (orderAttempt.current?.fingerprint !== fingerprint) {
+        orderAttempt.current = { fingerprint, key: crypto.randomUUID() };
+      }
+      const orderRes = await api.createOrder(orderRequest, orderAttempt.current.key);
       addSessionMarker("checkout_order_created", {
         payment_id: orderRes.payment_id,
         amount: selectedProduct.price,
@@ -204,6 +211,7 @@ function CheckoutContent() {
       return;
     }
     capturedOrders.current.add(orderId);
+    orderAttempt.current = null; // the next purchase gets a fresh idempotency key
 
     try {
       setWaitingApproval(false);
