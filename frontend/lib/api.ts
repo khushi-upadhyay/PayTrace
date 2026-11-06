@@ -105,27 +105,34 @@ export interface AuthTokenResponse {
   user: AuthUser;
 }
 
-const AUTH_TOKEN_KEY = "paytrace.auth.token";
 let unauthorizedHandler: (() => void) | null = null;
 
-export function getAuthToken(): string | null {
-  if (typeof window === "undefined") return null;
+const CHECKOUT_TOKENS_KEY = "paytrace.checkout.tokens";
+const ORDER_PATH = /^\/paypal\/orders\/([^/?]+)/;
+
+function readCheckoutTokens(): Record<string, string> {
   try {
-    return localStorage.getItem(AUTH_TOKEN_KEY) ?? sessionStorage.getItem(AUTH_TOKEN_KEY);
+    return JSON.parse(sessionStorage.getItem(CHECKOUT_TOKENS_KEY) || "{}");
   } catch {
-    return null;
+    return {};
   }
 }
 
-/** Persists the token (localStorage when `remember`, else this tab only); null clears it. */
-export function setAuthToken(token: string | null, remember = true): void {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    sessionStorage.removeItem(AUTH_TOKEN_KEY);
-    if (token) (remember ? localStorage : sessionStorage).setItem(AUTH_TOKEN_KEY, token);
-  } catch {
-    /* storage unavailable */
+/** Per-order checkout tokens issued by the backend; kept for this tab so the PayPal redirect round-trip can still capture. */
+function rememberCheckoutTokens(body: unknown): void {
+  if (typeof window === "undefined" || !body || typeof body !== "object") return;
+  const found: Array<Record<string, unknown>> = [body as Record<string, unknown>];
+  const nested = (body as Record<string, unknown>).checkout;
+  if (nested && typeof nested === "object") found.push(nested as Record<string, unknown>);
+  for (const item of found) {
+    const orderId = item.paypal_order_id;
+    const token = item.checkout_token;
+    if (typeof orderId !== "string" || typeof token !== "string") continue;
+    try {
+      sessionStorage.setItem(CHECKOUT_TOKENS_KEY, JSON.stringify({ ...readCheckoutTokens(), [orderId]: token }));
+    } catch {
+      /* storage unavailable */
+    }
   }
 }
 
@@ -137,9 +144,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const url = `${getApiBaseUrl()}${API_PREFIX}${path}`;
   const headers = new Headers(init?.headers);
   headers.set("Accept", "application/json");
-  const authToken = getAuthToken();
-  if (authToken && !headers.has("Authorization")) {
-    headers.set("Authorization", `Bearer ${authToken}`);
+  // The session lives in an HttpOnly cookie; this header is the CSRF guard the API requires on writes.
+  headers.set("X-Requested-With", "PayTrace");
+  const orderMatch = typeof window !== "undefined" ? ORDER_PATH.exec(path) : null;
+  if (orderMatch && !headers.has("X-Checkout-Token")) {
+    const checkoutToken = readCheckoutTokens()[decodeURIComponent(orderMatch[1])];
+    if (checkoutToken) headers.set("X-Checkout-Token", checkoutToken);
   }
   if (init?.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
@@ -147,7 +157,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   let res: Response;
   try {
-    res = await fetch(url, { ...init, headers });
+    res = await fetch(url, { ...init, headers, credentials: "include" });
   } catch (err) {
     const failure = classifyFetchFailure(err);
     const reason = err instanceof Error ? err.message : "Unknown browser fetch error";
@@ -161,7 +171,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   if (!res.ok) {
     const { message, detail } = await extractErrorMessage(res);
-    if (res.status === 401 && authToken && !path.startsWith("/auth/")) {
+    if (res.status === 401 && !path.startsWith("/auth/")) {
       unauthorizedHandler?.();
     }
     throw new ApiError(message, res.status, detail);
@@ -171,7 +181,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     return undefined as T;
   }
 
-  return (await res.json()) as T;
+  const data = (await res.json()) as T;
+  rememberCheckoutTokens(data);
+  return data;
 }
 
 export interface PaymentItem {
@@ -329,6 +341,7 @@ export interface OrderCreateResponse {
   status: string;
   approval_url: string | null;
   is_mock: boolean;
+  checkout_token?: string | null;
 }
 
 export interface OrderCaptureResponse {
@@ -619,11 +632,15 @@ export const api = {
     return request<AuthUser>("/auth/me");
   },
 
-  login(email: string, password: string): Promise<AuthTokenResponse> {
+  login(email: string, password: string, remember = true): Promise<AuthTokenResponse> {
     return request<AuthTokenResponse>("/auth/login", {
       method: "POST",
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, remember }),
     });
+  },
+
+  logout(): Promise<void> {
+    return request<void>("/auth/logout", { method: "POST" });
   },
 
   register(name: string, email: string, password: string): Promise<AuthTokenResponse> {
@@ -734,10 +751,11 @@ export const api = {
     return request<PaymentSessionInfo>(`/payments/${encodeURIComponent(paymentId)}/session`);
   },
 
-  createOrder(body: OrderCreateRequest): Promise<OrderCreateResponse> {
+  createOrder(body: OrderCreateRequest, idempotencyKey?: string): Promise<OrderCreateResponse> {
     return request<OrderCreateResponse>("/paypal/orders", {
       method: "POST",
       body: JSON.stringify(body),
+      headers: idempotencyKey ? { "Idempotency-Key": idempotencyKey } : undefined,
     });
   },
 

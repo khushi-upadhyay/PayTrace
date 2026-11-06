@@ -45,7 +45,7 @@ export default function DisputesPage() {
     <div className="space-y-6 max-w-7xl mx-auto animate-fadeIn">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="font-display text-4xl font-bold tracking-tight text-black">Disputes <span className="ml-2 align-middle rounded-full border border-amber-700/40 bg-amber-50 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-800">Experimental</span></h1>
+          <h1 className="font-display text-4xl font-bold tracking-tight text-black">Disputes <span className="ml-2 align-middle rounded-full border border-amber-500/50 bg-amber-950 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-300">Experimental</span></h1>
           <p className="text-base text-black/70 mt-2">
             Every buyer dispute linked to a payment, with response deadlines and resolution state.
             This sandbox simulates disputes locally — none of these call PayPal&apos;s live Disputes API.

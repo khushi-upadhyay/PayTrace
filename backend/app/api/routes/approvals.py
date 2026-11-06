@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+import logging
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from typing import List
+from app.core.audit import audit
 from app.api.dependencies import get_current_user, get_db
 from app.db.models.approval_ticket import ApprovalTicket
 from app.db.models.user import User
@@ -11,6 +13,7 @@ from app.schemas.approval import (
 )
 from app.services.policy.engine import policy_engine
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/approvals", tags=["Approvals"])
 
 @router.get("", response_model=List[ApprovalTicketResponse])
@@ -23,6 +26,7 @@ def list_approvals(db: Session = Depends(get_db), user: User = Depends(get_curre
 async def decide_approval_ticket(
     ticket_id: str,
     req: ApprovalDecisionRequest,
+    request: Request,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
@@ -39,6 +43,7 @@ async def decide_approval_ticket(
             operator_token=req.operator_token,
             notes=req.notes,
         )
+        audit("approval_decision", request, user=user.id, ticket=ticket_id, decision=req.decision, status=ticket.status)
         return ApprovalDecisionResponse(
             ticket_id=ticket.id,
             decision=req.decision,
@@ -48,5 +53,6 @@ async def decide_approval_ticket(
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Execution error: {str(e)}")
+    except Exception:
+        logger.error(f"Approval execution failed for ticket {ticket_id}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Execution error. See server logs for details.")

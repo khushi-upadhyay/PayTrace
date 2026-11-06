@@ -22,15 +22,18 @@ export function sanitizeRequestUrl(value, baseUrl) {
   } catch { return "unavailable"; }
 }
 
-export function sanitizeLogText(value) {
+export function sanitizeLogText(value, maxLength = 240) {
   return String(value ?? "")
     .replace(/https?:\/\/\S+/gi, "[URL]")
     .replace(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi, "[EMAIL]")
     .replace(SECRET_ASSIGNMENT, "$1=[REDACTED]")
     .replace(/\b(?:\d[ -]*?){13,19}\b/g, "[REDACTED_CARD]")
     .replace(/\+?\d[\d\s().-]{7,}\d/g, "[REDACTED_NUMBER]")
-    .slice(0, 240);
+    .slice(0, maxLength);
 }
+
+// SVG geometry (icon paths, chart coordinates) is numeric by nature, not personal data.
+const SVG_GEOMETRY = new Set(["d", "viewbox", "points", "x", "y", "x1", "x2", "y1", "y2", "cx", "cy", "r", "rx", "ry", "transform", "stroke-dasharray", "stroke-dashoffset"]);
 
 export function sanitizeRrwebEvent(event, baseUrl) {
   const urlFields = new Set(["href", "src", "action", "formaction", "url"]);
@@ -39,11 +42,13 @@ export function sanitizeRrwebEvent(event, baseUrl) {
     if (typeof value === "string") {
       if (key === "_cssText") return value;
       if (sensitiveField.test(key)) return "[REDACTED]";
+      if (SVG_GEOMETRY.has(key.toLowerCase())) return value;
       if (urlFields.has(key.toLowerCase())) {
         if (/^(data|blob|javascript):/i.test(value)) return "[REDACTED_URL]";
         return sanitizeRequestUrl(value, baseUrl);
       }
-      return sanitizeLogText(value);
+      // Recorded page text must replay intact (long class lists, paths); the server enforces the size limit.
+      return sanitizeLogText(value, Infinity);
     }
     if (Array.isArray(value)) return value.map((entry) => visit(entry, key));
     if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([childKey, entry]) => [childKey, visit(entry, childKey)]));

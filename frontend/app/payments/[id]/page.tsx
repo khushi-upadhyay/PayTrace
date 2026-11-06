@@ -326,7 +326,7 @@ export default function PaymentDetailPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <Link href={`/investigate?payment_id=${encodeURIComponent(payment.id)}`} className="inline-flex items-center gap-2 rounded-lg border border-cyan-200 bg-blue-50 px-3 py-2 text-xs font-semibold text-cyan-800 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">
+            <Link href={`/investigate?payment_id=${encodeURIComponent(payment.id)}`} className="inline-flex items-center gap-2 rounded-lg border border-cyan-700 bg-cyan-950 px-3 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">
               <Brain className="h-3.5 w-3.5" /> Ask AI about this payment
             </Link>
             {/* Status Pill */}

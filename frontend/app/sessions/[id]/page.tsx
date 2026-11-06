@@ -177,10 +177,9 @@ export default function SessionReplayPage() {
           seekPreservingPlayback(localPlayer, pendingSeek.current, playing);
           pendingSeek.current = null;
         } else {
-          // Start playback automatically so the recording doesn't sit on a blank frame
-          // waiting for a click.
-          localPlayer.play(0);
-          setPlaying(true);
+          // Draw the first frame and wait: playback starts only when the user presses Play.
+          localPlayer.pause(0);
+          setPlaying(false);
         }
         requestAnimationFrame(applyFit);
       } catch (err) { setPlayerError(err instanceof Error ? err.message : "The stored recording could not be replayed."); }

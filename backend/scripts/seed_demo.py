@@ -2,7 +2,7 @@ import sys
 import os
 import uuid
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Ensure backend root is in sys.path
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
@@ -16,6 +16,7 @@ from app.db.models.incident import Incident
 from app.db.models.approval_ticket import ApprovalTicket
 from app.db.models.ai_investigation import AIInvestigation
 from app.core.time import utc_now
+from scripts.demo_replay import build_demo_replay
 from sqlalchemy.orm import Session
 
 def run_seed(db: Session):
@@ -154,6 +155,17 @@ def run_seed(db: Session):
         event_type="spinner_stall_detected", payload_redacted={"warning": "Client observed loading spinner for >5s"}
     )
     db.add_all([s_ev1, s_ev2, s_ev3])
+
+    # Recorded page for the replay player; the journey events above are linked to it by tab and segment.
+    for ev in (s_ev1, s_ev2, s_ev3):
+        ev.tab_id, ev.segment_id, ev.route = "demo-tab-1", "demo-segment-1", "/checkout"
+    for rr in build_demo_replay(timeout_time):
+        db.add(SessionEvent(
+            id=str(uuid.uuid4()), session_id=timeout_session_id,
+            occurred_at=datetime.fromtimestamp(rr["timestamp"] / 1000, tz=timezone.utc).replace(tzinfo=None),
+            event_type="rrweb", category="replay", source="browser",
+            tab_id="demo-tab-1", segment_id="demo-segment-1", route="/checkout", payload_redacted=rr,
+        ))
 
     # 3. Denied payment (INSTRUMENT_DECLINED)
     denied_pid = "demo-declined-payment-002"

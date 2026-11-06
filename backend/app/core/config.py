@@ -24,9 +24,72 @@ class Settings(BaseSettings):
     AI_PROVIDER: str = "openai"
     AI_API_KEY: Optional[str] = ""
     AI_MODEL: str = "gpt-4o-mini"
+    AI_BASE_URL: Optional[str] = None
+    GROK_API_KEY: Optional[str] = None
+    XAI_API_KEY: Optional[str] = None
+    GROQ_API_KEY: Optional[str] = None
+    OPENAI_API_KEY: Optional[str] = None
 
-    DEMO_OPERATOR_TOKEN: str = "demo-operator-secret-token"
+    @property
+    def effective_ai_provider(self) -> str:
+        """Normalized AI provider: 'openai', 'grok', 'xai', or 'groq'."""
+        prov = (self.AI_PROVIDER or "").strip().lower()
+        if prov in ("grok", "xai"):
+            key = self.effective_ai_api_key
+            if key and key.startswith("gsk_"):
+                return "groq"
+            return "grok"
+        if prov == "groq":
+            return "groq"
+        return "openai"
+
+    @property
+    def effective_ai_api_key(self) -> str:
+        """Resolves the active API key across provider-specific and general settings."""
+        if self.AI_API_KEY and len(self.AI_API_KEY.strip()) > 0:
+            return self.AI_API_KEY.strip()
+        prov = (self.AI_PROVIDER or "").strip().lower()
+        if prov in ("grok", "xai"):
+            return (self.XAI_API_KEY or self.GROK_API_KEY or self.GROQ_API_KEY or "").strip()
+        if prov == "groq":
+            return (self.GROQ_API_KEY or "").strip()
+        return (self.OPENAI_API_KEY or "").strip()
+
+    @property
+    def effective_ai_endpoint(self) -> str:
+        """Resolves chat completions API endpoint for OpenAI, Grok (xAI), or Groq."""
+        if self.AI_BASE_URL and self.AI_BASE_URL.strip():
+            url = self.AI_BASE_URL.strip().rstrip("/")
+            if not url.endswith("/chat/completions"):
+                url = f"{url}/chat/completions"
+            return url
+        prov = self.effective_ai_provider
+        if prov == "grok":
+            return "https://api.x.ai/v1/chat/completions"
+        elif prov == "groq":
+            return "https://api.groq.com/openai/v1/chat/completions"
+        return "https://api.openai.com/v1/chat/completions"
+
+    @property
+    def effective_ai_model(self) -> str:
+        """Resolves the model name, providing suitable defaults if switching providers."""
+        prov = self.effective_ai_provider
+        configured_model = (self.AI_MODEL or "").strip()
+        if prov == "grok":
+            if not configured_model or configured_model.startswith("gpt-"):
+                return "grok-2-latest"
+            return configured_model
+        elif prov == "groq":
+            if not configured_model or configured_model.startswith("gpt-") or configured_model.startswith("grok") or "llama" in configured_model:
+                return "openai/gpt-oss-120b"
+            return configured_model
+        return configured_model or "gpt-4o-mini"
+
     AUTH_SECRET_KEY: str = "dev-only-change-me-paytrace-auth-secret"
+    RATE_LIMIT_ENABLED: bool = True
+    MAX_ORDER_AMOUNT: float = 10000.00
+    # Session cookie: "lax" works when the web app and API share a registrable domain (localhost, app.x.com + api.x.com).
+    COOKIE_SAMESITE: Literal["lax", "strict", "none"] = "lax"
     AUTH_TOKEN_TTL_MINUTES: int = 720
     FRONTEND_ORIGIN: str = "http://localhost:3000"
     OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
@@ -40,11 +103,20 @@ class Settings(BaseSettings):
     )
 
     @property
+    def cookie_secure(self) -> bool:
+        return self.COOKIE_SAMESITE == "none" or self.APP_ENV.strip().lower() not in {"development", "test"}
+
+    @property
+    def registration_open(self) -> bool:
+        return self.APP_ENV.strip().lower() in {"development", "test"}
+
+    @property
     def is_paypal_configured(self) -> bool:
         return bool(self.PAYPAL_CLIENT_ID and self.PAYPAL_CLIENT_SECRET)
 
     @property
     def is_ai_configured(self) -> bool:
-        return bool(self.AI_API_KEY and len(self.AI_API_KEY.strip()) > 5)
+        key = self.effective_ai_api_key
+        return bool(key and len(key) > 5)
 
 settings = Settings()
