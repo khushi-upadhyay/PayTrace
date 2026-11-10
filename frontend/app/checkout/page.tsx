@@ -388,8 +388,7 @@ function CheckoutContent() {
                     Merchant Backend Timeout / Ambiguous Capture State (Recommended Demo)
                   </span>
                   <span className="text-[11px] text-amber-300/80">
-                    PayPal captures order, but merchant times out before receiving the HTTP response.
-                    PayTrace halts blind retry to prevent duplicate charges.
+                    With Sandbox credentials, PayTrace makes one real capture request and simulates losing the merchant response. Without credentials, it uses the labeled mock demo flow.
                   </span>
                 </div>
               </label>

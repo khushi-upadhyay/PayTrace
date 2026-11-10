@@ -25,13 +25,13 @@ export default function InvestigateHubPage() {
   const [loading, setLoading] = useState(false);
 
   // Chat follow-up
-  const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([]);
+  const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string; activity?: { nodes: string[]; tools: string[]; tracing: boolean; answerMode: string; model: string; fallbackReason: string | null } }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const chatThreadEndRef = useRef<HTMLDivElement | null>(null);
   const autoInvestigatedIncidents = useRef(new Set<string>());
-  const promptSuggestions = ["Why did this payment fail?", "Why is this payment uncertain?", "Show the complete payment lifecycle", "Were any webhook events recorded?", "Is this payment linked to a browser session?", "What should I investigate next?"];
+  const promptSuggestions = ["Why did checkout failures increase in the last 15 minutes?", "Which failure pattern affects the most transactions?", "Are failures related to PayPal API latency or merchant backend errors?", "Which transactions require reconciliation?"];
 
   // The chat thread is a fixed-height scrollable box; without this, new
   // messages render below the visible fold and the chat looks dead.
@@ -69,7 +69,6 @@ export default function InvestigateHubPage() {
 
   const handleRunInvestigation = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!selectedPaymentId && !incidentContext) return;
 
     try {
       setLoading(true);
@@ -96,7 +95,7 @@ export default function InvestigateHubPage() {
 
     try {
       const res = await api.chatInvestigator(incidentContext ? null : selectedPaymentId || null, newMessages, userMsg.content, incidentContext?.id);
-      setChatMessages([...newMessages, { role: "assistant", content: res.response }]);
+      setChatMessages([...newMessages, { role: "assistant", content: res.response, activity: { nodes: res.workflow_nodes || [], tools: res.tool_calls || [], tracing: res.langsmith_tracing_enabled === true, answerMode: res.answer_mode, model: [res.model_provider, res.model_name].filter(Boolean).join(" / "), fallbackReason: res.fallback_reason } }]);
     } catch (err: any) {
       setChatMessages([
         ...newMessages,
@@ -128,13 +127,14 @@ export default function InvestigateHubPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Payment Selector */}
           <div className="md:col-span-5 space-y-1.5">
-            <label className="text-xs text-slate-400">{incidentContext ? "Affected payment (incident context is active)" : "Select Target Payment"}</label>
+            <label className="text-xs text-slate-400">{incidentContext ? "Affected payment (incident context is active)" : "Investigation scope"}</label>
             <select
               value={selectedPaymentId}
               onChange={(e) => setSelectedPaymentId(e.target.value)}
               disabled={Boolean(incidentContext)}
               className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2.5 text-xs text-ink focus:outline-none focus:border-cyan-500"
             >
+              {!incidentContext && <option value="">All recent transactions (incident command)</option>}
               {payments.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.status} - ${Number(p.amount).toFixed(2)} ({p.id.slice(0, 10)}... {p.failure_code || "Normal"})
@@ -151,13 +151,13 @@ export default function InvestigateHubPage() {
                 type="text"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Ask investigator to explain root cause..."
+                placeholder="Ask about one payment or recent fleet-wide failure patterns..."
                 className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3.5 py-2 text-xs text-ink focus:outline-none focus:border-cyan-500"
               />
               <button
                 type="button"
                 onClick={() => handleRunInvestigation()}
-                disabled={loading || (!selectedPaymentId && !incidentContext)}
+                disabled={loading}
                 className="px-5 py-2 bg-cyan-500 hover:bg-cyan-400 text-onsolid font-bold text-xs rounded-lg transition-all duration-150 shadow-md shadow-cyan-500/20 flex items-center gap-1.5 shrink-0 disabled:opacity-50"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -169,7 +169,7 @@ export default function InvestigateHubPage() {
 
         <div className="border-t border-slate-200 pt-3">
           <p className="mb-2 text-xs font-medium text-slate-600">Suggested questions</p>
-          <div className="flex flex-wrap gap-2">{promptSuggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => setQuestion(suggestion)} className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:border-cyan-500 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">{suggestion}</button>)}</div>
+          <div className="flex flex-wrap gap-2">{promptSuggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => { setQuestion(suggestion); setSelectedPaymentId(""); }} className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:border-cyan-500 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">{suggestion}</button>)}</div>
         </div>
         {error && <div role="alert" className="rounded-lg border border-rose-700 bg-rose-950 px-3 py-2 text-sm text-rose-300">{error}</div>}
 
@@ -200,6 +200,9 @@ export default function InvestigateHubPage() {
             </span>
             <span className="text-slate-500">•</span>
             <span className="text-slate-400 text-[11px]">{selectedPayment.customer_ref}</span>
+            <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold ${selectedPayment.source_mode === "SIMULATED" ? "border-amber-800 bg-amber-950 text-amber-300" : "border-emerald-800 bg-emerald-950 text-emerald-300"}`}>
+              {selectedPayment.source_mode === "SIMULATED" ? "Simulated payment" : `${selectedPayment.source_mode.replace("PAYPAL_", "PayPal ")} payment`}
+            </span>
           </div>
         )}
       </div>
@@ -221,7 +224,7 @@ export default function InvestigateHubPage() {
       {investigation && !loading && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fadeIn">
           {/* Main Structured Findings (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className={`${selectedPayment || incidentContext ? "lg:col-span-7" : "lg:col-span-12"} space-y-6`}>
             <div className="glass-panel rounded-2xl p-6 border border-cyan-500/20 glow-blue space-y-6">
               {/* Header */}
               <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -247,6 +250,17 @@ export default function InvestigateHubPage() {
                   </span>
                 </div>
               </div>
+
+              <section aria-label="AI workflow activity" className="rounded-lg border border-slate-700 bg-slate-900/70 p-3 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-[10px]">
+                  <span className="font-bold uppercase tracking-wide text-slate-300">Workflow: {investigation.execution_mode.replaceAll("_", " ")}</span>
+                  <span className={investigation.langsmith_tracing_enabled ? "text-emerald-300" : "text-amber-300"}>
+                    LangSmith tracing {investigation.langsmith_tracing_enabled ? "configured" : "not configured"}
+                  </span>
+                </div>
+                <p className="text-[10px] text-slate-400">Nodes: {(investigation.workflow_nodes || []).join(" → ") || "No graph node details returned"}</p>
+                <p className="text-[10px] text-slate-400">Tool calls: {(investigation.tool_calls || []).join(", ") || "No investigation tools called"}</p>
+              </section>
 
               {/* Root cause */}
               <div className="space-y-1.5">
@@ -313,8 +327,8 @@ export default function InvestigateHubPage() {
             </div>
           </div>
 
-          {/* Interactive Chat Thread (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
+          {/* Follow-up chat is payment/incident scoped; fleet questions run through Incident Command above. */}
+          {(selectedPayment || incidentContext) && <div className="lg:col-span-5 space-y-6">
             <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
               <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                 <h3 className="text-sm font-bold text-ink flex items-center gap-2">
@@ -345,6 +359,14 @@ export default function InvestigateHubPage() {
                         {msg.role === "user" ? "OPERATOR" : "INVESTIGATOR"}
                       </span>
                       {msg.content}
+                      {msg.activity && (
+                        <div className="mt-2 border-t border-cyan-800/60 pt-2 text-[10px] text-cyan-200/80 space-y-1">
+                          <p>Workflow nodes: {msg.activity.nodes.join(" → ") || "No graph run for this answer"}</p>
+                          <p>Answer: {msg.activity.answerMode}{msg.activity.model ? ` · ${msg.activity.model}` : ""} · LangSmith tracing {msg.activity.tracing ? "enabled" : "disabled"}</p>
+                          <p>Tools: {msg.activity.tools.join(", ") || "none"}</p>
+                          {msg.activity.fallbackReason && <p className="text-amber-300">Fallback reason: {msg.activity.fallbackReason}</p>}
+                        </div>
+                      )}
                     </div>
                   ))
                 )}
@@ -374,7 +396,7 @@ export default function InvestigateHubPage() {
                 </button>
               </form>
             </div>
-          </div>
+          </div>}
         </div>
       )}
     </div>

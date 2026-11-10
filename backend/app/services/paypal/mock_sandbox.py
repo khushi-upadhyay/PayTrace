@@ -104,6 +104,9 @@ class MockPayPalSandbox:
         self.captures[capture_id] = capture_payload
         if order_id in self.orders:
             self.orders[order_id]["status"] = "COMPLETED"
+            self.orders[order_id]["purchase_units"][0]["payments"] = {
+                "captures": capture_payload["purchase_units"][0]["payments"]["captures"]
+            }
         return capture_payload
 
 mock_paypal = MockPayPalSandbox()

@@ -23,15 +23,15 @@ services:
       dockerfile: Dockerfile
     container_name: paytrace-backend
     restart: unless-stopped
+    # Runtime secrets/config belong in the host-side file; it is excluded from
+    # the Docker build context and is not copied into the image.
+    env_file:
+      - ./backend/.env
     environment:
       APP_ENV: development
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgrespassword}@postgres:5432/${POSTGRES_DB:-paytrace}
-      PAYPAL_MODE: sandbox
-      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID:-}
-      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET:-}
-      PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID:-}
       FRONTEND_ORIGIN: http://localhost:3000
 
     ports:

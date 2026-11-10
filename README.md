@@ -115,12 +115,20 @@ You can run PayTrace using **Docker Compose** or directly on your **local machin
    cd PayTrace
    ```
 
-2. **Start all services:**
+2. **Configure the backend environment** (only if `backend/.env` does not already exist):
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+   Set your PayPal Sandbox credentials and AI provider settings in `backend/.env`.
+   Docker Compose passes this file to the backend container at runtime, including
+   `AI_API_KEY`, `LANGCHAIN_API_KEY` (or `LANGSMITH_API_KEY`), and tracing settings.
+
+3. **Start all services:**
    ```bash
    docker-compose up --build
    ```
 
-3. **Access the applications:**
+4. **Access the applications:**
    - **Frontend Dashboard**: [http://localhost:3000](http://localhost:3000)
    - **FastAPI OpenAPI Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
    - **PostgreSQL**: `localhost:5432` (credentials: `postgres` / `postgrespassword`)
@@ -295,7 +303,7 @@ PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver 
 
 ### A. End-to-End Sandbox Checkout
 1. Open **PayPal Checkout** at [http://localhost:3000/checkout](http://localhost:3000/checkout). The separate sample catalog is at [http://localhost:3000/shelfswipe](http://localhost:3000/shelfswipe).
-2. Select a demo item (e.g. `$49.99 Developer Cloud License`).
+2. Select an item from the checkout catalog.
 3. Select **Standard Successful Payment** and click **Pay with PayPal Sandbox**.
 4. With Sandbox credentials, approve the order in PayPal and return to PayTrace. In credential-free demo mode, the local approval screen asks you to explicitly simulate buyer approval; it does not contact PayPal or move money.
 5. PayTrace verifies the provider order status before requesting capture.
@@ -306,13 +314,12 @@ PayPal Sandbox webhooks require a publicly accessible HTTPS endpoint to deliver 
    - `CAPTURE_COMPLETED`
    - A webhook event only when an actual, signature-verified PayPal delivery is received.
 
-### B. Investigating Failure & Timeout Scenarios
-1. On the `/checkout` page, select **Merchant Backend Timeout / Ambiguous Capture State** or click **Simulate Timeout** in the header.
-2. Complete checkout: the payment enters **`CAPTURE_UNCERTAIN`**.
-3. Click **Investigate with AI**:
-   - The AI investigator builds a chronological timeline from real database records.
-   - Shows **Facts** (order created, capture sent, timeout before 200 OK) vs **Inferences** (PayPal may have captured funds; blind retry prohibited).
-   - Recommends **Reconciliation before retry** to avoid duplicate charges.
+### B. Real Sandbox Capture Response-Loss Demo
+1. Configure PayPal Sandbox credentials and choose **Merchant Backend Timeout / Ambiguous Capture State** on `/checkout`.
+2. Approve the real Sandbox order. PayTrace sends one real capture request, then simulates a lost merchant response and records `CAPTURE_UNCERTAIN` without storing a fabricated capture ID.
+3. Click **Investigate with AI**. LangGraph compares the local payment state, merchant lifecycle events, webhook processing history, and live PayPal order plus capture responses.
+4. The report identifies a completed live Sandbox capture when the evidence confirms it, or states that the result remains unconfirmed. It recommends reconciliation before any retry.
+5. Use [the full demo walkthrough](docs/demo-script.md) for the credential-less fallback boundaries and fleet-level Incident Command question.
 
 ---
 
@@ -346,7 +353,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 cp backend/.env.example backend/.env
 
 # 2. Fill in real values in backend/.env
-#    PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID, AI_API_KEY, etc.
+#    PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID, AI_API_KEY,
+#    LANGCHAIN_API_KEY or LANGSMITH_API_KEY (optional), etc.
 #    Never commit this file.
 ```
 

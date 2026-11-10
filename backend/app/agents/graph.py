@@ -26,6 +26,7 @@ from app.agents.investigation_tools import (
     analyze_failure_patterns,
     compare_successful_payments,
     find_similar_failures,
+    get_incident_overview,
     get_payment_facts,
     get_paypal_order,
     inspect_payment_timeline,
@@ -296,7 +297,7 @@ def _deterministic_hypotheses(evidence: Dict[str, Any]) -> List[Dict[str, Any]]:
         }]
     if status == "CAPTURED" and webhooks.get("total_webhook_events", 0) == 0:
         return [{
-            "root_cause": "Capture succeeded but webhook delivery delayed or missing",
+            "root_cause": "Capture is recorded locally, but no linked webhook record is available",
             "confidence": 0.82,
             "supporting_evidence": ["CAPTURED status", "zero webhook events"],
             "contradicting_evidence": [],
@@ -356,6 +357,21 @@ def node_select_investigation_tools(state: InvestigationState) -> InvestigationS
 
     # Filter out already-used tools to avoid redundant calls
     selected = [t for t in requested if t not in already_used and t in TOOL_DESCRIPTIONS]
+
+    # An uncertain capture always requires provider reconciliation before report generation.
+    facts = state.get("initial_evidence", {}).get("payment_facts", {})
+    if facts.get("status") == "CAPTURE_UNCERTAIN" and "get_paypal_order" not in already_used:
+        selected = list(dict.fromkeys([*selected, "get_paypal_order"]))
+    question = state.get("question", "").lower()
+    needs_provider_reconciliation = any(
+        word in question for word in ("retry", "capture", "paypal", "provider", "order", "reconcile")
+    )
+    if (
+        needs_provider_reconciliation
+        and facts.get("paypal_order_id")
+        and "get_paypal_order" not in already_used
+    ):
+        selected = list(dict.fromkeys([*selected, "get_paypal_order"]))
 
     # Safety: never select tools that modify state (none exist in our toolset, but explicit check)
     ALLOWED_TOOLS = set(TOOL_DESCRIPTIONS.keys())
@@ -457,10 +473,10 @@ def _execute_single_tool(
             if loop and loop.is_running():
                 import concurrent.futures
                 with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-                    future = pool.submit(asyncio.run, get_paypal_order(order_id))
-                    return future.result(timeout=10)
+                    future = pool.submit(asyncio.run, get_paypal_order(order_id, facts.get("paypal_capture_id"), facts.get("source_mode")))
+                    return future.result(timeout=45)
             else:
-                return asyncio.run(get_paypal_order(order_id))
+                return asyncio.run(get_paypal_order(order_id, facts.get("paypal_capture_id"), facts.get("source_mode")))
         except Exception as exc:
             return {"skipped": True, "reason": f"async execution failed: {exc}"}
     elif tool_name == "inspect_webhook_events":
@@ -597,6 +613,7 @@ def node_generate_report(state: InvestigationState) -> InvestigationState:
     # Try LLM report generation
     report = _generate_report_with_llm(
         payment_id=payment_id,
+        question=state.get("question", ""),
         hypotheses=hypotheses,
         all_evidence=all_evidence,
         tools_used=tools_used,
@@ -612,6 +629,24 @@ def node_generate_report(state: InvestigationState) -> InvestigationState:
             tools_used=tools_used,
         )
 
+    # Surface the provider retrieval provenance in the API result itself. The
+    # local payment's source_mode alone does not prove that reconciliation GETs
+    # succeeded during this particular investigation.
+    provider_result = tool_results.get("get_paypal_order")
+    if isinstance(provider_result, dict):
+        retrieval = provider_result.get("retrieval_status", "UNKNOWN")
+        source = provider_result.get("source", "UNKNOWN")
+        if retrieval == "LIVE_RESPONSE":
+            captures = provider_result.get("captures", [])
+            capture_states = ", ".join(
+                str(item.get("status", "UNKNOWN")) for item in captures if isinstance(item, dict)
+            ) or "none returned"
+            provenance = f"Provider evidence: {source}; retrieval_status=LIVE_RESPONSE; order status={provider_result.get('status', 'UNKNOWN')}; capture states={capture_states}."
+        else:
+            provenance = f"Provider evidence: {source}; retrieval_status={retrieval}; {provider_result.get('reason', 'No live provider response was available for this investigation.')}"
+        report.facts = [fact for fact in report.facts if not str(fact).startswith("Provider evidence:")]
+        report.facts.append(provenance)
+
     elapsed_ms = int((time.monotonic() - t0) * 1000)
     logger.info(
         "investigation_id=%s node=generate_report confidence=%.2f "
@@ -625,11 +660,16 @@ def node_generate_report(state: InvestigationState) -> InvestigationState:
 
     nodes = list(state.get("nodes_executed", []))
     nodes.append("generate_report")
+    report.workflow_nodes = nodes
+    report.tool_calls = list(tools_used)
+    report.execution_mode = "langgraph" if LANGGRAPH_AVAILABLE else "direct_pipeline"
+    report.langsmith_tracing_enabled = settings.is_langsmith_tracing_enabled
     return {**state, "report": report, "nodes_executed": nodes}
 
 
 def _generate_report_with_llm(
     payment_id: str,
+    question: str,
     hypotheses: List[Dict[str, Any]],
     all_evidence: Dict[str, Any],
     tools_used: List[str],
@@ -643,6 +683,9 @@ def _generate_report_with_llm(
 
     prompt = f"""You are PayTrace AI Investigator generating a final investigation report.
 
+USER'S INVESTIGATION QUESTION (answer this directly):
+{question}
+
 HYPOTHESES FORMED:
 {json.dumps(hypotheses, indent=2, default=str)}
 
@@ -653,10 +696,13 @@ TOOLS USED: {tools_used}
 
 SAFETY RULES (non-negotiable):
 - Only state verified facts. Never fabricate payment events, captures, or webhooks.
+- Respect the evidence source label. DEMO_RESPONSE is simulated and must never be described as PayPal Sandbox evidence.
+- A PayPal provider fact is live only when the tool result says retrieval_status=LIVE_RESPONSE.
 - If evidence is insufficient, set insufficient_evidence=true and confidence<0.5.
 - Never recommend retrying a capture without reconciliation confirmation.
 - Never recommend autonomous refunds — always require human approval.
 - Do not claim a systemic outage without 5+ similar failures as evidence.
+- Make the summary and recommendation specific to the user's question. Compare the corresponding retrieved evidence when asked, and say when evidence does not answer it.
 
 Return ONLY valid JSON (no markdown) matching this schema:
 {{
@@ -746,16 +792,61 @@ def _generate_deterministic_report(
     if order_id and order_id != "UNKNOWN":
         facts.append(f"PayPal order ID: {order_id}")
     facts.append(f"Payment status: {status}")
+    if facts_data.get("paypal_capture_id"):
+        facts.append(f"Locally recorded PayPal capture ID: {facts_data['paypal_capture_id']}")
     facts.append(f"Event count: {facts_data.get('event_count', 0)}")
     facts.append(f"Webhook events: {webhooks.get('total_webhook_events', 0)}")
+    if webhooks.get("total_webhook_events", 0) == 0:
+        facts.append("No linked webhook records were found; this does not prove PayPal failed to send a webhook.")
+    for event in facts_data.get("events_summary", [])[:20]:
+        facts.append(
+            f"Merchant lifecycle event {event.get('event_type')}: source={event.get('source')}, status={event.get('status')}, latency_ms={event.get('latency_ms')}, simulated={event.get('is_simulated')}."
+        )
+    for webhook in webhooks.get("verified_events", [])[:20]:
+        facts.append(
+            f"Webhook {webhook.get('event_type')}: signature_verified={webhook.get('signature_verified')}, processing_status={webhook.get('processing_status')}, received_at={webhook.get('received_at')}."
+        )
+    for webhook in webhooks.get("unverified_events", [])[:20]:
+        facts.append(
+            f"Webhook {webhook.get('event_type')}: signature_verified=false, processing_status={webhook.get('processing_status')}, received_at={webhook.get('received_at')}."
+        )
     if similar.get("similar_count", 0) > 0:
         facts.append(f"Similar failures found: {similar.get('similar_count')}")
 
     # PayPal reconciliation result if fetched
+    paypal_result = tool_results.get("get_paypal_order", {})
+    live_provider_capture_confirmed = (
+        paypal_result.get("retrieval_status") == "LIVE_RESPONSE"
+        and paypal_result.get("status") == "COMPLETED"
+        and any(
+            capture.get("status") == "COMPLETED"
+            and capture.get("retrieval_status") in ("LIVE_RESPONSE", "FROM_LIVE_ORDER_RESPONSE")
+            for capture in paypal_result.get("captures", [])
+        )
+    )
+    demo_capture_confirmed = (
+        paypal_result.get("retrieval_status") == "DEMO_RESPONSE"
+        and paypal_result.get("status") == "COMPLETED"
+        and any(capture.get("status") == "COMPLETED" for capture in paypal_result.get("captures", []))
+    )
     if "get_paypal_order" in tool_results:
-        pp = tool_results["get_paypal_order"]
-        if not pp.get("skipped") and pp.get("status"):
+        pp = paypal_result
+        if pp.get("retrieval_status") == "LIVE_RESPONSE" and pp.get("status"):
             facts.append(f"PayPal live order status: {pp['status']}")
+            captures = pp.get("captures", [])
+            if captures:
+                for capture in captures:
+                    facts.append(f"PayPal capture {capture.get('capture_id') or 'ID unavailable'} status: {capture.get('status') or 'unknown'}.")
+                if live_provider_capture_confirmed:
+                    facts.append("Live PayPal order and capture responses confirm that the payment was captured.")
+            else:
+                facts.append("No capture details were returned by the live order lookup; provider capture state remains unconfirmed.")
+        elif pp.get("retrieval_status") == "UNAVAILABLE":
+            facts.append("Live PayPal reconciliation was unavailable; provider capture state remains unconfirmed.")
+        elif pp.get("retrieval_status") == "DEMO_RESPONSE":
+            facts.append(f"Simulated demo provider order status: {pp.get('status') or 'unknown'} (not PayPal Sandbox evidence).")
+            for capture in pp.get("captures", []):
+                facts.append(f"Simulated demo capture {capture.get('capture_id') or 'ID unavailable'} status: {capture.get('status') or 'unknown'} (not PayPal evidence).")
 
     inferences = list(top.get("inferences", []))
     missing = top.get("missing_evidence", [])
@@ -774,7 +865,7 @@ def _generate_deterministic_report(
         or status in ("DENIED", "CAPTURE_FAILED")
         or facts_data.get("denied", False)
     )
-    is_captured = status == "CAPTURED" and "delayed" not in root_cause.lower()
+    is_captured = (status == "CAPTURED" or live_provider_capture_confirmed) and "delayed" not in root_cause.lower()
     is_mismatch = "mismatch" in root_cause.lower() or "diverge" in root_cause.lower()
 
     if not inferences:
@@ -810,7 +901,11 @@ def _generate_deterministic_report(
                 "Evidence in database is insufficient or events are incomplete to draw definitive conclusions.",
             ]
 
-    if is_timeout:
+    if live_provider_capture_confirmed and status != "CAPTURED":
+        recommendation = "PayPal confirms a completed capture while PayTrace remains uncertain. Reconcile the local payment record from this provider evidence; do not issue another capture."
+    elif demo_capture_confirmed:
+        recommendation = "SIMULATED DEMO ONLY: the in-memory provider reports a completed capture. This is not PayPal Sandbox evidence. In a real transaction, reconcile the live PayPal order and capture before retrying."
+    elif is_timeout:
         recommendation = "DO NOT RETRY CAPTURE. Reconcile order state with PayPal or verify incoming webhooks before taking further action to prevent duplicate charges."
     elif is_declined:
         recommendation = "Prompt customer to select an alternative payment method. Do not automatically re-attempt with current instrument."
@@ -943,6 +1038,8 @@ def run_direct_pipeline(
     report = state.get("report")
     if report is None:
         raise ValueError("Report generation returned None")
+    report.execution_mode = "direct_pipeline"
+    report.langsmith_tracing_enabled = settings.is_langsmith_tracing_enabled
     return report
 
 
@@ -1004,10 +1101,12 @@ def run_investigation_graph(
                     "tools_used": [],
                     "nodes_executed": [],
                 }
-                final_state = graph.invoke(initial_state)
+                final_state = graph.invoke(initial_state, config={"run_name": "PayTrace payment investigation", "tags": ["paytrace", "payment-investigation"]})
                 report = final_state.get("report")
                 if report is None:
                     raise ValueError("Graph returned no report")
+                report.execution_mode = "langgraph"
+                report.langsmith_tracing_enabled = settings.is_langsmith_tracing_enabled
 
                 elapsed_ms = int((time.monotonic() - t0) * 1000)
                 logger.info(
@@ -1041,4 +1140,137 @@ def run_investigation_graph(
             exc_info=True,
         )
         raise
+
+
+class IncidentCommandState(TypedDict, total=False):
+    db: Any
+    question: str
+    window_minutes: int
+    evidence: Dict[str, Any]
+    hypotheses: List[Dict[str, Any]]
+    report: Optional[AIInvestigationResponse]
+
+
+def _incident_command_gather(state: IncidentCommandState) -> IncidentCommandState:
+    return {**state, "evidence": get_incident_overview(state["db"], state.get("window_minutes", 15))}
+
+
+def _incident_command_analyze(state: IncidentCommandState) -> IncidentCommandState:
+    evidence = state.get("evidence", {})
+    hypotheses = _analyze_with_llm(evidence, state.get("question", ""))
+    if hypotheses is None:
+        failures = evidence.get("failure_pattern_counts", [])
+        dominant = max(failures, key=lambda row: row.get("count", 0), default=None)
+        hypotheses = [{
+            "root_cause": (f"Most frequent recorded failure pattern: {dominant['failure_code']}" if dominant else "No failed payment pattern was recorded in the selected window."),
+            "confidence": 0.6 if dominant else 0.35,
+            "severity": "HIGH" if dominant and dominant.get("count", 0) >= 5 else "MEDIUM" if dominant else "LOW",
+            "supporting_evidence": [f"SQL aggregation counted {dominant['count']} records for {dominant['failure_code']}." ] if dominant else ["SQL aggregation returned no failed payment records."],
+            "inferences": [],
+            "missing_evidence": [],
+            "next_investigation_action": "none",
+        }]
+    return {**state, "hypotheses": hypotheses}
+
+
+def _incident_command_report(state: IncidentCommandState) -> IncidentCommandState:
+    evidence = state.get("evidence", {})
+    hypotheses = state.get("hypotheses", [])
+    report = _generate_report_with_llm(
+        payment_id="fleet-level",
+        question=state.get("question", ""),
+        hypotheses=hypotheses,
+        all_evidence={"sql_incident_overview": evidence},
+        tools_used=["get_incident_overview"],
+        investigation_id=str(uuid.uuid4()),
+    )
+    if report is None:
+        failures = evidence.get("failure_pattern_counts", [])
+        dominant = max(failures, key=lambda row: row.get("count", 0), default=None)
+        statuses = evidence.get("payment_status_counts", {})
+        uncertain_count = statuses.get("CAPTURE_UNCERTAIN", 0)
+        report = AIInvestigationResponse(
+            root_cause=hypotheses[0].get("root_cause", "Insufficient evidence to identify a failure pattern"),
+            confidence=hypotheses[0].get("confidence", 0.35),
+            severity=hypotheses[0].get("severity", "LOW"),
+            facts=[
+                f"SQL counted {sum(statuses.values())} payments updated in the last {evidence.get('window_minutes')} minutes.",
+                f"Failed-payment count changed by {evidence.get('failed_payment_count_change', 0)} versus the immediately preceding {evidence.get('window_minutes')}-minute window.",
+                f"SQL counted {uncertain_count} payments in CAPTURE_UNCERTAIN status.",
+                f"Most frequent failure pattern: {dominant['failure_code']} ({dominant['count']} records)." if dominant else "No failed payment pattern was recorded in this window.",
+                f"Reconciliation candidates retrieved: {evidence.get('reconciliation_candidate_count', 0)}.",
+                f"Merchant event and webhook aggregates were retrieved from SQL for the same window.",
+            ],
+            inferences=["Compare merchant event latency and PayPal API evidence before attributing failures to a provider."],
+            customer_impact=f"{sum(statuses.values())} recent payments are represented in this investigation window.",
+            business_impact=f"{evidence.get('reconciliation_candidate_count', 0)} payment(s) need provider reconciliation review.",
+            recommendation="Reconcile each CAPTURE_UNCERTAIN order with PayPal order and capture details and verified webhooks before any capture retry.",
+            is_incident_likely=bool(dominant and dominant.get("count", 0) >= 3),
+            insufficient_evidence=not bool(statuses),
+            model_name="langgraph/sql-evidence-fallback-v1",
+        )
+    else:
+        # Keep incident counts, window comparisons, and reconciliation totals
+        # bound to SQL results even when the model writes the narrative.
+        statuses = evidence.get("payment_status_counts", {})
+        failures = evidence.get("failure_pattern_counts", [])
+        dominant = max(failures, key=lambda row: row.get("count", 0), default=None)
+        report.facts = [
+            f"SQL counted {sum(statuses.values())} payments updated in the last {evidence.get('window_minutes')} minutes.",
+            f"Failed-payment count changed by {evidence.get('failed_payment_count_change', 0)} versus the immediately preceding {evidence.get('window_minutes')}-minute window.",
+            f"SQL counted {statuses.get('CAPTURE_UNCERTAIN', 0)} CAPTURE_UNCERTAIN payments.",
+            f"Most frequent failure pattern: {dominant['failure_code']} ({dominant['count']} records)." if dominant else "No failed payment pattern was recorded in this window.",
+            f"Reconciliation candidates retrieved: {evidence.get('reconciliation_candidate_count', 0)}.",
+            f"Merchant backend event aggregates retrieved: {len(evidence.get('merchant_backend_event_aggregates', []))}.",
+            f"Webhook processing status aggregates retrieved: {len(evidence.get('webhook_processing_counts', {}))}.",
+            *[
+                f"Merchant event {row['source']}/{row['event_type']}: count={row['count']}, average recorded latency_ms={row['average_latency_ms']}."
+                for row in evidence.get("merchant_backend_event_aggregates", [])[:10]
+            ],
+            *[
+                f"Webhook processing status {status}: {count} record(s)."
+                for status, count in evidence.get("webhook_processing_counts", {}).items()
+            ],
+            *[
+                f"Reconciliation candidate payment {row['payment_id']}: status={row['status']}, order_id={row.get('paypal_order_id') or 'not recorded'}; reconcile before retry."
+                for row in evidence.get("reconciliation_candidates", [])
+            ],
+        ]
+        report.customer_impact = f"{sum(statuses.values())} recent payment records were included in this query window."
+        report.business_impact = f"{evidence.get('reconciliation_candidate_count', 0)} payment(s) were retrieved for reconciliation review."
+        report.comparison_notes = "Incident counts and latency aggregates are SQL results. Source correlation alone does not establish whether PayPal or the merchant backend caused the failures."
+        report.severity = "HIGH" if dominant and dominant.get("count", 0) >= 5 else "MEDIUM" if dominant else "LOW"
+        report.is_incident_likely = bool(dominant and dominant.get("count", 0) >= 3)
+        report.insufficient_evidence = not bool(statuses)
+        report.recommendation = "Compare merchant backend latency with live PayPal order/capture evidence and verified webhook history. Reconcile CAPTURE_UNCERTAIN orders before any capture retry."
+    report.payment_id = None
+    report.workflow_nodes = ["aggregate_sql_evidence", "analyze_patterns", "generate_grounded_report"]
+    report.tool_calls = ["get_incident_overview"]
+    report.execution_mode = "langgraph"
+    report.langsmith_tracing_enabled = settings.is_langsmith_tracing_enabled
+    return {**state, "report": report}
+
+
+def run_incident_command_graph(db: Session, question: str, window_minutes: int = 15) -> AIInvestigationResponse:
+    """Run a fleet-level SQL evidence investigation through a small LangGraph workflow."""
+    if not LANGGRAPH_AVAILABLE:
+        raise RuntimeError("LangGraph is unavailable")
+    graph = StateGraph(IncidentCommandState)
+    graph.add_node("aggregate_sql_evidence", _incident_command_gather)
+    graph.add_node("analyze_patterns", _incident_command_analyze)
+    graph.add_node("generate_grounded_report", _incident_command_report)
+    graph.set_entry_point("aggregate_sql_evidence")
+    graph.add_edge("aggregate_sql_evidence", "analyze_patterns")
+    graph.add_edge("analyze_patterns", "generate_grounded_report")
+    graph.add_edge("generate_grounded_report", END)
+    final_state = graph.compile().invoke(
+        {"db": db, "question": question, "window_minutes": window_minutes},
+        config={"run_name": "PayTrace incident command", "tags": ["paytrace", "incident-command", "sql-evidence"]},
+    )
+    report = final_state.get("report")
+    if report is None:
+        raise ValueError("Incident command graph returned no report")
+    report.execution_mode = "langgraph"
+    report.langsmith_tracing_enabled = settings.is_langsmith_tracing_enabled
+    return report
 

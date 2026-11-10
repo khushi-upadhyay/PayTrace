@@ -5,12 +5,14 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 
-type ReturnRoute = "checkout" | "shelfswipe";
+type ReturnRoute = "checkout" | "shelfswipe" | "shelfswipe/buyer-prototype";
 
 function DemoApproval() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("token") || null;
-  const returnRoute: ReturnRoute = searchParams.get("return_to") === "shelfswipe" ? "shelfswipe" : "checkout";
+  const returnRoute: ReturnRoute = searchParams.get("return_to") === "shelfswipe-buyer"
+    ? "shelfswipe/buyer-prototype"
+    : searchParams.get("return_to") === "shelfswipe" ? "shelfswipe" : "checkout";
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
