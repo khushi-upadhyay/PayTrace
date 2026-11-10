@@ -28,6 +28,7 @@ from app.schemas.shelfswipe import (
     ShelfProductSchema,
     ShelfProductDeckResponse,
     SwipeRecordRequest,
+    ShelfSwipeCartLine,
     ShelfSwipeCheckoutRequest,
     ProductPatchRequest,
     ProductCreateRequest,
@@ -911,19 +912,42 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "recorded", "direction": req.direction, "product_id": req.product_id}
 
+from app.core.security import create_checkout_token  # noqa: E402
+
+ALLOWED_RETURN_PATHS = {"/shelfswipe", "/shelfswipe/buyer-onboarding"}
+RETURN_KEYS = {"/shelfswipe": "shelfswipe", "/shelfswipe/buyer-onboarding": "buyer-onboarding"}
+
+
 @router.post("/checkout")
 async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
     """
     Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
     """
-    prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
-    if not prod:
-        raise HTTPException(status_code=404, detail="Product not found")
-    if prod.stock < req.quantity:
-        raise HTTPException(status_code=400, detail="Insufficient stock")
+    lines = req.items or [ShelfSwipeCartLine(product_id=req.product_id, quantity=req.quantity)]
+    merged: Dict[str, int] = {}
+    for line in lines:
+        merged[line.product_id] = merged.get(line.product_id, 0) + line.quantity
+    cart: List[tuple] = []
+    for product_id, qty in merged.items():
+        # Buyer deck products live in ss_products; legacy prototype products in shelfswipe_products.
+        item = db.query(SSProduct).filter(SSProduct.id == product_id, SSProduct.status == "live").first()
+        source = "ss"
+        if not item:
+            item = db.query(ShelfProduct).filter(ShelfProduct.id == product_id).first()
+            source = "legacy"
+        if not item:
+            raise HTTPException(status_code=404, detail="Product not found")
+        if item.stock < qty:
+            raise HTTPException(status_code=400, detail=f"Insufficient stock for {item.name}")
+        cart.append((item, qty, source))
+    if len({item.currency for item, _, _ in cart}) != 1:
+        raise HTTPException(status_code=400, detail="Cart items must share one currency")
+    prod = cart[0][0]
+    return_page = req.return_path if req.return_path in ALLOWED_RETURN_PATHS else "/shelfswipe"
+    cart_name = prod.name if len(cart) == 1 else f"{prod.name} + {len(cart) - 1} more"
 
     payment_id = str(uuid.uuid4())
-    total_amount = Decimal(str(prod.price)) * req.quantity
+    total_amount = sum((Decimal(str(i.price)) * q for i, q, _ in cart), Decimal("0"))
     is_mock = not settings.is_paypal_configured
 
     paypal_order_id = ""
@@ -935,8 +959,8 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
                 amount=total_amount,
                 currency=prod.currency,
                 custom_id=payment_id,
-                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
-                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
+                return_url=f"{settings.FRONTEND_ORIGIN}{return_page}?status=approved",
+                cancel_url=f"{settings.FRONTEND_ORIGIN}{return_page}?status=cancelled",
             )
             if prod.currency != "USD":
                 raise ValueError("ShelfSwipe Sandbox checkout requires USD")
@@ -962,7 +986,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
             custom_id=payment_id,
         )
         paypal_order_id = order_data["id"]
-        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
+        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to={RETURN_KEYS.get(return_page, 'shelfswipe')}"
 
     # Register in PayTrace unified payment ledger
     payment = Payment(
@@ -986,7 +1010,12 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         source="SHELVESWIPE_APP",
         status="SUCCESS",
         paypal_order_id=paypal_order_id,
-        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": prod.seller_id},
+        metadata={
+            "product_name": prod.name,
+            "quantity": cart[0][1],
+            "seller_id": getattr(prod, "seller_id", None) or getattr(prod, "shop_id", None),
+            "items": [{"id": i.id, "name": i.name, "quantity": q, "source": src} for i, q, src in cart],
+        },
         is_simulated=is_mock,
     )
     db.commit()
@@ -994,9 +1023,10 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
     return {
         "payment_id": payment_id,
         "paypal_order_id": paypal_order_id,
+        "checkout_token": create_checkout_token(paypal_order_id),
         "approval_url": approval_url,
         "amount": float(total_amount),
         "currency": prod.currency,
-        "product_name": prod.name,
+        "product_name": cart_name,
         "is_mock": is_mock,
     }

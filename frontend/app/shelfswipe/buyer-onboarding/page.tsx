@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Search,
   ThumbsDown,
-  ThumbsUp,
+  ShoppingCart,
   Loader2,
   Package,
   CheckCircle2,
@@ -13,6 +13,9 @@ import {
   Compass,
   ArrowLeft,
 } from "lucide-react";
+import CartPayment, { CartLine } from "@/components/shelfswipe/CartPayment";
+import { api } from "@/lib/api";
+import { useSessionRecording } from "@/components/session/SessionRecordingProvider";
 import {
   BuyerDeckProductItem,
   ShelfSwipeSellerSummary,
@@ -32,8 +35,21 @@ export default function ShelfSwipeBuyerOnboardingPage() {
   const [loadingDeck, setLoadingDeck] = useState(true);
   const [deckError, setDeckError] = useState<string | null>(null);
 
-  const [liked, setLiked] = useState<BuyerDeckProductItem[]>([]);
+  const { sessionId, addSessionMarker } = useSessionRecording();
+  const [cart, setCart] = useState<CartLine[]>([]);
   const [imageError, setImageError] = useState(false);
+
+  // Checkout state
+  const [processing, setProcessing] = useState(false);
+  const [checkoutMessage, setCheckoutMessage] = useState<string | null>(null);
+  const [checkoutResult, setCheckoutResult] = useState<{
+    payment_id: string;
+    status: string;
+    failure_reason?: string | null;
+    product_name?: string;
+    is_simulated: boolean;
+  } | null>(null);
+  const capturedOrders = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     setBuyerId(getOrCreateBuyerId());
@@ -82,7 +98,25 @@ export default function ShelfSwipeBuyerOnboardingPage() {
   const handleSwipe = async (direction: "left" | "right") => {
     if (!currentItem || !buyerId) return;
     if (direction === "right") {
-      setLiked((prev) => [...prev, currentItem]);
+      // "Add to Cart": merge repeat adds into one line, capped at available stock
+      setCart((prev) => {
+        const existing = prev.find((l) => l.id === currentItem.id);
+        if (existing) {
+          return prev.map((l) => (l.id === currentItem.id ? { ...l, quantity: Math.min(l.quantity + 1, l.stock) } : l));
+        }
+        return [
+          ...prev,
+          {
+            id: currentItem.id,
+            name: currentItem.name,
+            shop_name: currentItem.shop_name,
+            price: Number(currentItem.price),
+            stock: currentItem.stock,
+            image_url: currentItem.image_url,
+            quantity: 1,
+          },
+        ];
+      });
     }
     setImageError(false);
     setCurrentIndex((prev) => Math.min(prev + 1, deck.length));
@@ -96,8 +130,96 @@ export default function ShelfSwipeBuyerOnboardingPage() {
 
   const handleReset = () => {
     fetchDeck(selectedShopId, query);
-    setLiked([]);
   };
+
+  const changeQty = (id: string, qty: number) => {
+    setCart((prev) =>
+      prev
+        .map((l) => (l.id === id ? { ...l, quantity: Math.min(qty, l.stock) } : l))
+        .filter((l) => l.quantity > 0)
+    );
+  };
+  const removeLine = (id: string) => setCart((prev) => prev.filter((l) => l.id !== id));
+
+  const handlePay = async (method: "paypal" | "paylater" | "card") => {
+    if (!buyerId || cart.length === 0 || processing) return;
+    try {
+      setProcessing(true);
+      setCheckoutResult(null);
+      setCheckoutMessage(method === "card" ? "Processing card payment..." : "Redirecting to PayPal...");
+      const res = await api.checkoutShelfCart(
+        cart.map((l) => ({ product_id: l.id, quantity: l.quantity })),
+        buyerId,
+        { returnPath: "/shelfswipe/buyer-onboarding", sessionId: sessionId || undefined }
+      );
+      addSessionMarker("shelfswipe_order_created", {
+        payment_id: res.payment_id,
+        amount: res.amount,
+        currency: res.currency,
+        method,
+      });
+      if (!res.approval_url) throw new Error("PayPal did not return an approval URL.");
+      sessionStorage.setItem(
+        "paytrace_shelfswipe_pending_order",
+        JSON.stringify({ orderId: res.paypal_order_id, isMock: res.is_mock, scenario: "normal", productName: res.product_name })
+      );
+      window.location.assign(res.approval_url);
+    } catch (err: any) {
+      setCheckoutMessage(`Checkout failed: ${err.message}`);
+      setProcessing(false);
+    }
+  };
+
+  const verifyAndCapture = async (orderId: string) => {
+    if (capturedOrders.current.has(orderId)) return;
+    setProcessing(true);
+    setCheckoutMessage("Verifying buyer approval with PayPal...");
+    try {
+      const pending = JSON.parse(sessionStorage.getItem("paytrace_shelfswipe_pending_order") || "{}");
+      if (pending.orderId !== orderId) throw new Error("No matching pending checkout was found.");
+      const providerOrder = await api.getPayPalOrder(orderId);
+      const providerStatus = providerOrder.status;
+      if (providerStatus !== "APPROVED" && providerStatus !== "COMPLETED") {
+        setCheckoutMessage(`PayPal reports ${String(providerStatus || "UNKNOWN")}; approve the order before capture.`);
+        return;
+      }
+      capturedOrders.current.add(orderId);
+      const cap = await api.captureOrder(orderId, false);
+      addSessionMarker("shelfswipe_capture_response", { payment_id: cap.payment_id, status: cap.status });
+      setCheckoutResult({
+        payment_id: cap.payment_id,
+        status: cap.status,
+        failure_reason: cap.failure_reason,
+        product_name: pending.productName,
+        is_simulated: pending.isMock === true,
+      });
+      setCheckoutMessage(null);
+      sessionStorage.removeItem("paytrace_shelfswipe_pending_order");
+      if (cap.status === "CAPTURED") setCart([]);
+      void fetchDeck(selectedShopId, query);
+    } catch (err: any) {
+      capturedOrders.current.delete(orderId);
+      setCheckoutMessage(`Checkout verification failed: ${err.message}`);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  // PayPal return (?status=approved&token=ORDER_ID or ?status=cancelled)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("status");
+    const orderId = params.get("token") || params.get("orderId");
+    if (status === "cancelled" || status === "cancel") {
+      setCheckoutMessage("Payment was cancelled. Your cart is unchanged and nothing was charged.");
+      sessionStorage.removeItem("paytrace_shelfswipe_pending_order");
+      return;
+    }
+    if ((status === "approved" || orderId) && orderId) {
+      void verifyAndCapture(orderId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] pb-16">
@@ -194,7 +316,7 @@ export default function ShelfSwipeBuyerOnboardingPage() {
                   ? `Product ${Math.min(currentIndex + 1, deck.length)} of ${deck.length}`
                   : "No live products found"}
               </span>
-              {liked.length > 0 && <span>{liked.length} liked this session</span>}
+              {cart.length > 0 && <span>{cart.reduce((n, l) => n + l.quantity, 0)} in cart</span>}
             </div>
 
             {loadingDeck ? (
@@ -230,8 +352,8 @@ export default function ShelfSwipeBuyerOnboardingPage() {
                   <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full border border-[#e2e8f0] text-[10px] font-mono font-medium text-[#334155]">
                     {currentItem.category}
                   </div>
-                  <div className="absolute top-3 right-3 bg-[#047857] px-2.5 py-1 rounded-full text-[10px] font-bold text-white">
-                    {currentItem.stock} in stock
+                  <div className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-[10px] font-bold text-white ${currentItem.stock > 0 ? "bg-[#047857]" : "bg-[#b91c1c]"}`}>
+                    {currentItem.stock > 0 ? `${currentItem.stock} in stock` : "Out of stock"}
                   </div>
                   <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full text-[10px] font-semibold text-white">
                     <Store className="h-3 w-3" />
@@ -272,10 +394,11 @@ export default function ShelfSwipeBuyerOnboardingPage() {
                     <button
                       type="button"
                       onClick={() => handleSwipe("right")}
-                      className="flex-1 py-3 px-4 rounded-xl bg-[#047857]/10 hover:bg-[#047857]/15 border border-[#047857]/30 text-[#047857] font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                      disabled={currentItem.stock <= 0}
+                      className="flex-1 py-3 px-4 rounded-xl bg-[#047857]/10 hover:bg-[#047857]/15 border border-[#047857]/30 text-[#047857] font-bold text-xs flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <ThumbsUp className="w-4 h-4" />
-                      Like
+                      <ShoppingCart className="w-4 h-4" />
+                      {currentItem.stock <= 0 ? "Out of Stock" : "Add to Cart"}
                     </button>
                   </div>
                 </div>
@@ -317,34 +440,37 @@ export default function ShelfSwipeBuyerOnboardingPage() {
             )}
           </div>
 
-          {/* Liked sidebar */}
+          {/* Cart + PayPal-style payment */}
           <div className="lg:col-span-5 space-y-3">
-            <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5">
-              <div className="flex items-center justify-between pb-3 border-b border-[#f1f5f9]">
-                <h2 className="text-sm font-bold text-[#0f172a] flex items-center gap-2">
-                  <ThumbsUp className="w-4 h-4 text-[#047857]" />
-                  Liked this session
-                </h2>
-                <span className="text-[10px] text-[#94a3b8] font-mono">{liked.length}</span>
-              </div>
-              {liked.length === 0 ? (
-                <p className="text-xs text-[#94a3b8] text-center py-8">
-                  Swipe right (Like) on products you&apos;re interested in &mdash; they&apos;ll collect here.
+            {checkoutResult && (
+              <div
+                role="status"
+                className={`rounded-2xl border p-4 text-xs space-y-1.5 ${
+                  checkoutResult.status === "CAPTURED"
+                    ? "border-[#047857]/30 bg-[#047857]/10 text-[#065f46]"
+                    : "border-[#f59e0b]/40 bg-[#fffbeb] text-[#92400e]"
+                }`}
+              >
+                <p className="text-sm font-bold flex items-center gap-1.5">
+                  <CheckCircle2 className="h-4 w-4" />
+                  {checkoutResult.status === "CAPTURED" ? "Payment complete" : `Payment ${checkoutResult.status.toLowerCase().replace(/_/g, " ")}`}
                 </p>
-              ) : (
-                <div className="mt-3 space-y-2 max-h-96 overflow-y-auto pr-1">
-                  {liked.map((item) => (
-                    <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] p-2.5 text-xs">
-                      <div className="min-w-0">
-                        <span className="font-semibold text-[#0f172a] block truncate">{item.name}</span>
-                        <span className="text-[10px] text-[#94a3b8]">{item.shop_name}</span>
-                      </div>
-                      <span className="font-mono font-bold text-paypal-navy shrink-0">${item.price.toFixed(2)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                {checkoutResult.product_name && <p>{checkoutResult.product_name}</p>}
+                {checkoutResult.failure_reason && <p>{checkoutResult.failure_reason}</p>}
+                {checkoutResult.is_simulated && <p className="opacity-80">Simulated sandbox order &mdash; no real money moved.</p>}
+                <Link href={`/payments/${checkoutResult.payment_id}`} className="font-semibold underline">
+                  View in PayTrace
+                </Link>
+              </div>
+            )}
+            <CartPayment
+              lines={cart}
+              processing={processing}
+              message={checkoutMessage}
+              onChangeQty={changeQty}
+              onRemove={removeLine}
+              onPay={handlePay}
+            />
           </div>
         </div>
       </div>

@@ -248,8 +248,15 @@ class SwipeRecordRequest(BaseModel):
     direction: str  # "right" or "left"
 
 
+class ShelfSwipeCartLine(BaseModel):
+    product_id: str
+    quantity: int = Field(default=1, ge=1, le=99)
+
+
 class ShelfSwipeCheckoutRequest(BaseModel):
     product_id: str
+    items: Optional[List[ShelfSwipeCartLine]] = None  # multi-item cart; overrides product_id/quantity
+    return_path: Optional[str] = None  # one of the whitelisted frontend return pages
     buyer_ref: str
     quantity: int = 1
     session_id: Optional[str] = None

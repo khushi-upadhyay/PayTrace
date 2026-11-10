@@ -380,6 +380,7 @@ export interface ShelfDeckResponse {
 export interface ShelfCheckoutResponse {
   payment_id: string;
   paypal_order_id: string;
+  checkout_token?: string;
   approval_url: string | null;
   amount: number;
   currency: string;
@@ -704,6 +705,24 @@ export const api = {
         buyer_ref: buyerRef,
         session_id: sessionId,
         simulate_scenario: simulateScenario,
+      }),
+    });
+  },
+
+  checkoutShelfCart(
+    items: { product_id: string; quantity: number }[],
+    buyerRef: string,
+    options: { returnPath?: string; sessionId?: string; simulateScenario?: string } = {}
+  ) {
+    return request<ShelfCheckoutResponse>("/shelfswipe/checkout", {
+      method: "POST",
+      body: JSON.stringify({
+        product_id: items[0]?.product_id,
+        items,
+        buyer_ref: buyerRef,
+        session_id: options.sessionId,
+        simulate_scenario: options.simulateScenario,
+        return_path: options.returnPath,
       }),
     });
   },

@@ -6,7 +6,7 @@ from typing import Dict, Any, Optional, Tuple
 from sqlalchemy.orm import Session
 from app.db.models.webhook import PayPalWebhook
 from app.db.models.payment import Payment
-from app.db.models.shelfswipe import ShelfProduct
+from app.db.models.shelfswipe import ShelfProduct, SSProduct
 from app.services.lifecycle.engine import lifecycle_engine
 from app.core.security import redact_sensitive_data
 from app.services.paypal.client import paypal_client
@@ -198,13 +198,24 @@ class WebhookProcessor:
                 if capture_id and not prior_capture_webhook:
                     for event in payment.events:
                         metadata = event.metadata_redacted or {}
-                        product_name = metadata.get("product_name")
-                        if product_name:
-                            product = db.query(ShelfProduct).filter(ShelfProduct.name == product_name).first()
+                        lines = metadata.get("items") or (
+                            [{"name": metadata["product_name"], "quantity": metadata.get("quantity", 1)}]
+                            if metadata.get("product_name")
+                            else []
+                        )
+                        if not lines:
+                            continue
+                        for line in lines:
+                            qty = int(line.get("quantity", 1))
+                            product = None
+                            if line.get("id"):
+                                model = SSProduct if line.get("source") == "ss" else ShelfProduct
+                                product = db.query(model).filter(model.id == line["id"]).first()
+                            elif line.get("name"):
+                                product = db.query(ShelfProduct).filter(ShelfProduct.name == line["name"]).first()
                             if product and product.stock > 0:
-                                quantity = metadata.get("quantity", 1)
-                                product.stock = max(0, product.stock - quantity)
-                                break
+                                product.stock = max(0, product.stock - qty)
+                        break
             elif event_type == "PAYMENT.CAPTURE.DENIED":
                 if current_status not in ("CAPTURED", "REFUNDED"):
                     reason = resource.get("status_details", {}).get("reason", "Capture Denied by PayPal")
