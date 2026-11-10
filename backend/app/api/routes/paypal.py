@@ -10,6 +10,7 @@ from app.core.audit import audit
 from app.core.idempotency import idempotency_store
 from app.core.rate_limit import rate_limit
 from app.core.security import create_checkout_token
+from app.services.shelfswipe.inventory import decrement_stock_once
 from app.db.models.payment import Payment
 from app.db.models.user import User
 from app.schemas.paypal import (
@@ -319,6 +320,7 @@ async def capture_order(
         capture_id = capture["id"]
         payment.paypal_capture_id = capture_id
         lifecycle_engine.transition_status(payment, "CAPTURED")
+        decrement_stock_once(db, payment)
         lifecycle_engine.record_event(
             db,
             payment,
@@ -559,6 +561,7 @@ async def capture_order(
 
     # Success
     lifecycle_engine.transition_status(payment, "CAPTURED")
+    decrement_stock_once(db, payment)
     lifecycle_engine.record_event(
         db=db,
         payment=payment,
