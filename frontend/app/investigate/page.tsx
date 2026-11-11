@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { api, PaymentItem, AIInvestigationData, IncidentItem } from "@/lib/api";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   Brain,
   Search,
@@ -15,6 +17,37 @@ import {
   Send,
   HelpCircle,
 } from "lucide-react";
+
+function ChatMarkdown({ content }: { content: string }) {
+  return (
+    <div className="chat-markdown">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          h1: ({ children }) => <h1>{children}</h1>,
+          h2: ({ children }) => <h2>{children}</h2>,
+          h3: ({ children }) => <h3>{children}</h3>,
+          p: ({ children }) => <p>{children}</p>,
+          ul: ({ children }) => <ul>{children}</ul>,
+          ol: ({ children }) => <ol>{children}</ol>,
+          li: ({ children }) => <li>{children}</li>,
+          blockquote: ({ children }) => <blockquote>{children}</blockquote>,
+          code: ({ children, className }) => className
+            ? <code className={className}>{children}</code>
+            : <code className="chat-inline-code">{children}</code>,
+          pre: ({ children }) => <pre>{children}</pre>,
+          a: ({ children, href }) => <a href={href} target="_blank" rel="noreferrer">{children}</a>,
+          table: ({ children }) => <div className="chat-table-wrap"><table>{children}</table></div>,
+          th: ({ children }) => <th>{children}</th>,
+          td: ({ children }) => <td>{children}</td>,
+          br: () => <br />,
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+}
 
 export default function InvestigateHubPage() {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
@@ -29,14 +62,15 @@ export default function InvestigateHubPage() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const chatThreadEndRef = useRef<HTMLDivElement | null>(null);
+  const chatThreadRef = useRef<HTMLDivElement | null>(null);
   const autoInvestigatedIncidents = useRef(new Set<string>());
   const promptSuggestions = ["Why did checkout failures increase in the last 15 minutes?", "Which failure pattern affects the most transactions?", "Are failures related to PayPal API latency or merchant backend errors?", "Which transactions require reconciliation?"];
 
   // The chat thread is a fixed-height scrollable box; without this, new
   // messages render below the visible fold and the chat looks dead.
   useEffect(() => {
-    chatThreadEndRef.current?.scrollIntoView({ block: "nearest" });
+    const thread = chatThreadRef.current;
+    if (thread) thread.scrollTop = thread.scrollHeight;
   }, [chatMessages, chatLoading]);
 
   useEffect(() => {
@@ -328,42 +362,42 @@ export default function InvestigateHubPage() {
           </div>
 
           {/* Follow-up chat is payment/incident scoped; fleet questions run through Incident Command above. */}
-          {(selectedPayment || incidentContext) && <div className="lg:col-span-5 space-y-6">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-              <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-3">
+          {(selectedPayment || incidentContext) && <div className="lg:col-span-5 min-w-0 self-stretch">
+            <section aria-label="AI Investigator follow-up chat" className="investigator-chat light-scale flex h-[520px] min-h-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-800 shadow-lg shadow-slate-900/5 lg:sticky lg:top-[84px] lg:h-[calc(100vh-112px)] lg:min-h-[420px]">
+              <div className="flex shrink-0 items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
                 <div>
                   <h3 className="flex items-center gap-2 text-sm font-bold text-slate-900">
                     <Brain className="h-4 w-4 text-blue-600" />
-                    Ask a follow-up
+                    PayTrace Investigator
                   </h3>
                   <p className="mt-1 text-[11px] text-slate-600">Continue with the same payment or incident evidence.</p>
                 </div>
                 <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-[9px] font-semibold tracking-wide text-blue-800">EVIDENCE-GROUNDED</span>
               </div>
 
-              <div className="max-h-80 space-y-3 overflow-y-auto rounded-xl bg-slate-50 p-3 pr-2">
+              <div ref={chatThreadRef} role="log" aria-live="polite" aria-label="Conversation" className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain bg-slate-50/70 p-4">
                 {chatMessages.length === 0 ? (
-                  <div className="space-y-2 py-8 text-center text-xs text-slate-600">
-                    <HelpCircle className="mx-auto h-6 w-6 text-slate-400" />
+                  <div className="space-y-2 py-8 text-center text-sm text-slate-700">
+                    <HelpCircle className="mx-auto h-7 w-7 text-blue-600" />
                   <p>Have specific questions about {incidentContext ? "this incident and its linked records" : "this payment outcome"}?</p>
-                    <p className="text-[11px] font-medium text-blue-700">Try: &ldquo;Why shouldn&apos;t I retry right now?&rdquo;</p>
+                    <p className="text-xs font-medium text-blue-700">Try: &ldquo;Why shouldn&apos;t I retry right now?&rdquo;</p>
                   </div>
                 ) : (
                   chatMessages.map((msg, i) => (
                     <div
                       key={i}
-                      className={`p-3 rounded-lg text-xs leading-relaxed ${
+                      className={`max-w-[94%] break-words rounded-xl border px-3.5 py-3 text-[13px] leading-6 ${
                         msg.role === "user"
-                        ? "ml-6 border border-blue-200 bg-blue-50 text-slate-800"
-                          : "mr-6 border border-slate-200 bg-white text-slate-800 shadow-xs"
+                        ? "ml-auto border-blue-200 bg-blue-700 text-white"
+                          : "mr-auto border-slate-200 bg-white text-slate-800 shadow-sm"
                       }`}
                     >
-                      <span className={`mb-1 block text-[9px] font-semibold tracking-wide ${msg.role === "user" ? "text-blue-800" : "text-slate-500"}`}>
+                      <span className={`mb-1 block text-[9px] font-semibold tracking-wide ${msg.role === "user" ? "text-blue-100" : "text-slate-500"}`}>
                         {msg.role === "user" ? "YOU" : "PAYTRACE INVESTIGATOR"}
                       </span>
-                      {msg.content}
+                      <ChatMarkdown content={msg.content} />
                       {msg.activity && (
-                        <div className="mt-2 space-y-1 border-t border-slate-200 pt-2 text-[10px] text-slate-600">
+                        <div className={`mt-3 space-y-1 border-t pt-2 text-[10px] ${msg.role === "user" ? "border-white/20 text-blue-100" : "border-slate-200 text-slate-600"}`}>
                           <p>Workflow nodes: {msg.activity.nodes.join(" → ") || "No graph run for this answer"}</p>
                           <p>Answer: {msg.activity.answerMode}{msg.activity.model ? ` · ${msg.activity.model}` : ""} · LangSmith tracing {msg.activity.tracing ? "enabled" : "disabled"}</p>
                           <p>Tools: {msg.activity.tools.join(", ") || "none"}</p>
@@ -374,33 +408,38 @@ export default function InvestigateHubPage() {
                   ))
                 )}
                 {chatLoading && (
-                  <div role="status" className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-800">
+                  <div role="status" className="flex items-center gap-2 rounded-lg border border-blue-200 bg-white p-3 text-xs text-blue-800">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     Consulting payment records...
                   </div>
                 )}
-                <div ref={chatThreadEndRef} />
               </div>
 
-              <form onSubmit={handleSendChat} className="flex gap-2 border-t border-slate-200 pt-3">
-                <input
-                  type="text"
+              <form onSubmit={handleSendChat} className="flex shrink-0 items-end gap-2 border-t border-slate-200 bg-white p-4">
+                <textarea
+                  rows={1}
                   aria-label="Ask a follow-up question"
                   placeholder="Ask a follow-up about this evidence…"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      event.currentTarget.form?.requestSubmit();
+                    }
+                  }}
+                  className="min-h-12 min-w-0 flex-1 resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm leading-5 text-slate-900 placeholder:text-slate-500 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-600/20"
                 />
                 <button
                   type="submit"
                   aria-label="Send follow-up question"
                   disabled={chatLoading || !chatInput.trim() || (!selectedPaymentId && !incidentContext)}
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-700 text-white transition-colors hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-700 text-white transition-colors hover:bg-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>
               </form>
-            </div>
+            </section>
           </div>}
         </div>
       )}
