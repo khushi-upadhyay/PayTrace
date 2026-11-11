@@ -35,7 +35,13 @@ services:
       APP_ENV: development
       APP_HOST: 0.0.0.0
       APP_PORT: 8000
-      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgrespassword}@postgres:5432/${POSTGRES_DB:-paytrace}
+      # The root .env DATABASE_URL is for hosted app traffic (Neon). Local
+      # Compose must keep using its own PostgreSQL volume by default.
+      # Set PAYTRACE_DATABASE_URL only when deliberately overriding it.
+      DATABASE_URL: ${PAYTRACE_DATABASE_URL:-postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgrespassword}@postgres:5432/${POSTGRES_DB:-paytrace}}
+      # env_file may include Neon’s direct URL. Keep Alembic on local Postgres
+      # too unless the explicit Compose override is set.
+      DATABASE_URL_UNPOOLED: ${PAYTRACE_DATABASE_URL:-postgresql+psycopg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgrespassword}@postgres:5432/${POSTGRES_DB:-paytrace}}
       FRONTEND_ORIGIN: http://localhost:3000
 
     ports:

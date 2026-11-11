@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     APP_HOST: str = "0.0.0.0"
     APP_PORT: int = 8000
     DATABASE_URL: str = f"sqlite:///{DEFAULT_DB_PATH}"
+    # Optional unpooled URL reserved for schema migrations and administrative
+    # database operations (for example, Neon direct connections).
+    DATABASE_URL_UNPOOLED: Optional[str] = None
 
     PAYPAL_CLIENT_ID: Optional[str] = ""
     PAYPAL_CLIENT_SECRET: Optional[str] = ""

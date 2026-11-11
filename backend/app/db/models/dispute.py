@@ -30,7 +30,7 @@ class Dispute(Base):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     payment_id: Mapped[str] = mapped_column(String(36), ForeignKey("payments.id", ondelete="CASCADE"), index=True)
-    paypal_dispute_id: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    paypal_dispute_id: Mapped[str] = mapped_column(String(64), unique=True)
     reason: Mapped[str] = mapped_column(String(64), default="OTHER")
     status: Mapped[str] = mapped_column(String(32), default="OPEN", index=True)
     amount: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
@@ -48,5 +48,6 @@ class Dispute(Base):
     payment: Mapped["Payment"] = relationship("Payment", back_populates="disputes")
 
     __table_args__ = (
+        Index("ix_disputes_paypal_dispute_id", "paypal_dispute_id"),
         Index("ix_disputes_status_opened_at", "status", "opened_at"),
     )
