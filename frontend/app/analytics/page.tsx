@@ -29,6 +29,17 @@ import {
 } from "recharts";
 
 const COLORS = ["#0b73c2", "#f59e0b", "#f43f5e", "#8b5cf6", "#10b981"];
+const STATUS_COLORS: Record<string, string> = {
+  CAPTURED: "#059669",
+  REFUNDED: "#0b73c2",
+  CREATED: "#64748b",
+  APPROVED: "#7c3aed",
+  CAPTURE_PENDING: "#d97706",
+  CAPTURE_UNCERTAIN: "#ea580c",
+  CAPTURE_FAILED: "#e11d48",
+  DENIED: "#be123c",
+  DISPUTED: "#9333ea",
+};
 
 export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -97,7 +108,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* KPI Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
           <span className="text-xs font-medium text-slate-400">Payment records</span>
           <div className="text-2xl font-extrabold text-ink">{analytics.total_payments.toLocaleString()}</div>
@@ -123,6 +134,12 @@ export default function AnalyticsPage() {
           <span className="text-xs font-medium text-slate-400">Webhook arrival delay</span>
           <div className="text-2xl font-extrabold text-ink">{analytics.average_webhook_delay_seconds == null ? "No data" : `${analytics.average_webhook_delay_seconds} s`}</div>
           <span className="text-[11px] text-slate-400">Provider event timestamps are not currently persisted</span>
+        </div>
+
+        <div className="glass-card rounded-xl p-5 border border-slate-800 space-y-1.5">
+          <span className="text-xs font-medium text-slate-400">Open incidents</span>
+          <div className="text-2xl font-extrabold text-ink">{analytics.open_incidents_count.toLocaleString()}</div>
+          <span className="text-[11px] text-slate-400">Unresolved incidents in the stored workspace</span>
         </div>
       </div>
 
@@ -179,6 +196,32 @@ export default function AnalyticsPage() {
         <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4 lg:col-span-2">
           <div><h3 className="text-sm font-bold text-ink">Payment outcomes by provider environment</h3><p className="text-xs text-slate-400">Counts grouped from persisted payment source and status fields.</p></div>
           {providerOutcomeRows.length ? <div className="h-72 w-full"><ResponsiveContainer width="100%" height="100%"><BarChart data={providerOutcomeRows} margin={{ top: 10, right: 20, left: -15, bottom: 4 }}><CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" /><XAxis dataKey="provider" stroke="var(--chart-axis)" fontSize={11} /><YAxis stroke="var(--chart-axis)" fontSize={11} allowDecimals={false} /><Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", borderColor: "var(--chart-tooltip-border)", borderRadius: "8px", fontSize: "12px" }} /><Legend />{providerStatuses.map((status, index) => <Bar key={status} dataKey={status} stackId="outcomes" fill={COLORS[index % COLORS.length]} name={status.replaceAll("_", " ")} />)}</BarChart></ResponsiveContainer></div> : <p className="py-12 text-center text-xs text-slate-500">No provider outcome data is stored.</p>}
+        </div>
+
+        <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4 lg:col-span-2">
+          <div>
+            <h3 className="text-sm font-bold text-ink">Payment lifecycle status mix</h3>
+            <p className="text-xs text-slate-400">Persisted payment records grouped by their current lifecycle status.</p>
+          </div>
+          {analytics.status_breakdown.length ? <div className="grid grid-cols-1 items-center gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <div className="h-64 min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={analytics.status_breakdown} dataKey="count" nameKey="status" innerRadius={58} outerRadius={92} paddingAngle={2}>
+                    {analytics.status_breakdown.map((entry, index) => <Cell key={entry.status} fill={STATUS_COLORS[entry.status] || COLORS[index % COLORS.length]} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", borderColor: "var(--chart-tooltip-border)", borderRadius: "8px", fontSize: "12px" }} />
+                  <Legend formatter={(value) => String(value).replaceAll("_", " ")} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <ul className="space-y-2" aria-label="Payment counts by status">
+              {analytics.status_breakdown.slice().sort((a, b) => b.count - a.count).map((entry) => <li key={entry.status} className="flex items-center justify-between gap-3 rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-2 text-xs">
+                <span className="flex min-w-0 items-center gap-2 font-medium text-slate-200"><span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: STATUS_COLORS[entry.status] || "#64748b" }} /> <span className="truncate">{entry.status.replaceAll("_", " ")}</span></span>
+                <span className="font-bold tabular-nums text-white">{entry.count.toLocaleString()}</span>
+              </li>)}
+            </ul>
+          </div> : <p className="py-12 text-center text-xs text-slate-400">No payment status records are stored.</p>}
         </div>
       </div>
     </div>

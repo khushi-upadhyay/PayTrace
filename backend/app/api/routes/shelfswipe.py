@@ -913,8 +913,6 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "recorded", "direction": req.direction, "product_id": req.product_id}
 
-from app.core.security import create_checkout_token  # noqa: E402
-
 ALLOWED_RETURN_PATHS = {
     "/shelfswipe",
     "/shelfswipe/buyer-onboarding",

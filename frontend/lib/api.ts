@@ -380,7 +380,6 @@ export interface ShelfDeckResponse {
 export interface ShelfCheckoutResponse {
   payment_id: string;
   paypal_order_id: string;
-  checkout_token?: string;
   approval_url: string | null;
   amount: number;
   currency: string;

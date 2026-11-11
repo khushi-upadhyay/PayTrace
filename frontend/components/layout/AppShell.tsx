@@ -14,9 +14,6 @@ import { useAuth } from "@/components/providers/AuthProvider";
 const PUBLIC_ROUTES = [
   "/",
   "/checkout",
-  "/shelfswipe",
-  "/shelfswipe/seller-onboarding",
-  "/shelfswipe/history",
   "/shelfswipe/buyer-onboarding",
   "/demo/approval",
 ];

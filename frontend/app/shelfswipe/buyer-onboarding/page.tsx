@@ -10,8 +10,8 @@ import {
   Package,
   CheckCircle2,
   Store,
-  Compass,
-  ArrowLeft,
+  MessageCircle,
+  Send,
 } from "lucide-react";
 import CartPayment, { CartLine } from "@/components/shelfswipe/CartPayment";
 import { api } from "@/lib/api";
@@ -22,7 +22,6 @@ import {
   getOrCreateBuyerId,
   shelfswipeApi,
 } from "@/lib/shelfswipe-api";
-import { api } from "@/lib/api";
 
 export default function ShelfSwipeBuyerOnboardingPage() {
   const [buyerId, setBuyerId] = useState<string | null>(null);
@@ -35,6 +34,15 @@ export default function ShelfSwipeBuyerOnboardingPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadingDeck, setLoadingDeck] = useState(true);
   const [deckError, setDeckError] = useState<string | null>(null);
+  const [assistantQuery, setAssistantQuery] = useState("");
+  const [assistantMessages, setAssistantMessages] = useState<Array<{
+    id: string;
+    query: string;
+    text: string;
+    products: BuyerDeckProductItem[];
+  }>>([]);
+  const [assistantBusy, setAssistantBusy] = useState(false);
+  const [assistantError, setAssistantError] = useState<string | null>(null);
 
   const { sessionId, addSessionMarker } = useSessionRecording();
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -98,29 +106,66 @@ export default function ShelfSwipeBuyerOnboardingPage() {
 
   const currentItem = deck[currentIndex];
 
+  const addToCart = (product: BuyerDeckProductItem) => {
+    if (product.stock < 1) return;
+    setCart((previous) => {
+      const existing = previous.find((line) => line.id === product.id);
+      if (existing) {
+        return previous.map((line) => line.id === product.id
+          ? { ...line, quantity: Math.min(line.quantity + 1, line.stock) }
+          : line);
+      }
+      return [...previous, {
+        id: product.id,
+        name: product.name,
+        shop_name: product.shop_name,
+        price: Number(product.price),
+        stock: product.stock,
+        image_url: product.image_url,
+        quantity: 1,
+      }];
+    });
+  };
+
+  const askStoreAssistant = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const question = assistantQuery.trim();
+    if (!question || assistantBusy) return;
+    setAssistantBusy(true);
+    setAssistantError(null);
+    try {
+      const result = await shelfswipeApi.getBuyerDeck(
+        selectedShopId === "all" ? undefined : selectedShopId,
+        question,
+      );
+      const available = result.deck.filter((product) => product.stock > 0);
+      const text = available.length
+          ? `Yes — I found ${available.length} in-stock ${available.length === 1 ? "product" : "products"} matching “${question}” in the approved store catalog.`
+          : result.deck.length
+            ? `I found matching products for “${question}”, but they are currently out of stock.`
+            : `I couldn't find “${question}” in the currently approved store catalog. Try another name or category.`;
+      setAssistantMessages((previous) => [...previous.slice(-7), {
+        id: `${Date.now()}-${previous.length}`,
+        query: question,
+        text,
+        products: (available.length ? available : result.deck).slice(0, 4),
+      }]);
+      addSessionMarker("shelfswipe_catalog_assistant_search", {
+        query: question,
+        result_count: result.deck.length,
+        in_stock_count: available.length,
+        shop_id: selectedShopId === "all" ? null : selectedShopId,
+      });
+    } catch (error) {
+      setAssistantError(error instanceof Error ? error.message : "The store catalog could not be searched.");
+    } finally {
+      setAssistantBusy(false);
+    }
+  };
+
   const handleSwipe = async (direction: "left" | "right") => {
     if (!currentItem || !buyerId) return;
-    if (direction === "right") {
-      // "Add to Cart": merge repeat adds into one line, capped at available stock
-      setCart((prev) => {
-        const existing = prev.find((l) => l.id === currentItem.id);
-        if (existing) {
-          return prev.map((l) => (l.id === currentItem.id ? { ...l, quantity: Math.min(l.quantity + 1, l.stock) } : l));
-        }
-        return [
-          ...prev,
-          {
-            id: currentItem.id,
-            name: currentItem.name,
-            shop_name: currentItem.shop_name,
-            price: Number(currentItem.price),
-            stock: currentItem.stock,
-            image_url: currentItem.image_url,
-            quantity: 1,
-          },
-        ];
-      });
-    }
+    if (direction === "right") addToCart(currentItem);
     setImageError(false);
     setCurrentIndex((prev) => Math.min(prev + 1, deck.length));
 
@@ -250,28 +295,14 @@ export default function ShelfSwipeBuyerOnboardingPage() {
       <div className="border-b border-[#e2e8f0] bg-white">
         <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <Link
-              href="/shelfswipe"
-              className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[#cbd5e1] px-2.5 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f1f5f9] transition-colors"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back</span>
-            </Link>
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#047857] text-white shadow-sm">
               <Store className="h-5 w-5" />
             </div>
             <div className="min-w-0">
               <span className="text-xs font-bold uppercase tracking-wider text-paypal-blue block">ShelfSwipe</span>
-              <h1 className="text-lg font-bold text-[#0f172a] truncate">Buyer Store Onboarding</h1>
+              <h1 className="text-lg font-bold text-[#0f172a] truncate">ShelfSwipe Store</h1>
             </div>
           </div>
-          <Link
-            href="/shelfswipe/seller-onboarding"
-            className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-[#f8fafc] px-3 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f1f5f9] transition-colors shrink-0"
-          >
-            <Compass className="h-3.5 w-3.5 text-paypal-blue" />
-            <span>Onboard a seller</span>
-          </Link>
         </div>
       </div>
 
@@ -325,6 +356,36 @@ export default function ShelfSwipeBuyerOnboardingPage() {
             Search
           </button>
         </form>
+
+        <section aria-label="ShelfSwipe catalog chat" className="rounded-2xl border border-[#cbd5e1] bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex items-start gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#eaf3ff] text-[#075ca8]"><MessageCircle className="h-4 w-4" /></span>
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-bold text-[#0f172a]">Ask the ShelfSwipe catalog</h2>
+              <p className="mt-1 text-xs leading-relaxed text-[#475569]">Search live, approved products by name or category, then add a match to your cart. Results use the local catalog, including products imported through Channel3.</p>
+              <form onSubmit={askStoreAssistant} className="mt-3 flex gap-2">
+                <input value={assistantQuery} onChange={(event) => setAssistantQuery(event.target.value)} aria-label="Ask the product catalog" placeholder="Do you have a lavender candle?" className="min-w-0 flex-1 rounded-xl border border-[#94a3b8] bg-white px-3 py-2.5 text-sm text-[#0f172a] placeholder:text-[#64748b] focus:border-[#075ca8] focus:outline-none focus:ring-2 focus:ring-[#075ca8]/20" />
+                <button type="submit" disabled={assistantBusy || !assistantQuery.trim()} className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-[#075ca8] px-3.5 py-2.5 text-xs font-bold text-white hover:bg-[#064b88] disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-3.5 w-3.5" /><span className="hidden sm:inline">Ask</span></button>
+              </form>
+              {assistantBusy && <p role="status" className="mt-3 text-xs font-medium text-[#334155]">Searching approved store inventory…</p>}
+              {assistantError && <p role="alert" className="mt-3 text-xs font-semibold text-[#b42318]">{assistantError}</p>}
+              {assistantMessages.length > 0 && <div aria-live="polite" className="mt-3 max-h-80 space-y-3 overflow-y-auto pr-1">
+                {assistantMessages.map((message) => <div key={message.id} className="space-y-2">
+                  <div className="flex justify-end"><p className="max-w-[85%] rounded-xl rounded-br-sm bg-[#075ca8] px-3 py-2 text-xs font-medium text-white">{message.query}</p></div>
+                  <div className="max-w-[95%] rounded-xl rounded-bl-sm bg-[#f1f5f9] p-3">
+                    <p className="text-sm font-medium text-[#1e293b]">{message.text}</p>
+                    {message.products.length > 0 && <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                      {message.products.map((product) => <div key={product.id} className="flex items-center justify-between gap-3 rounded-lg border border-[#cbd5e1] bg-white p-2.5">
+                        <div className="min-w-0"><p className="truncate text-xs font-bold text-[#0f172a]">{product.name}</p><p className="mt-0.5 truncate text-[11px] text-[#475569]">{product.shop_name} · ${Number(product.price).toFixed(2)} · {product.stock > 0 ? `${product.stock} in stock` : "Out of stock"}</p></div>
+                        <button type="button" onClick={() => addToCart(product)} disabled={product.stock < 1} className="shrink-0 rounded-lg border border-[#075ca8] px-2.5 py-1.5 text-[11px] font-bold text-[#075ca8] hover:bg-[#eaf3ff] disabled:opacity-50">Add</button>
+                      </div>)}
+                    </div>}
+                  </div>
+                </div>)}
+              </div>}
+            </div>
+          </div>
+        </section>
 
         {/* Deck */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">

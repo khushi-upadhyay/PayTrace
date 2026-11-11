@@ -33,7 +33,7 @@ export default function ShelfSwipeChooserPage() {
               Local Commerce Demo
             </span>
           </div>
-          <h1 className="text-xl font-bold text-[#0f172a] mt-1">What would you like to do?</h1>
+          <h1 className="text-xl font-bold text-[#0f172a] mt-1">ShelfSwipe commerce workspace</h1>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export default function ShelfSwipeChooserPage() {
               Channel3 — then review readiness flags and approve products to go live.
             </p>
             <span className="inline-flex items-center gap-1.5 text-sm font-bold text-paypal-blue mt-5 group-hover:gap-2.5 transition-all">
-              Onboard a store
+              Open seller onboarding
               <ArrowRight className="h-4 w-4" />
             </span>
           </Link>
@@ -80,13 +80,13 @@ export default function ShelfSwipeChooserPage() {
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#047857] text-white shadow-sm">
               <ShoppingBag className="h-6 w-6" />
             </div>
-            <h2 className="text-lg font-bold text-[#0f172a] mt-4">Buyer Store Onboarding</h2>
+            <h2 className="text-lg font-bold text-[#0f172a] mt-4">Browse ShelfSwipe Store</h2>
             <p className="text-sm text-[#64748b] mt-1.5 flex-1">
               Browse every product sellers have approved to live status, in a swipeable,
               Tinder-style deck. Swipe through one shop, or every shop at once.
             </p>
             <span className="inline-flex items-center gap-1.5 text-sm font-bold text-[#047857] mt-5 group-hover:gap-2.5 transition-all">
-              Start swiping
+              Shop live products
               <ArrowRight className="h-4 w-4" />
             </span>
           </Link>
