@@ -2,6 +2,7 @@ from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal, Optional
 import os
+from urllib.parse import urlsplit
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DB_PATH = (BASE_DIR / "paytrace.db").as_posix()
@@ -114,8 +115,16 @@ class Settings(BaseSettings):
     )
 
     @property
+    def session_cookie_samesite(self) -> Literal["lax", "strict", "none"]:
+        """Use cross-site cookies in deployed environments, while keeping localhost Lax by default."""
+        local_frontend = urlsplit(self.FRONTEND_ORIGIN).hostname in {"localhost", "127.0.0.1", "::1"}
+        if self.APP_ENV.strip().lower() in {"development", "test"} and local_frontend:
+            return self.COOKIE_SAMESITE
+        return "none"
+
+    @property
     def cookie_secure(self) -> bool:
-        return self.COOKIE_SAMESITE == "none" or self.APP_ENV.strip().lower() not in {"development", "test"}
+        return self.session_cookie_samesite == "none" or self.APP_ENV.strip().lower() not in {"development", "test"}
 
     @property
     def registration_open(self) -> bool:

@@ -22,7 +22,7 @@ def _set_session_cookie(response: Response, user_id: str, remember: bool = True)
         max_age=settings.AUTH_TOKEN_TTL_MINUTES * 60 if remember else None,
         httponly=True,
         secure=settings.cookie_secure,
-        samesite=settings.COOKIE_SAMESITE,
+        samesite=settings.session_cookie_samesite,
         path="/",
     )
     return token
@@ -73,7 +73,13 @@ def login(req: LoginRequest, request: Request, response: Response, db: Session =
 def logout(request: Request, response: Response):
     """Clears the session cookie."""
     audit("logout", request)
-    response.delete_cookie(AUTH_COOKIE, path="/", secure=settings.cookie_secure, httponly=True, samesite=settings.COOKIE_SAMESITE)
+    response.delete_cookie(
+        AUTH_COOKIE,
+        path="/",
+        secure=settings.cookie_secure,
+        httponly=True,
+        samesite=settings.session_cookie_samesite,
+    )
 
 
 @router.get("/me", response_model=UserResponse)
