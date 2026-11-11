@@ -38,6 +38,34 @@ body {
   background: rgb(var(--slate-600));
 }
 
+.chat-markdown { overflow-wrap: anywhere; }
+.chat-markdown > :first-child { margin-top: 0; }
+.chat-markdown > :last-child { margin-bottom: 0; }
+.chat-markdown p { margin: 0.55rem 0; }
+.chat-markdown h1, .chat-markdown h2, .chat-markdown h3 { margin: 0.9rem 0 0.4rem; color: #0f172a; font-weight: 700; line-height: 1.35; }
+.chat-markdown h1 { font-size: 1.1rem; }
+.chat-markdown h2 { font-size: 1rem; }
+.chat-markdown h3 { font-size: 0.9rem; }
+.chat-markdown ul, .chat-markdown ol { margin: 0.55rem 0; padding-left: 1.35rem; }
+.chat-markdown ul { list-style: disc; }
+.chat-markdown ol { list-style: decimal; }
+.chat-markdown li { margin: 0.2rem 0; padding-left: 0.12rem; }
+.chat-markdown li::marker { color: #2563eb; }
+.chat-markdown blockquote { margin: 0.65rem 0; border-left: 3px solid #60a5fa; padding: 0.2rem 0 0.2rem 0.75rem; color: #475569; }
+.chat-markdown a { color: #1d4ed8; text-decoration: underline; text-underline-offset: 2px; }
+.chat-markdown pre { max-width: 100%; overflow-x: auto; margin: 0.65rem 0; border-radius: 0.5rem; background: #0f172a; padding: 0.75rem; color: #e2e8f0; font-size: 0.75rem; line-height: 1.5; }
+.chat-markdown pre code { white-space: pre; }
+.chat-markdown .chat-inline-code { border-radius: 0.25rem; background: #e2e8f0; padding: 0.1rem 0.28rem; color: #1e293b; font-size: 0.9em; }
+.chat-table-wrap { max-width: 100%; overflow-x: auto; margin: 0.65rem 0; }
+.chat-markdown table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+.chat-markdown th, .chat-markdown td { border: 1px solid #cbd5e1; padding: 0.35rem 0.5rem; text-align: left; }
+.chat-markdown th { background: #eff6ff; color: #1e3a8a; font-weight: 700; }
+.investigator-chat [role="log"] { scrollbar-color: #94a3b8 transparent; scrollbar-width: thin; }
+
+@media (max-width: 1023px) {
+  .investigator-chat { height: min(520px, 72vh); }
+}
+
 /* Surfaces. Kept under their old names so existing pages pick up the PayPal look. */
 .glass-panel {
   background: rgb(var(--slate-900) / 0.9);
