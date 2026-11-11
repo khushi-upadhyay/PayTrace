@@ -1,9 +1,11 @@
 from app.api.dependencies import get_current_user
 from app.main import app
+from app.core.config import settings
+from fastapi.testclient import TestClient
 
 
 def _real_auth(client):
-    """Drop the conftest bypass so the real bearer-token check runs."""
+    """Drop the conftest bypass so the real cookie/bearer auth check runs."""
     app.dependency_overrides.pop(get_current_user, None)
 
 
@@ -56,12 +58,16 @@ def test_registration_closed_outside_development(client):
         settings.APP_ENV = original
 
 
-def test_login_sets_httponly_cookie_and_cookie_authenticates(client):
+def test_login_sets_httponly_cookie_and_cookie_authenticates(client, monkeypatch):
+    monkeypatch.setattr(settings, "APP_ENV", "test")
+    monkeypatch.setattr(settings, "FRONTEND_ORIGIN", "http://localhost:3000")
+    monkeypatch.setattr(settings, "COOKIE_SAMESITE", "lax")
     _real_auth(client)
     client.post("/api/v1/auth/register", json={"name": "C", "email": "c@example.com", "password": "longenough1"})
     r = client.post("/api/v1/auth/login", json={"email": "c@example.com", "password": "longenough1"})
     cookie = r.headers["set-cookie"].lower()
     assert "paytrace_session=" in cookie and "httponly" in cookie and "samesite=lax" in cookie
+    assert "; secure" not in cookie
     assert "max-age" in cookie
     client.cookies.set("paytrace_session", r.json()["access_token"])
     assert client.get("/api/v1/auth/me").status_code == 200
@@ -74,6 +80,75 @@ def test_login_sets_httponly_cookie_and_cookie_authenticates(client):
     )
     assert r2.status_code != 401 and "CSRF" not in r2.text  # authenticated; reaches the route
     assert "CSRF" not in r2.text
+
+
+def test_production_cookie_is_cross_site_and_authenticates_workspace(client, monkeypatch):
+    _real_auth(client)
+    registered = client.post(
+        "/api/v1/auth/register",
+        json={"name": "Production", "email": "prod-cookie@example.com", "password": "longenough1"},
+    )
+    assert registered.status_code == 201
+
+    # Simulate a stale Render setting: production must still issue a cross-site cookie.
+    monkeypatch.setattr(settings, "APP_ENV", "production")
+    monkeypatch.setattr(settings, "FRONTEND_ORIGIN", "https://paytraceai.vercel.app")
+    monkeypatch.setattr(settings, "COOKIE_SAMESITE", "lax")
+    with TestClient(app, base_url="https://testserver") as browser:
+        response = browser.post(
+            "/api/v1/auth/login",
+            json={"email": "prod-cookie@example.com", "password": "longenough1"},
+        )
+        assert response.status_code == 200
+        cookie = response.headers["set-cookie"].lower()
+        assert "paytrace_session=" in cookie
+        assert "samesite=none" in cookie
+        assert "secure" in cookie
+        assert "httponly" in cookie
+        assert "path=/" in cookie
+
+        # The HTTPS client stores and automatically sends the Secure cookie.
+        me = browser.get("/api/v1/auth/me")
+        workspace = browser.get("/api/v1/payments/workspace?limit=500")
+        assert me.status_code == 200
+        assert me.json()["email"] == "prod-cookie@example.com"
+        assert workspace.status_code == 200
+
+        logged_out = browser.post("/api/v1/auth/logout")
+        cleared_cookie = logged_out.headers["set-cookie"].lower()
+        assert logged_out.status_code == 204
+        assert "samesite=none" in cleared_cookie and "secure" in cleared_cookie
+        assert browser.get("/api/v1/auth/me").status_code == 401
+
+
+def test_missing_and_invalid_session_cookies_return_401(client):
+    _real_auth(client)
+    assert client.get("/api/v1/auth/me").status_code == 401
+    client.cookies.set("paytrace_session", "not-a-valid-session")
+    assert client.get("/api/v1/auth/me").status_code == 401
+
+
+def test_cors_allows_only_the_configured_origin_with_credentials(client):
+    origin = settings.FRONTEND_ORIGIN
+    allowed = client.options(
+        "/api/v1/auth/me",
+        headers={
+            "Origin": origin,
+            "Access-Control-Request-Method": "GET",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+    assert allowed.headers.get("access-control-allow-origin") == origin
+    assert allowed.headers.get("access-control-allow-credentials") == "true"
+
+    denied = client.options(
+        "/api/v1/auth/me",
+        headers={
+            "Origin": "https://not-paytrace.example",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert denied.headers.get("access-control-allow-origin") is None
 
 
 def test_session_only_cookie_without_remember(client):

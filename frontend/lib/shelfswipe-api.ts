@@ -65,7 +65,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
   let res: Response;
   try {
-    res = await fetch(url, { ...init, headers });
+    res = await fetch(url, { ...init, headers, credentials: "include" });
   } catch (err: unknown) {
     const reason = err instanceof Error ? err.message : "Network error";
     throw new ShelfSwipeApiError(
