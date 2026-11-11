@@ -123,8 +123,10 @@ async def create_order(
 
 async def _create_order(req: OrderCreateRequest, db: Session) -> OrderCreateResponse:
     payment_id = str(uuid.uuid4())
-    # Deterministic demo simulation takes precedence if explicitly requested or if PayPal is not configured
-    is_mock = bool(req.simulate_scenario) or not settings.is_paypal_configured
+    # The timeout demo simulates only the merchant losing the capture response;
+    # it still creates a real Sandbox order when credentials exist.
+    # Instrument declines remain an explicitly simulated provider fallback.
+    is_mock = req.simulate_scenario == "capture_denied" or not settings.is_paypal_configured
 
     paypal_order_id = ""
     approval_url = None
@@ -355,7 +357,7 @@ async def capture_order(
     # without mutating anything. Falling through from here would re-run this payment
     # through the normal capture path below and actually issue a second real capture —
     # exactly the blind-retry double-charge this status exists to prevent.
-    if payment.status == "CAPTURE_UNCERTAIN" and not req.simulate_timeout:
+    if payment.status == "CAPTURE_UNCERTAIN":
         return OrderCaptureResponse(
             payment_id=payment.id,
             paypal_order_id=order_id,
@@ -383,32 +385,63 @@ async def capture_order(
         )
         lifecycle_engine.transition_status(payment, "APPROVED")
 
-    # CRITICAL SCENARIO: Simulated backend timeout before receiving response.
-    # Compared case-insensitively: this same field gets overwritten to the uppercase
-    # "TIMEOUT_BEFORE_RESPONSE" constant a few lines below once this branch has run
-    # once, so a lowercase-only comparison stops matching on any later request for the
-    # same payment and would otherwise let it silently fall through into a real capture.
+    # Simulate a lost merchant response only after making one real Sandbox capture
+    # request. The provider result is deliberately discarded so reconciliation must
+    # recover the actual state through GET order/capture and webhook evidence.
     if req.simulate_timeout or (payment.failure_code or "").upper() == "TIMEOUT_BEFORE_RESPONSE":
-        simulated_capture_id = f"MOCK-CAP-{uuid.uuid4().hex[:10].upper()}"
-        payment.paypal_capture_id = simulated_capture_id
+        capture_response_received = False
+        if is_mock:
+            try:
+                # The credential-less demo updates only its in-memory provider.
+                mock_paypal.capture_order(order_id)
+                capture_response_received = True
+            except Exception as capture_error:
+                logger.warning("Simulated demo capture outcome uncertain after %s", type(capture_error).__name__)
+        else:
+            try:
+                await paypal_client.capture_order(order_id, idempotency_key=payment.id)
+                capture_response_received = True
+            except Exception as capture_error:
+                if isinstance(capture_error, httpx.HTTPStatusError) and 400 <= capture_error.response.status_code < 500:
+                    lifecycle_engine.transition_status(
+                        payment,
+                        new_status="CAPTURE_FAILED",
+                        failure_code="PAYPAL_CAPTURE_REJECTED",
+                        failure_reason="PayPal rejected the Sandbox capture request; the simulated response-loss scenario did not occur.",
+                    )
+                    lifecycle_engine.record_event(
+                        db=db,
+                        payment=payment,
+                        event_type="CAPTURE_FAILED",
+                        source="PAYPAL_API",
+                        status="FAILED",
+                        paypal_order_id=order_id,
+                        metadata={"http_status": capture_error.response.status_code, "simulation": "merchant_response_loss_not_applied"},
+                        is_simulated=False,
+                    )
+                    db.commit()
+                    raise HTTPException(status_code=502, detail="PayPal rejected the capture request; no timeout demo was recorded.") from capture_error
+                logger.warning("Demo capture outcome uncertain after %s", type(capture_error).__name__)
+        payment.paypal_capture_id = None
         lifecycle_engine.transition_status(
             payment,
             new_status="CAPTURE_UNCERTAIN",
             failure_code="TIMEOUT_BEFORE_RESPONSE",
-            failure_reason="Merchant backend timed out (HTTP 504/timeout >5000ms) before receiving capture response from PayPal.",
+            failure_reason="The merchant-side response loss was simulated after the capture request; local capture state remains uncertain until reconciliation.",
         )
         lifecycle_engine.record_event(
             db=db,
             payment=payment,
-            event_type="CAPTURE_REQUEST_TIMEOUT",
+            event_type="CAPTURE_RESPONSE_DROPPED" if capture_response_received else "CAPTURE_REQUEST_TIMEOUT",
             source="SIMULATED",
             status="UNCERTAIN",
-            latency_ms=5240,
+            latency_ms=None,
             paypal_order_id=order_id,
-            paypal_capture_id=simulated_capture_id,
             metadata={
-                "error": "ReadTimeout: merchant backend waited 5.2s with no response",
-                "risk": "Provider may have processed capture; blind retry prohibited to avoid duplicate charges.",
+                "simulation": "merchant_response_loss",
+                "provider_operation": "live_paypal_capture" if not is_mock else "simulated_demo_capture",
+                "provider_response_discarded": capture_response_received,
+                "risk": "Capture outcome must be reconciled with provider evidence before retry.",
             },
             is_simulated=True,
         )
@@ -417,12 +450,17 @@ async def capture_order(
         return OrderCaptureResponse(
             payment_id=payment.id,
             paypal_order_id=order_id,
-            paypal_capture_id=simulated_capture_id,
+            paypal_capture_id=None,
             status="CAPTURE_UNCERTAIN",
             failure_code="TIMEOUT_BEFORE_RESPONSE",
-            failure_reason="Merchant backend timed out waiting for PayPal response. Do NOT retry blindly. Reconcile provider state first.",
+            failure_reason="Merchant-side response loss was simulated. Do NOT retry blindly; reconcile provider state first.",
             reconciliation_required=True,
-            details={"advice": "Call GET /paypal/orders/{order_id} or await webhook confirmation."},
+            details={
+                "advice": "Reconcile the PayPal order and capture state or inspect processed webhook evidence before retry.",
+                "provider_operation": "live_paypal_capture" if not is_mock else "simulated_demo_capture",
+                "merchant_response_loss_simulated": True,
+                "provider_response_discarded": capture_response_received,
+            },
         )
 
     # Normal execution (Real or Mock)

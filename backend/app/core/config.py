@@ -1,6 +1,7 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Literal, Optional
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEFAULT_DB_PATH = (BASE_DIR / "paytrace.db").as_posix()
@@ -94,10 +95,17 @@ class Settings(BaseSettings):
     FRONTEND_ORIGIN: str = "http://localhost:3000"
     OTEL_EXPORTER_OTLP_ENDPOINT: Optional[str] = None
     APIMATIC_API_KEY: Optional[str] = None
+    LANGCHAIN_API_KEY: Optional[str] = None
+    LANGSMITH_API_KEY: Optional[str] = None
+    LANGCHAIN_PROJECT: Optional[str] = "paytrace"
+    LANGCHAIN_TRACING_V2: Optional[bool] = None
+    LANGSMITH_TRACING: Optional[bool] = None
     SESSION_IDLE_TIMEOUT_SECONDS: int = 1800
 
     model_config = SettingsConfigDict(
-        env_file=(".env", "../.env"),
+        # Resolve project env files independently of the shell's current
+        # directory so `uvicorn` works from either the repo root or backend/.
+        env_file=(BASE_DIR / ".env", BASE_DIR.parent / ".env"),
         env_file_encoding="utf-8",
         extra="ignore"
     )
@@ -119,4 +127,27 @@ class Settings(BaseSettings):
         key = self.effective_ai_api_key
         return bool(key and len(key) > 5)
 
+    @property
+    def is_langsmith_tracing_enabled(self) -> bool:
+        explicit = self.LANGSMITH_TRACING
+        if explicit is None:
+            explicit = self.LANGCHAIN_TRACING_V2
+        return bool((self.LANGSMITH_API_KEY or self.LANGCHAIN_API_KEY) and explicit is not False)
+
 settings = Settings()
+
+# LangGraph emits LangSmith traces when a key is supplied. Respect an explicit
+# tracing toggle; otherwise enable tracing automatically when the key exists.
+_langsmith_key = (settings.LANGSMITH_API_KEY or settings.LANGCHAIN_API_KEY or "").strip()
+if _langsmith_key:
+    os.environ.setdefault("LANGSMITH_API_KEY", _langsmith_key)
+    os.environ.setdefault("LANGCHAIN_API_KEY", _langsmith_key)
+    tracing_enabled = settings.LANGSMITH_TRACING
+    if tracing_enabled is None:
+        tracing_enabled = settings.LANGCHAIN_TRACING_V2
+    if tracing_enabled is None:
+        tracing_enabled = True
+    os.environ["LANGSMITH_TRACING"] = str(tracing_enabled).lower()
+    os.environ["LANGCHAIN_TRACING_V2"] = str(tracing_enabled).lower()
+    if settings.LANGCHAIN_PROJECT:
+        os.environ.setdefault("LANGCHAIN_PROJECT", settings.LANGCHAIN_PROJECT)

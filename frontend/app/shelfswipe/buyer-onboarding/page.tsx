@@ -22,6 +22,7 @@ import {
   getOrCreateBuyerId,
   shelfswipeApi,
 } from "@/lib/shelfswipe-api";
+import { api } from "@/lib/api";
 
 export default function ShelfSwipeBuyerOnboardingPage() {
   const [buyerId, setBuyerId] = useState<string | null>(null);
@@ -38,6 +39,8 @@ export default function ShelfSwipeBuyerOnboardingPage() {
   const { sessionId, addSessionMarker } = useSessionRecording();
   const [cart, setCart] = useState<CartLine[]>([]);
   const [imageError, setImageError] = useState(false);
+  const [checkoutBusy, setCheckoutBusy] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   // Checkout state
   const [processing, setProcessing] = useState(false);
@@ -125,6 +128,26 @@ export default function ShelfSwipeBuyerOnboardingPage() {
       await shelfswipeApi.recordBuyerSwipe(buyerId, currentItem.id, direction);
     } catch {
       // swipe recording is best-effort; the browsing experience should not block on it
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!currentItem || !buyerId || checkoutBusy) return;
+    setCheckoutBusy(true);
+    setCheckoutError(null);
+    try {
+      const order = await api.checkoutShelfItem(currentItem.id, buyerId);
+      if (!order.approval_url) throw new Error("PayPal did not return a buyer approval URL.");
+      sessionStorage.setItem("paytrace_shelfswipe_pending_order", JSON.stringify({
+        orderId: order.paypal_order_id,
+        isMock: order.is_mock,
+        scenario: "normal",
+        productName: order.product_name,
+      }));
+      window.location.assign(order.approval_url);
+    } catch (err) {
+      setCheckoutError(err instanceof Error ? err.message : "Could not start PayPal checkout.");
+      setCheckoutBusy(false);
     }
   };
 
@@ -401,6 +424,16 @@ export default function ShelfSwipeBuyerOnboardingPage() {
                       {currentItem.stock <= 0 ? "Out of Stock" : "Add to Cart"}
                     </button>
                   </div>
+                  {checkoutError && <p role="alert" className="text-xs text-rose-700">{checkoutError}</p>}
+                  <button
+                    type="button"
+                    onClick={handleCheckout}
+                    disabled={!buyerId || checkoutBusy || currentItem.stock < 1}
+                    className="w-full py-3 px-4 rounded-xl bg-[#0070ba] hover:bg-[#005ea6] disabled:opacity-50 text-white font-bold text-xs flex items-center justify-center gap-2 transition-all"
+                  >
+                    {checkoutBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                    {checkoutBusy ? "Opening PayPal…" : `Buy with PayPal · $${Number(currentItem.price).toFixed(2)}`}
+                  </button>
                 </div>
               </div>
             ) : (

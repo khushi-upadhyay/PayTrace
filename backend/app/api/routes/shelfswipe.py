@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 import httpx
 from app.api.dependencies import get_db
 from app.core.config import settings
+from app.core.security import create_checkout_token
 from app.db.models.payment import Payment
 from app.db.models.shelfswipe import (
     SSSeller,
@@ -914,8 +915,16 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
 
 from app.core.security import create_checkout_token  # noqa: E402
 
-ALLOWED_RETURN_PATHS = {"/shelfswipe", "/shelfswipe/buyer-onboarding"}
-RETURN_KEYS = {"/shelfswipe": "shelfswipe", "/shelfswipe/buyer-onboarding": "buyer-onboarding"}
+ALLOWED_RETURN_PATHS = {
+    "/shelfswipe",
+    "/shelfswipe/buyer-onboarding",
+    "/shelfswipe/buyer-prototype",
+}
+RETURN_KEYS = {
+    "/shelfswipe": "shelfswipe",
+    "/shelfswipe/buyer-onboarding": "buyer-onboarding",
+    "/shelfswipe/buyer-prototype": "buyer-prototype",
+}
 
 
 @router.post("/checkout")
@@ -955,6 +964,8 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
 
     if settings.is_paypal_configured:
         try:
+            if prod.currency != "USD":
+                raise ValueError("ShelfSwipe PayPal checkout requires USD")
             order_data = await paypal_client.create_order(
                 amount=total_amount,
                 currency=prod.currency,
@@ -962,8 +973,6 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
                 return_url=f"{settings.FRONTEND_ORIGIN}{return_page}?status=approved",
                 cancel_url=f"{settings.FRONTEND_ORIGIN}{return_page}?status=cancelled",
             )
-            if prod.currency != "USD":
-                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
             validate_created_order_amount(order_data, total_amount, prod.currency)
             paypal_order_id = order_data["id"]
             for link in order_data.get("links", []):
@@ -1014,6 +1023,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
             "product_name": prod.name,
             "quantity": cart[0][1],
             "seller_id": getattr(prod, "seller_id", None) or getattr(prod, "shop_id", None),
+            "shop_id": getattr(prod, "shop_id", None),
             "items": [{"id": i.id, "name": i.name, "quantity": q, "source": src} for i, q, src in cart],
         },
         is_simulated=is_mock,

@@ -6,7 +6,7 @@ import { AlertTriangle, CheckCircle2, FlaskConical, Loader2, RotateCcw, Timer, X
 import { api } from "@/lib/api";
 
 const SCENARIOS = [
-  { id: "timeout_before_response", title: "Capture response timeout", detail: "Creates an explicitly simulated ambiguous capture with payment lifecycle events and runs incident detection.", icon: Timer },
+  { id: "timeout_before_response", title: "Simulated timeout fixture (offline)", detail: "Creates a labeled demo-only uncertain payment. It does not call PayPal; use checkout for the real Sandbox response-loss demo.", icon: Timer },
   { id: "capture_denied", title: "Payment declined", detail: "Creates an explicitly simulated declined payment and its lifecycle evidence.", icon: XCircle },
 ];
 

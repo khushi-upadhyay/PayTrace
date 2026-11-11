@@ -386,6 +386,7 @@ export interface ShelfCheckoutResponse {
   currency: string;
   product_name: string;
   is_mock: boolean;
+  checkout_token: string;
 }
 
 export interface ShelfOnboardResponse {
@@ -420,6 +421,10 @@ export interface AIInvestigationData {
   model_name: string;
   created_at: string | null;
   comparison_notes: string | null;
+  workflow_nodes: string[];
+  tool_calls: string[];
+  execution_mode: string;
+  langsmith_tracing_enabled: boolean;
 }
 
 export interface AIChatMessage {
@@ -432,6 +437,17 @@ export interface AIChatResponse {
   grounded_facts: string[];
   recommended_action: string | null;
   evidence_event_ids: string[];
+  workflow_nodes: string[];
+  tool_calls: string[];
+  execution_mode: string;
+  langsmith_tracing_enabled: boolean;
+  provider_facts: string[];
+  investigation_summary: string | null;
+  answer_mode: string;
+  model_provider: string | null;
+  model_name: string | null;
+  model_status: string;
+  fallback_reason: string | null;
 }
 
 export interface WorkspaceSearchItem {
