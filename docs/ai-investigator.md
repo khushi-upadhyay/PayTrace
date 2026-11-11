@@ -1,74 +1,66 @@
-# PayTrace AI Payment Investigator
+# PayTrace AI Investigation Flow
 
-The AI Payment Investigator is not a chatbot wrapper; it is a cross-signal root-cause analysis engine that gathers deterministic facts across the payment provider, backend lifecycles, and customer browser sessions.
+PayTrace uses LangGraph to coordinate read-only evidence tools. SQL and provider APIs establish facts; the model explains those facts, separates inference from observation, and recommends safe next steps. The agent cannot capture, refund, or retry a payment.
 
-## Investigation Workflow
+## Per-payment flow
 
 ```mermaid
-sequenceDiagram
-    participant UI as Operator UI
-    participant API as FastAPI /api/v1/ai/investigate
-    participant Tools as Evidence Tools (DB)
-    participant LLM as AI Provider / Fallback
-    participant Policy as Policy Engine
-
-    UI->>API: POST /api/v1/ai/investigate {payment_id}
-    API->>Tools: get_payment_facts(payment_id)
-    API->>Tools: find_similar_failures(payment_id)
-    API->>Tools: compare_with_successful(payment_id)
-    Tools-->>API: Structured Evidence & Metrics
-
-    alt AI Configured (OpenAI Key Available)
-        API->>LLM: Prompt with Redacted Evidence JSON
-        LLM-->>API: Structured JSON Findings
-    else Offline / Fallback
-        API->>API: Execute Deterministic Investigation Rules
-    end
-
-    API->>UI: Validated Structured AI Investigation Response
+flowchart TD
+  A[Operator question and payment ID] --> B[Read local payment and merchant events]
+  B --> C[Read webhook processing history]
+  C --> D[Form evidence-based hypothesis]
+  D --> E{Capture uncertain or state mismatch?}
+  E -->|Yes| F[GET PayPal order in recorded environment]
+  F --> G[GET each available PayPal capture]
+  E -->|No| H[Other read-only evidence tools as needed]
+  G --> I[Compare PayPal, local state, webhooks, and merchant events]
+  H --> I
+  I --> J[Structured report with facts, inferences, and recommendation]
+  J --> K{Graph or AI unavailable?}
+  K -->|Yes| L[Evidence-only deterministic fallback]
+  K -->|No| M[Return grounded report]
 ```
 
-## Bounded Evidence Tools
+### Evidence tools
 
-The investigator uses server-side read tools to gather facts:
-1. `get_payment_facts(payment_id)`: Fetches payment lifecycle status, provider order ID, capture ID, webhook reception count, and latency metrics.
-2. `find_similar_failures(payment_id)`: Identifies payment failures occurring within the same time window sharing identical failure codes or decline reasons.
-3. `compare_with_successful(payment_id)`: Compares the problematic payment with a successful payment of similar size to pinpoint divergence points.
-4. `get_session_summary(payment_id)`: Evaluates user activity preceding the failure marker.
+- `get_payment_facts`: local payment state, provider IDs, source mode, and recorded merchant lifecycle events.
+- `get_paypal_order`: live `GET /v2/checkout/orders/{id}` in the same PayPal environment that created the payment. If the payment is simulated, it is clearly labeled and reads only the in-memory demo provider.
+- For capture IDs returned by PayPal or already recorded locally, `get_paypal_order` also makes a live `GET /v2/payments/captures/{id}` and returns only status, amount, currency, and timestamps.
+- `inspect_webhook_events`: signature and processing status, event type, and receive time for linked webhook history. Missing webhook records do not prove PayPal failed to send a webhook.
+- `inspect_payment_timeline`: ordered backend and provider lifecycle events, source, status, latency, and simulation marker.
+- `find_similar_failures`, `compare_successful_payments`, and `analyze_failure_patterns`: bounded local database comparisons.
+- `get_incident_overview`: SQL grouped counts for payment statuses and failure patterns, prior-window comparison, event latency grouped by source, webhook processing status, and reconciliation candidates.
 
-## Structured Output Schema
+An uncertain capture always triggers a provider order lookup even if the model proposes another tool. A live capture is considered confirmed only when the live PayPal response reports a completed order and completed capture. When the provider API is unavailable, the report says the provider state is unconfirmed and recommends reconciliation before retry.
 
-Every investigation produces a strictly validated Pydantic model:
-```json
-{
-  "root_cause": "Merchant backend timed out while awaiting PayPal capture response; final capture outcome is unconfirmed locally.",
-  "confidence": 0.94,
-  "severity": "HIGH",
-  "facts": [
-    "PayPal order MOCK-ORD-TIMEOUT-001 was successfully created and approved by the buyer.",
-    "The merchant backend dispatched a capture request to PayPal.",
-    "Merchant HTTP client timed out (>5000ms) before receiving the HTTP capture response.",
-    "No verified PAYMENT.CAPTURE.COMPLETED webhook was processed prior to timeout.",
-    "Payment marked CAPTURE_UNCERTAIN to prevent premature retry."
-  ],
-  "inferences": [
-    "PayPal may have successfully processed the capture on their ledger despite the local HTTP timeout.",
-    "A blind capture retry risks duplicate charges on the customer's payment instrument."
-  ],
-  "customer_impact": "Customer observed a connection timeout spinner; funds may have been debited or reserved without local confirmation.",
-  "business_impact": "Potential revenue at risk of $189.99 USD. High dispute risk if double-captured.",
-  "recommendation": "DO NOT RETRY CAPTURE. Reconcile order state via GET /v2/checkout/orders/{order_id} or verify incoming webhooks before taking further action.",
-  "evidence_event_ids": ["evt-1", "evt-2"],
-  "is_incident_likely": true,
-  "insufficient_evidence": false,
-  "model_name": "deterministic-rule-engine-v1"
-}
-```
+## Fleet-level Incident Command
 
-## Critical Principle: Distinguishing Facts vs. Inferences
-- **Facts**: Concrete, observable events recorded in the database (e.g. "Order approval was recorded", "HTTP read timeout occurred after 5.2s").
-- **Inferences**: Probabilistic hypotheses derived by the AI from the evidence (e.g. "Capture may have succeeded at provider").
-- **Recommendations**: Safe operational next steps (e.g. "Reconcile order state before retrying").
+`POST /api/v1/ai/investigate` accepts a question without `payment_id` or `incident_id` to investigate recent fleet activity. The default window is 15 minutes; a question such as “last 30 minutes” selects the SQL window. SQL compares the current interval with the immediately preceding interval of the same length. LangGraph then analyzes these retrieved aggregates. Report counts and comparison values are rendered from SQL results, never generated by the language model.
 
-## Safeguards & Human Approval
-The AI Investigator **cannot execute financial transactions autonomously**. Proposing a refund generates an approval ticket routed to the Human Approval Inbox (`/approvals`), requiring explicit human sign-off before executing.
+Examples:
+
+- “Why did checkout failures increase in the last 15 minutes?”
+- “Which failure pattern affects the most transactions?”
+- “Are failures related to PayPal API latency or merchant backend errors?”
+- “Which transactions require reconciliation?”
+
+The aggregate path compares event latency by recorded event source with webhook processing counts. Those records can support a correlation; they do not alone prove that PayPal caused a merchant-side failure.
+
+## LangSmith tracing
+
+Set `LANGCHAIN_API_KEY` or `LANGSMITH_API_KEY` and optionally `LANGCHAIN_PROJECT` in `backend/.env`. When a key is present, tracing is enabled by default. Set `LANGSMITH_TRACING=false` (or `LANGCHAIN_TRACING_V2=false`) to disable it explicitly. LangGraph runs are named `PayTrace payment investigation` and `PayTrace incident command` and tagged by flow for filtering in LangSmith. The application continues to work without a LangSmith key.
+
+## Fallback order
+
+1. LangGraph with configured AI provider and retrieved tools.
+2. LangGraph with deterministic analysis/reporting when the model key is absent or the model call fails.
+3. SQL evidence-only incident summary if LangGraph is unavailable.
+4. Existing deterministic per-payment evidence report if LangGraph or model execution fails.
+
+No fallback invents a PayPal response. Missing credentials or unreachable Sandbox APIs are reported as unavailable/demo evidence.
+
+## APIMatic PayPal Context Plugin
+
+APIMatic's PayPal Context Plugin is a coding-agent development aid. Its marketplace page lists nine integration skills (getting started, integration guide, authentication, client setup, endpoints, models, error handling, resilience, and testing) and generated SDK context. It is not a deployed runtime service. Use it during development with `npx context-plugins install paypal`; PayTrace runtime continues to use its own PayPal REST client and official PayPal API responses. No APIMatic runtime dependency or fabricated documentation results are added.
+
+References: [APIMatic PayPal API Context Plugin](https://context.apimatic.io/plugins/paypal/) · [PayPal Orders API](https://developer.paypal.com/docs/api/orders/v2/) · [PayPal Payments API](https://developer.paypal.com/docs/api/payments/v2/).

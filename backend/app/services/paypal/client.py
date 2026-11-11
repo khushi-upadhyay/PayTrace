@@ -217,6 +217,18 @@ class PayPalClient:
                 logger.error(f"PayPal get_order network error for order {order_id}: {e}")
                 raise
 
+    async def get_capture(self, capture_id: str) -> Dict[str, Any]:
+        """Retrieves the actual PayPal capture resource for reconciliation."""
+        token = await self.get_access_token()
+        headers = {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(
+                f"{self.base_url}/v2/payments/captures/{capture_id}",
+                headers=headers,
+            )
+            response.raise_for_status()
+            return response.json()
+
     async def capture_order(
         self, order_id: str, idempotency_key: Optional[str] = None
     ) -> Dict[str, Any]:

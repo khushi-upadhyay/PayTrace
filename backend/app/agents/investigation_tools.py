@@ -10,6 +10,7 @@ from typing import Dict, Any, List, Optional
 
 from sqlalchemy.orm import Session
 from sqlalchemy import func
+from app.core.time import utc_now
 
 from app.db.models.payment import Payment
 from app.db.models.payment_event import PaymentEvent
@@ -39,7 +40,11 @@ def get_payment_facts(db: Session, payment_id: str) -> Dict[str, Any]:
 
 
 # ─── Tool 2: get_paypal_order ────────────────────────────────────────────────
-async def get_paypal_order(order_id: str) -> Dict[str, Any]:
+async def get_paypal_order(
+    order_id: str,
+    local_capture_id: Optional[str] = None,
+    source_mode: Optional[str] = None,
+) -> Dict[str, Any]:
     """
     Retrieve the live PayPal order state for reconciliation.
     Skips gracefully when PayPal sandbox credentials are unavailable.
@@ -49,6 +54,47 @@ async def get_paypal_order(order_id: str) -> Dict[str, Any]:
 
     t0 = time.monotonic()
 
+    if source_mode == "SIMULATED":
+        from app.services.paypal.mock_sandbox import mock_paypal
+        try:
+            data = mock_paypal.get_order(order_id)
+            captures = []
+            for unit in data.get("purchase_units", []):
+                payments = unit.get("payments", {}) if isinstance(unit, dict) else {}
+                for capture in payments.get("captures", []) if isinstance(payments, dict) else []:
+                    captures.append({
+                        "capture_id": capture.get("id"),
+                        "status": capture.get("status"),
+                        "amount": (capture.get("amount") or {}).get("value"),
+                        "currency": (capture.get("amount") or {}).get("currency_code"),
+                        "retrieval_status": "DEMO_RESPONSE",
+                    })
+            return {
+                "source": "SIMULATED_DEMO",
+                "retrieval_status": "DEMO_RESPONSE",
+                "order_id": data.get("id"),
+                "status": data.get("status"),
+                "captures": captures,
+                "capture_count": len(captures),
+            }
+        except KeyError:
+            return {
+                "source": "SIMULATED_DEMO",
+                "retrieval_status": "UNAVAILABLE",
+                "reason": "The in-memory demo order is no longer available; this is not PayPal Sandbox evidence.",
+                "order_id": order_id,
+            }
+
+    if source_mode and source_mode.startswith("PAYPAL_"):
+        recorded_mode = source_mode.removeprefix("PAYPAL_").lower()
+        if recorded_mode != settings.paypal_mode:
+            return {
+                "source": "PAYPAL_API",
+                "retrieval_status": "ENVIRONMENT_MISMATCH",
+                "reason": f"Payment was created in PayPal {recorded_mode}; configured API environment is {settings.paypal_mode}.",
+                "order_id": order_id,
+            }
+
     if not settings.is_paypal_configured:
         logger.info(
             "tool=get_paypal_order order_id=%s skipped=no_credentials",
@@ -56,6 +102,8 @@ async def get_paypal_order(order_id: str) -> Dict[str, Any]:
         )
         return {
             "skipped": True,
+            "source": "PAYPAL_API",
+            "retrieval_status": "UNAVAILABLE",
             "reason": "PayPal credentials not configured; external reconciliation skipped.",
             "order_id": order_id,
         }
@@ -64,7 +112,7 @@ async def get_paypal_order(order_id: str) -> Dict[str, Any]:
         import asyncio
         from app.services.paypal.client import paypal_client
 
-        data = await asyncio.wait_for(paypal_client.get_order(order_id), timeout=5.0)
+        data = await asyncio.wait_for(paypal_client.get_order(order_id), timeout=10.0)
         elapsed_ms = int((time.monotonic() - t0) * 1000)
         logger.info(
             "tool=get_paypal_order order_id=%s status=%s elapsed_ms=%d",
@@ -72,13 +120,70 @@ async def get_paypal_order(order_id: str) -> Dict[str, Any]:
             data.get("status"),
             elapsed_ms,
         )
-        # Return only non-sensitive fields for investigation
+        # Preserve provider-returned order and capture evidence without PII.
+        captures = []
+        for unit in data.get("purchase_units", []):
+            payments = unit.get("payments", {}) if isinstance(unit, dict) else {}
+            for capture in payments.get("captures", []) if isinstance(payments, dict) else []:
+                if isinstance(capture, dict):
+                    amount = capture.get("amount") if isinstance(capture.get("amount"), dict) else {}
+                    captures.append({
+                        "capture_id": capture.get("id"),
+                        "status": capture.get("status"),
+                        "amount": amount.get("value"),
+                        "currency": amount.get("currency_code"),
+                        "create_time": capture.get("create_time"),
+                        "update_time": capture.get("update_time"),
+                    })
+        capture_ids = {capture.get("capture_id") for capture in captures if capture.get("capture_id")}
+        if local_capture_id:
+            capture_ids.add(local_capture_id)
+        capture_lookups = []
+        for capture_id in sorted(capture_ids)[:3]:
+            try:
+                capture_data = await asyncio.wait_for(paypal_client.get_capture(capture_id), timeout=10.0)
+                amount = capture_data.get("amount") if isinstance(capture_data.get("amount"), dict) else {}
+                capture_lookups.append({
+                    "capture_id": capture_data.get("id", capture_id),
+                    "status": capture_data.get("status"),
+                    "amount": amount.get("value"),
+                    "currency": amount.get("currency_code"),
+                    "create_time": capture_data.get("create_time"),
+                    "update_time": capture_data.get("update_time"),
+                    "retrieval_status": "LIVE_RESPONSE",
+                })
+            except Exception as capture_exc:
+                capture_lookups.append({
+                    "capture_id": capture_id,
+                    "retrieval_status": "UNAVAILABLE",
+                    "error_type": type(capture_exc).__name__,
+                })
+        direct_by_id = {
+            capture.get("capture_id"): capture
+            for capture in capture_lookups
+            if capture.get("retrieval_status") == "LIVE_RESPONSE"
+        }
+        order_capture_ids = {capture.get("capture_id") for capture in captures if capture.get("capture_id")}
+        returned_captures = [
+            direct_by_id.get(capture.get("capture_id"), {**capture, "retrieval_status": "FROM_LIVE_ORDER_RESPONSE"})
+            for capture in captures
+        ]
+        for capture_id in sorted(capture_ids - order_capture_ids):
+            returned_captures.append(
+                direct_by_id.get(capture_id)
+                or next((item for item in capture_lookups if item.get("capture_id") == capture_id), {
+                    "capture_id": capture_id,
+                    "retrieval_status": "UNAVAILABLE",
+                })
+            )
         return {
+            "source": "PAYPAL_SANDBOX_API" if settings.paypal_mode == "sandbox" else "PAYPAL_LIVE_API",
+            "retrieval_status": "LIVE_RESPONSE",
             "order_id": data.get("id"),
             "status": data.get("status"),
             "intent": data.get("intent"),
-            "purchase_units_count": len(data.get("purchase_units", [])),
-            "payer_email_hash": None,  # Never log PII
+            "captures": returned_captures,
+            "capture_count": len(returned_captures),
             "create_time": data.get("create_time"),
             "update_time": data.get("update_time"),
             "links_count": len(data.get("links", [])),
@@ -93,9 +198,88 @@ async def get_paypal_order(order_id: str) -> Dict[str, Any]:
         )
         return {
             "skipped": True,
+            "retrieval_status": "UNAVAILABLE",
+            "source": "PAYPAL_API",
             "reason": f"PayPal API call failed or timed out: {type(exc).__name__}",
             "order_id": order_id,
         }
+
+
+def get_incident_overview(db: Session, window_minutes: int = 15) -> Dict[str, Any]:
+    """Build fleet-level incident evidence using SQL aggregation, never model-generated counts."""
+    window_minutes = max(1, min(window_minutes, 1440))
+    now = utc_now()
+    since = now - timedelta(minutes=window_minutes)
+    previous_since = since - timedelta(minutes=window_minutes)
+    payment_rows = (
+        db.query(Payment.status, func.count(Payment.id))
+        .filter(Payment.updated_at >= since)
+        .group_by(Payment.status)
+        .all()
+    )
+    previous_payment_rows = (
+        db.query(Payment.status, func.count(Payment.id))
+        .filter(Payment.updated_at >= previous_since, Payment.updated_at < since)
+        .group_by(Payment.status)
+        .all()
+    )
+    failure_rows = (
+        db.query(func.coalesce(Payment.failure_code, Payment.status), func.count(Payment.id))
+        .filter(Payment.updated_at >= since, Payment.status.in_(["CAPTURE_UNCERTAIN", "DENIED", "CAPTURE_FAILED", "PENDING"]))
+        .group_by(func.coalesce(Payment.failure_code, Payment.status))
+        .all()
+    )
+    backend_rows = (
+        db.query(PaymentEvent.source, PaymentEvent.event_type, func.count(PaymentEvent.id), func.avg(PaymentEvent.latency_ms))
+        .join(Payment, Payment.id == PaymentEvent.payment_id)
+        .filter(PaymentEvent.occurred_at >= since)
+        .group_by(PaymentEvent.source, PaymentEvent.event_type)
+        .all()
+    )
+    webhook_rows = (
+        db.query(PayPalWebhook.processing_status, func.count(PayPalWebhook.id))
+        .filter(PayPalWebhook.received_at >= since)
+        .group_by(PayPalWebhook.processing_status)
+        .all()
+    )
+    uncertain = (
+        db.query(Payment.id, Payment.status, Payment.failure_code, Payment.paypal_order_id)
+        .filter(Payment.updated_at >= since, Payment.status == "CAPTURE_UNCERTAIN")
+        .order_by(Payment.created_at.desc())
+        .limit(20)
+        .all()
+    )
+    reconciliation_candidate_count = (
+        db.query(func.count(Payment.id))
+        .filter(Payment.updated_at >= since, Payment.status == "CAPTURE_UNCERTAIN")
+        .scalar()
+    ) or 0
+    return {
+        "window_minutes": window_minutes,
+        "since": since.isoformat(),
+        "previous_window_since": previous_since.isoformat(),
+        "payment_status_counts": {status: count for status, count in payment_rows},
+        "previous_payment_status_counts": {status: count for status, count in previous_payment_rows},
+        "failed_payment_count_change": (
+            sum(count for status, count in payment_rows if status in ("CAPTURE_UNCERTAIN", "DENIED", "CAPTURE_FAILED", "PENDING"))
+            - sum(count for status, count in previous_payment_rows if status in ("CAPTURE_UNCERTAIN", "DENIED", "CAPTURE_FAILED", "PENDING"))
+        ),
+        "failure_pattern_counts": [
+            {"failure_code": code, "count": count}
+            for code, count in failure_rows
+        ],
+        "merchant_backend_event_aggregates": [
+            {"source": source, "event_type": event, "count": count, "average_latency_ms": round(float(avg_latency), 2) if avg_latency is not None else None}
+            for source, event, count, avg_latency in backend_rows
+        ],
+        "webhook_processing_counts": {status: count for status, count in webhook_rows},
+        "reconciliation_candidates": [
+            {"payment_id": payment_id, "status": status, "failure_code": code, "paypal_order_id": order_id}
+            for payment_id, status, code, order_id in uncertain
+        ],
+        "reconciliation_candidate_count": reconciliation_candidate_count,
+        "aggregation_source": "SQL",
+    }
 
 
 # ─── Tool 3: inspect_webhook_events ─────────────────────────────────────────

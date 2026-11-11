@@ -1,70 +1,39 @@
-# PayTrace 3-Minute Hackathon Demo Script
+# PayTrace Sandbox and AI Investigation Demo
 
-This script walks through the three-minute hackathon presentation of PayTrace according to PRD Section 22.
+This walkthrough demonstrates one real PayPal Sandbox payment and one explicitly simulated merchant-side response loss. The separate `/demo/scenarios` fixtures remain fully simulated and are not PayPal evidence.
 
----
+## Before the demo
 
-### Segment 1: The Problem & Product Overview (0:00 – 0:25)
-- **Visual**: Start on Overview Dashboard (`http://localhost:3000`) or product overview (`http://localhost:3000/about`).
-- **Narrative**:
-  > "When an online payment fails or hangs, merchant engineering and support teams often have to scramble across isolated silos: looking at PayPal transaction logs, application backend error logs, and customer support tickets.
-  >
-  > PayTrace is an AI-powered payment investigation and observability platform that unifies all three signals: the payment provider, the backend lifecycle, and the customer's checkout session into a single cohesive trace.
-  >
-  > Don't just know a payment failed. Know exactly why."
+1. Follow [PayPal Sandbox setup](paypal-setup.md) and configure `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, and `PAYPAL_MODE=sandbox` in `backend/.env`.
+2. Optionally configure `PAYPAL_WEBHOOK_ID` and a public HTTPS tunnel to receive verified Sandbox webhooks. Webhook delivery is asynchronous and should only be claimed if a verified event appears in PayTrace.
+3. Configure the AI provider and (optionally) `LANGCHAIN_API_KEY` or `LANGSMITH_API_KEY` for LangSmith traces.
+4. Start the backend and frontend using the README setup instructions. Sign in and open `/checkout`.
 
----
+## Reproduce the uncertain capture
 
-### Segment 2: Real Sandbox Checkout & Unified Timeline (0:25 – 1:00)
-- **Action**: Navigate to `/checkout`. Select the **Enterprise Observability Plan** ($189.99) and complete checkout.
-- **Visual**: Click through to `/payments/{payment_id}`.
-- **Narrative**:
-  > "Here is our payments detail page. Notice the unified, chronological timeline:
-  > 1. Frontend checkout started with session tracking.
-  > 2. Order created in PayPal Sandbox.
-  > 3. Buyer approved the transaction.
-  > 4. Merchant backend captured the funds.
-  > 5. If the Sandbox webhook tunnel is configured, a signature-verified PayPal webhook can be matched to the order. Without that external Sandbox delivery, inspect only the synchronous capture lifecycle and do not claim webhook confirmation.
-  >
-  > Real Sandbox events and simulated events are clearly delineated—we never pretend simulated demo data came from PayPal."
+1. On checkout, select **Merchant Backend Timeout / Ambiguous Capture State** and submit the order.
+2. Complete buyer approval in the PayPal Sandbox account. This approval and the resulting Sandbox order are real PayPal operations when credentials are configured.
+3. After the buyer returns, PayTrace makes one real Sandbox capture request. The demo deliberately discards the returned response and records a simulated merchant-side response-loss event. PayTrace sets the local payment to `CAPTURE_UNCERTAIN` and does not persist a fabricated capture ID.
+4. Open the payment and run **Investigate with AI**. LangGraph retrieves local payment state, merchant lifecycle events, linked webhook processing history, then calls PayPal's live order endpoint and capture endpoint for IDs returned by the order. The report shows the provider order and capture statuses beside the local status and webhook evidence.
+5. If the live capture is `COMPLETED`, the report identifies PayPal's confirmation and recommends reconciling the local payment record. If the API is unavailable or no conclusive capture details are returned, it says the outcome remains uncertain. In both cases, it prohibits a blind retry.
+6. Open LangSmith and filter the `paytrace` project for `PayTrace payment investigation` to show the graph trace, when tracing is configured.
 
----
+### What is real and what is simulated?
 
-### Segment 3: The Ambiguous Capture Timeout Scenario (1:00 – 1:55)
-- **Action**: In the Header, click **Simulate Timeout** (or navigate to `/payments` and open `demo-timeout-payment-001`).
-- **Visual**: Show payment in state **`CAPTURE_UNCERTAIN`**.
-- **Action**: Click **Investigate with AI**.
-- **Narrative**:
-  > "Now let's look at the most dangerous payment failure in e-commerce: **The Merchant Backend Timeout**.
-  >
-  > In this scenario, the merchant backend submitted a capture request to PayPal, but the HTTP connection timed out after 5 seconds before receiving the response.
-  >
-  > If the merchant blindly retries the capture, the customer could be charged twice!
-  >
-  > PayTrace immediately flags this state as `CAPTURE_UNCERTAIN`. When we run the AI Investigator:
-  > - It identifies the root cause: an unconfirmed capture outcome after a timeout.
-  > - It separates hard **Facts** from probabilistic **Inferences**.
-  > - And most importantly, its primary recommendation is: **DO NOT RETRY CAPTURE BLINDLY. Reconcile order state first.**"
-- **Action**: Demonstrate clicking **Reconcile with PayPal** to safely verify provider state.
+| Step | Sandbox credentials configured | No Sandbox credentials |
+| --- | --- | --- |
+| Order creation and buyer approval | Real PayPal Sandbox | In-memory simulated demo |
+| Capture operation | One real PayPal Sandbox capture request | No PayPal request; mock order remains simulated |
+| Merchant response loss | Simulated by PayTrace after the request | Simulated demo event |
+| Investigation provider evidence | Live PayPal order and capture responses | Clearly labeled in-memory demo response or unavailable |
+| Webhook evidence | Real only when a verified webhook was received and processed | No external PayPal webhook evidence |
 
----
+The checkout payment record's source mode, lifecycle event source, simulation marker, and investigation tool result identify which path ran. A mock/demo response must never be presented as a PayPal Sandbox API response.
 
-### Segment 4: Incident Clustering & Session Evidence (1:55 – 2:30)
-- **Action**: Navigate to `/incidents` and select an active incident.
-- **Visual**: Show the Incident Detail page and click **Generate AI Incident Report**.
-- **Narrative**:
-  > "PayTrace doesn't just evaluate individual payments—it aggregates failures into Incidents.
-  >
-  > Here, our deterministic incident engine detected an anomalous spike in capture timeouts. PayTrace calculates the exact **potential revenue at risk** ($1,029.50) without falsely claiming it as confirmed losses, groups all affected payments, and provides an incident diagnostic report."
+## Fleet-level natural-language query
 
----
+Open `/investigate`, choose **All recent transactions (incident command)**, and ask: “Why did checkout failures increase in the last 15 minutes?” The SQL aggregation compares the last 15 minutes with the immediately preceding 15 minutes, groups failure and payment statuses, summarizes merchant event latency and webhook processing, and lists uncertain payments that need reconciliation. The report's counts come directly from SQL results.
 
-### Segment 5: Human-in-the-Loop Safe Action (2:30 – 3:00)
-- **Action**: Navigate to `/approvals`. Show a pending refund proposal. Click **Approve Action**.
-- **Visual**: Show the action execution and audit trail updating.
-- **Narrative**:
-  > "Finally, safety is our top priority. We never allow AI agents or automated bots to execute consequential financial actions without human policy verification.
-  >
-  > When a refund is proposed, it is routed directly to the Human Approval Inbox. Only an authenticated operator can authorize execution with PayPal.
-  >
-  > With PayTrace, developers and operations teams get complete end-to-end payment visibility, evidence-backed AI investigations, and guaranteed financial safety."
+## Credential-less fallback
+
+If Sandbox credentials are unavailable, the same checkout path uses the clearly labeled in-memory demo provider. It is useful for walking through local state transitions and the deterministic investigator, but it does not prove a PayPal capture or webhook. The standalone `/demo/scenarios` endpoint also creates simulated fixtures only.

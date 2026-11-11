@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_current_user, get_db
 from app.db.models.user import User
@@ -19,9 +19,6 @@ async def investigate_payment(req: AIInvestigationRequest, db: Session = Depends
     returning structured findings, confidence score, facts vs inferences,
     and recommended next actions with safe fallback.
     """
-    if not req.payment_id and not req.incident_id:
-        raise HTTPException(status_code=400, detail="Must provide payment_id or incident_id to investigate")
-
     response = await ai_investigator.investigate(
         db=db,
         payment_id=req.payment_id,
@@ -46,4 +43,15 @@ async def chat_with_investigator(req: AIChatRequest, db: Session = Depends(get_d
         grounded_facts=result.get("grounded_facts", []),
         recommended_action=result.get("recommended_action"),
         evidence_event_ids=result.get("evidence_event_ids", []),
+        workflow_nodes=result.get("workflow_nodes", []),
+        tool_calls=result.get("tool_calls", []),
+        execution_mode=result.get("execution_mode", "deterministic_fallback"),
+        langsmith_tracing_enabled=result.get("langsmith_tracing_enabled", False),
+        provider_facts=result.get("provider_facts", []),
+        investigation_summary=result.get("investigation_summary"),
+        answer_mode=result.get("answer_mode", "evidence_fallback"),
+        model_provider=result.get("model_provider"),
+        model_name=result.get("model_name"),
+        model_status=result.get("model_status", "not_configured"),
+        fallback_reason=result.get("fallback_reason"),
     )

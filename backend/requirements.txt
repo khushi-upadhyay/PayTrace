@@ -9,3 +9,4 @@ httpx==0.28.1
 PyJWT==2.15.1
 # LangGraph agentic investigation workflow (optional at runtime; the app falls back without it)
 langgraph==1.2.19
+langchain-openai>=0.3.0,<2.0.0

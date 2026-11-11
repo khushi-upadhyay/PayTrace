@@ -25,6 +25,10 @@ class AIInvestigationResponse(BaseModel):
     model_name: str = "deterministic-rule-engine-v1"
     created_at: Optional[datetime] = None
     comparison_notes: Optional[str] = None
+    workflow_nodes: List[str] = []
+    tool_calls: List[str] = []
+    execution_mode: str = "deterministic_fallback"
+    langsmith_tracing_enabled: bool = False
 
 class AIChatMessage(BaseModel):
     role: str # user, assistant, system
@@ -41,3 +45,14 @@ class AIChatResponse(BaseModel):
     grounded_facts: List[str] = []
     recommended_action: Optional[str] = None
     evidence_event_ids: List[str] = []
+    workflow_nodes: List[str] = []
+    tool_calls: List[str] = []
+    execution_mode: str = "deterministic_fallback"
+    langsmith_tracing_enabled: bool = False
+    provider_facts: List[str] = []
+    investigation_summary: Optional[str] = None
+    answer_mode: str = "evidence_fallback"
+    model_provider: Optional[str] = None
+    model_name: Optional[str] = None
+    model_status: str = "not_configured"
+    fallback_reason: Optional[str] = None

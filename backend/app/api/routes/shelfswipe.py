@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 import httpx
 from app.api.dependencies import get_db
 from app.core.config import settings
+from app.core.security import create_checkout_token
 from app.db.models.payment import Payment
 from app.db.models.shelfswipe import (
     SSSeller,
@@ -916,7 +917,16 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
     """
     Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
     """
-    prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
+    # The current buyer deck is backed by ss_products. Keep legacy products
+    # payable for the retained prototype, but resolve current IDs first.
+    prod = db.query(SSProduct).filter(
+        SSProduct.id == req.product_id,
+        SSProduct.status == "live",
+    ).first()
+    legacy_product = False
+    if not prod:
+        prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
+        legacy_product = prod is not None
     if not prod:
         raise HTTPException(status_code=404, detail="Product not found")
     if prod.stock < req.quantity:
@@ -931,15 +941,15 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
 
     if settings.is_paypal_configured:
         try:
+            if prod.currency != "USD":
+                raise ValueError("ShelfSwipe PayPal checkout requires USD")
             order_data = await paypal_client.create_order(
                 amount=total_amount,
                 currency=prod.currency,
                 custom_id=payment_id,
-                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
-                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
+                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe/buyer-prototype?status=approved",
+                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe/buyer-prototype?status=cancelled",
             )
-            if prod.currency != "USD":
-                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
             validate_created_order_amount(order_data, total_amount, prod.currency)
             paypal_order_id = order_data["id"]
             for link in order_data.get("links", []):
@@ -962,7 +972,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
             custom_id=payment_id,
         )
         paypal_order_id = order_data["id"]
-        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
+        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe-buyer"
 
     # Register in PayTrace unified payment ledger
     payment = Payment(
@@ -986,7 +996,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         source="SHELVESWIPE_APP",
         status="SUCCESS",
         paypal_order_id=paypal_order_id,
-        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": prod.seller_id},
+        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": getattr(prod, "seller_id", None), "shop_id": getattr(prod, "shop_id", None), "legacy_product": legacy_product},
         is_simulated=is_mock,
     )
     db.commit()
@@ -999,4 +1009,5 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         "currency": prod.currency,
         "product_name": prod.name,
         "is_mock": is_mock,
+        "checkout_token": create_checkout_token(paypal_order_id),
     }

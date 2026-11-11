@@ -25,8 +25,8 @@ router = APIRouter(prefix="/demo", tags=["Demo Controls"])
 AVAILABLE_SCENARIOS = [
     {
         "id": "timeout_before_response",
-        "title": "Merchant Backend Timeout / Ambiguous Capture State",
-        "description": "PayPal captures payment, but merchant backend times out (>5000ms) before receiving the HTTP response. PayTrace flags CAPTURE_UNCERTAIN and recommends reconciliation before retry to avoid duplicate charges.",
+        "title": "Simulated Timeout Fixture (Offline)",
+        "description": "Creates a fully simulated CAPTURE_UNCERTAIN fixture. It makes no PayPal API calls and is not Sandbox evidence.",
     },
     {
         "id": "capture_denied",
@@ -93,8 +93,8 @@ def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db), us
         return DemoScenarioResponse(
             scenario=scenario_id,
             payment_id=p_id,
-            title="Merchant Backend Timeout / Ambiguous Capture State",
-            description="Created payment in CAPTURE_UNCERTAIN state. AI Investigator will detect risk of duplicate charges and advise reconciliation.",
+            title="Simulated Timeout Fixture (Offline)",
+            description="Created a fully simulated CAPTURE_UNCERTAIN fixture. It is not a PayPal Sandbox transaction or provider capture.",
             status="SUCCESS",
             details={"payment_id": p_id, "order_id": order_id, "amount": 129.50},
         )

@@ -729,12 +729,15 @@ class TestAPICompatibility:
         for field in required_fields:
             assert field in data, f"Missing field: {field}"
 
-    def test_investigate_missing_payment_id_returns_400(self, db, api_client):
+    def test_investigate_without_target_runs_incident_command(self, db, api_client):
         resp = api_client.post(
             "/api/v1/ai/investigate",
             json={"question": "Investigate"},
         )
-        assert resp.status_code == 400
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["payment_id"] is None
+        assert any("SQL" in fact for fact in data["facts"])
 
     def test_chat_endpoint_still_works(self, db, api_client):
         pid = make_payment(db)
