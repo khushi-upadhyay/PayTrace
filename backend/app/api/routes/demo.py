@@ -1,8 +1,9 @@
 import uuid
 from decimal import Decimal
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
+from app.core.audit import audit
 from app.api.dependencies import get_current_user, get_db
 from app.db.models.user import User
 from app.core.time import utc_now
@@ -24,8 +25,8 @@ router = APIRouter(prefix="/demo", tags=["Demo Controls"])
 AVAILABLE_SCENARIOS = [
     {
         "id": "timeout_before_response",
-        "title": "Merchant Backend Timeout / Ambiguous Capture State",
-        "description": "PayPal captures payment, but merchant backend times out (>5000ms) before receiving the HTTP response. PayTrace flags CAPTURE_UNCERTAIN and recommends reconciliation before retry to avoid duplicate charges.",
+        "title": "Simulated Timeout Fixture (Offline)",
+        "description": "Creates a fully simulated CAPTURE_UNCERTAIN fixture. It makes no PayPal API calls and is not Sandbox evidence.",
     },
     {
         "id": "capture_denied",
@@ -92,8 +93,8 @@ def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db), us
         return DemoScenarioResponse(
             scenario=scenario_id,
             payment_id=p_id,
-            title="Merchant Backend Timeout / Ambiguous Capture State",
-            description="Created payment in CAPTURE_UNCERTAIN state. AI Investigator will detect risk of duplicate charges and advise reconciliation.",
+            title="Simulated Timeout Fixture (Offline)",
+            description="Created a fully simulated CAPTURE_UNCERTAIN fixture. It is not a PayPal Sandbox transaction or provider capture.",
             status="SUCCESS",
             details={"payment_id": p_id, "order_id": order_id, "amount": 129.50},
         )
@@ -150,10 +151,11 @@ def trigger_scenario(req: DemoScenarioRequest, db: Session = Depends(get_db), us
         raise HTTPException(status_code=400, detail=f"Scenario '{scenario_id}' not supported")
 
 @router.post("/reset", response_model=DemoResetResponse)
-def reset_demo_data(db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def reset_demo_data(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Explicitly resets development demo data; unavailable in deployed environments."""
     if settings.APP_ENV.strip().lower() not in {"development", "test"}:
         raise HTTPException(status_code=403, detail="Demo data reset is disabled outside development and tests")
+    audit("demo_reset", request, user=user.id)
     from scripts.seed_demo import run_seed
     counts = run_seed(db)
     return DemoResetResponse(

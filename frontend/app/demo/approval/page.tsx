@@ -1,17 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 
-type ReturnRoute = "checkout" | "shelfswipe";
-type DemoApprovalProps = {
-  searchParams: { token?: string; return_to?: string };
-};
+type ReturnRoute =
+  | "checkout"
+  | "shelfswipe"
+  | "shelfswipe/buyer-onboarding"
+  | "shelfswipe/buyer-prototype";
 
-export default function DemoApprovalPage({ searchParams }: DemoApprovalProps) {
-  const orderId = searchParams.token || null;
-  const returnRoute: ReturnRoute = searchParams.return_to === "shelfswipe" ? "shelfswipe" : "checkout";
+function DemoApproval() {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("token") || null;
+  const returnTo = searchParams.get("return_to");
+  const returnRoute: ReturnRoute =
+    returnTo === "buyer-onboarding"
+      ? "shelfswipe/buyer-onboarding"
+      : returnTo === "buyer-prototype" || returnTo === "shelfswipe-buyer"
+        ? "shelfswipe/buyer-prototype"
+        : returnTo === "shelfswipe"
+          ? "shelfswipe"
+          : "checkout";
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,5 +76,13 @@ export default function DemoApprovalPage({ searchParams }: DemoApprovalProps) {
         </button>
       </div>
     </main>
+  );
+}
+
+export default function DemoApprovalPage() {
+  return (
+    <Suspense fallback={null}>
+      <DemoApproval />
+    </Suspense>
   );
 }

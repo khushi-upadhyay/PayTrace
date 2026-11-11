@@ -97,3 +97,14 @@ test("console instrumentation captures safe levels and restores original methods
   restore();
   assert.equal(target.warn, original);
 });
+
+test("rrweb sanitising keeps SVG geometry and long attribute values intact", () => {
+  const path = "M423.5 12.25 L244.75 154.5 C573.111,221,543.9 10 20 30 ".repeat(8);
+  const classes = "flex items-center gap-2 rounded-xl border px-3 py-2 ".repeat(8);
+  const event = sanitizeRrwebEvent({ type: 2, attributes: { d: path, viewBox: "0 0 24 24", x1: "423.5", class: classes } }, "https://app.test/");
+  assert.equal(event.attributes.d, path);
+  assert.equal(event.attributes.viewBox, "0 0 24 24");
+  assert.equal(event.attributes.x1, "423.5");
+  assert.equal(event.attributes.class, classes);
+  assert.match(sanitizeRrwebEvent({ text: "Call +1 (415) 555-0199 now" }, "https://app.test/").text, /REDACTED_NUMBER/);
+});

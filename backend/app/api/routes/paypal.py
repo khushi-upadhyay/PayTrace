@@ -2,9 +2,15 @@ import uuid
 import logging
 import httpx
 from decimal import Decimal, InvalidOperation
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from sqlalchemy.orm import Session
-from app.api.dependencies import get_current_user, get_db
+from app.api.dependencies import get_current_user, get_db, require_order_access
+from app.core.audit import audit
+from app.core.idempotency import idempotency_store
+from app.core.rate_limit import rate_limit
+from app.core.security import create_checkout_token
+from app.services.shelfswipe.inventory import decrement_stock_once
 from app.db.models.payment import Payment
 from app.db.models.user import User
 from app.schemas.paypal import (
@@ -94,12 +100,33 @@ def _validate_payment_environment(payment: Payment) -> None:
             detail=f"Order belongs to PayPal {recorded_mode}; current API is configured for {settings.paypal_mode}",
         )
 
-@router.post("/orders", response_model=OrderCreateResponse)
-async def create_order(req: OrderCreateRequest, db: Session = Depends(get_db)):
-    """Creates a PayPal Sandbox order and registers a local PayTrace payment."""
+@router.post("/orders", response_model=OrderCreateResponse, dependencies=[Depends(rate_limit("order-create", 20, 60))])
+async def create_order(
+    req: OrderCreateRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    idempotency_key: Optional[str] = Header(default=None, pattern=r"^[A-Za-z0-9_.:-]{8,128}$"),
+):
+    """Creates a PayPal Sandbox order and registers a local PayTrace payment.
+
+    Send an `Idempotency-Key` header so a retry or double submit returns the original order instead of a second one.
+    """
+    if req.amount > Decimal(str(settings.MAX_ORDER_AMOUNT)):
+        raise HTTPException(status_code=422, detail=f"Order amount exceeds the maximum of {settings.MAX_ORDER_AMOUNT:.2f}")
+    if not idempotency_key:
+        return await _create_order(req, db)
+    client = request.client.host if request.client else "-"
+    return await idempotency_store.run(
+        f"order:{client}:{idempotency_key}", req.model_dump_json(), lambda: _create_order(req, db)
+    )
+
+
+async def _create_order(req: OrderCreateRequest, db: Session) -> OrderCreateResponse:
     payment_id = str(uuid.uuid4())
-    # Deterministic demo simulation takes precedence if explicitly requested or if PayPal is not configured
-    is_mock = bool(req.simulate_scenario) or not settings.is_paypal_configured
+    # The timeout demo simulates only the merchant losing the capture response;
+    # it still creates a real Sandbox order when credentials exist.
+    # Instrument declines remain an explicitly simulated provider fallback.
+    is_mock = req.simulate_scenario == "capture_denied" or not settings.is_paypal_configured
 
     paypal_order_id = ""
     approval_url = None
@@ -143,7 +170,7 @@ async def create_order(req: OrderCreateRequest, db: Session = Depends(get_db)):
                 if error_description:
                     detail += f": {error_description}"
             else:
-                detail = f"Failed to create order on PayPal Sandbox: {str(e)}"
+                detail = f"Failed to create order on PayPal Sandbox: {e}" if isinstance(e, ValueError) else "Failed to create order on PayPal Sandbox"
             raise HTTPException(
                 status_code=502,
                 detail=detail,
@@ -193,9 +220,10 @@ async def create_order(req: OrderCreateRequest, db: Session = Depends(get_db)):
         status="CREATED",
         approval_url=approval_url,
         is_mock=is_mock,
+        checkout_token=create_checkout_token(paypal_order_id),
     )
 
-@router.get("/orders/{order_id}")
+@router.get("/orders/{order_id}", dependencies=[Depends(rate_limit("order-get", 60, 60)), Depends(require_order_access)])
 async def get_order_details(order_id: str, db: Session = Depends(get_db)):
     """Reconciles provider order status directly with PayPal."""
     payment = db.query(Payment).filter(Payment.paypal_order_id == order_id).first()
@@ -207,13 +235,13 @@ async def get_order_details(order_id: str, db: Session = Depends(get_db)):
             return await paypal_client.get_order(order_id)
         except Exception as e:
             logger.warning(f"Failed to fetch live order {order_id}: {e}")
-            raise HTTPException(status_code=502, detail=f"Failed to fetch live PayPal order: {str(e)}")
+            raise HTTPException(status_code=502, detail="Failed to fetch live PayPal order")
     try:
         return mock_paypal.get_order(order_id)
     except KeyError:
         raise HTTPException(status_code=404, detail=f"Simulated order {order_id} is unavailable")
 
-@router.post("/orders/{order_id}/approve")
+@router.post("/orders/{order_id}/approve", dependencies=[Depends(rate_limit("order-approve", 20, 60)), Depends(require_order_access)])
 def approve_mock_order(order_id: str, db: Session = Depends(get_db)):
     """Completes the buyer approval step for a simulated PayPal order."""
     payment = db.query(Payment).filter(Payment.paypal_order_id == order_id).first()
@@ -226,7 +254,7 @@ def approve_mock_order(order_id: str, db: Session = Depends(get_db)):
     except KeyError:
         raise HTTPException(status_code=404, detail=f"Mock order {order_id} was not found")
 
-@router.post("/orders/{order_id}/capture", response_model=OrderCaptureResponse)
+@router.post("/orders/{order_id}/capture", response_model=OrderCaptureResponse, dependencies=[Depends(rate_limit("order-capture", 20, 60)), Depends(require_order_access)])
 async def capture_order(
     order_id: str,
     req: OrderCaptureRequest = OrderCaptureRequest(),
@@ -279,7 +307,7 @@ async def capture_order(
         logger.error(f"Failed to check order approval for {order_id}: {e}")
         raise HTTPException(
             status_code=502,
-            detail=f"Unable to verify order approval status from PayPal: {str(e)}"
+            detail="Unable to verify order approval status from PayPal"
         )
 
     if provider_status == "COMPLETED":
@@ -294,6 +322,7 @@ async def capture_order(
         capture_id = capture["id"]
         payment.paypal_capture_id = capture_id
         lifecycle_engine.transition_status(payment, "CAPTURED")
+        decrement_stock_once(db, payment)
         lifecycle_engine.record_event(
             db,
             payment,
@@ -328,7 +357,7 @@ async def capture_order(
     # without mutating anything. Falling through from here would re-run this payment
     # through the normal capture path below and actually issue a second real capture —
     # exactly the blind-retry double-charge this status exists to prevent.
-    if payment.status == "CAPTURE_UNCERTAIN" and not req.simulate_timeout:
+    if payment.status == "CAPTURE_UNCERTAIN":
         return OrderCaptureResponse(
             payment_id=payment.id,
             paypal_order_id=order_id,
@@ -356,32 +385,63 @@ async def capture_order(
         )
         lifecycle_engine.transition_status(payment, "APPROVED")
 
-    # CRITICAL SCENARIO: Simulated backend timeout before receiving response.
-    # Compared case-insensitively: this same field gets overwritten to the uppercase
-    # "TIMEOUT_BEFORE_RESPONSE" constant a few lines below once this branch has run
-    # once, so a lowercase-only comparison stops matching on any later request for the
-    # same payment and would otherwise let it silently fall through into a real capture.
+    # Simulate a lost merchant response only after making one real Sandbox capture
+    # request. The provider result is deliberately discarded so reconciliation must
+    # recover the actual state through GET order/capture and webhook evidence.
     if req.simulate_timeout or (payment.failure_code or "").upper() == "TIMEOUT_BEFORE_RESPONSE":
-        simulated_capture_id = f"MOCK-CAP-{uuid.uuid4().hex[:10].upper()}"
-        payment.paypal_capture_id = simulated_capture_id
+        capture_response_received = False
+        if is_mock:
+            try:
+                # The credential-less demo updates only its in-memory provider.
+                mock_paypal.capture_order(order_id)
+                capture_response_received = True
+            except Exception as capture_error:
+                logger.warning("Simulated demo capture outcome uncertain after %s", type(capture_error).__name__)
+        else:
+            try:
+                await paypal_client.capture_order(order_id, idempotency_key=payment.id)
+                capture_response_received = True
+            except Exception as capture_error:
+                if isinstance(capture_error, httpx.HTTPStatusError) and 400 <= capture_error.response.status_code < 500:
+                    lifecycle_engine.transition_status(
+                        payment,
+                        new_status="CAPTURE_FAILED",
+                        failure_code="PAYPAL_CAPTURE_REJECTED",
+                        failure_reason="PayPal rejected the Sandbox capture request; the simulated response-loss scenario did not occur.",
+                    )
+                    lifecycle_engine.record_event(
+                        db=db,
+                        payment=payment,
+                        event_type="CAPTURE_FAILED",
+                        source="PAYPAL_API",
+                        status="FAILED",
+                        paypal_order_id=order_id,
+                        metadata={"http_status": capture_error.response.status_code, "simulation": "merchant_response_loss_not_applied"},
+                        is_simulated=False,
+                    )
+                    db.commit()
+                    raise HTTPException(status_code=502, detail="PayPal rejected the capture request; no timeout demo was recorded.") from capture_error
+                logger.warning("Demo capture outcome uncertain after %s", type(capture_error).__name__)
+        payment.paypal_capture_id = None
         lifecycle_engine.transition_status(
             payment,
             new_status="CAPTURE_UNCERTAIN",
             failure_code="TIMEOUT_BEFORE_RESPONSE",
-            failure_reason="Merchant backend timed out (HTTP 504/timeout >5000ms) before receiving capture response from PayPal.",
+            failure_reason="The merchant-side response loss was simulated after the capture request; local capture state remains uncertain until reconciliation.",
         )
         lifecycle_engine.record_event(
             db=db,
             payment=payment,
-            event_type="CAPTURE_REQUEST_TIMEOUT",
+            event_type="CAPTURE_RESPONSE_DROPPED" if capture_response_received else "CAPTURE_REQUEST_TIMEOUT",
             source="SIMULATED",
             status="UNCERTAIN",
-            latency_ms=5240,
+            latency_ms=None,
             paypal_order_id=order_id,
-            paypal_capture_id=simulated_capture_id,
             metadata={
-                "error": "ReadTimeout: merchant backend waited 5.2s with no response",
-                "risk": "Provider may have processed capture; blind retry prohibited to avoid duplicate charges.",
+                "simulation": "merchant_response_loss",
+                "provider_operation": "live_paypal_capture" if not is_mock else "simulated_demo_capture",
+                "provider_response_discarded": capture_response_received,
+                "risk": "Capture outcome must be reconciled with provider evidence before retry.",
             },
             is_simulated=True,
         )
@@ -390,12 +450,17 @@ async def capture_order(
         return OrderCaptureResponse(
             payment_id=payment.id,
             paypal_order_id=order_id,
-            paypal_capture_id=simulated_capture_id,
+            paypal_capture_id=None,
             status="CAPTURE_UNCERTAIN",
             failure_code="TIMEOUT_BEFORE_RESPONSE",
-            failure_reason="Merchant backend timed out waiting for PayPal response. Do NOT retry blindly. Reconcile provider state first.",
+            failure_reason="Merchant-side response loss was simulated. Do NOT retry blindly; reconcile provider state first.",
             reconciliation_required=True,
-            details={"advice": "Call GET /paypal/orders/{order_id} or await webhook confirmation."},
+            details={
+                "advice": "Reconcile the PayPal order and capture state or inspect processed webhook evidence before retry.",
+                "provider_operation": "live_paypal_capture" if not is_mock else "simulated_demo_capture",
+                "merchant_response_loss_simulated": True,
+                "provider_response_discarded": capture_response_received,
+            },
         )
 
     # Normal execution (Real or Mock)
@@ -534,6 +599,7 @@ async def capture_order(
 
     # Success
     lifecycle_engine.transition_status(payment, "CAPTURED")
+    decrement_stock_once(db, payment)
     lifecycle_engine.record_event(
         db=db,
         payment=payment,
@@ -563,7 +629,7 @@ async def capture_order(
     )
 
 @router.post("/payments/{payment_id}/refund", response_model=RefundResponse)
-def request_refund(payment_id: str, req: RefundRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def request_refund(payment_id: str, req: RefundRequest, request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     """Submits a refund proposal to the Human Approval Inbox."""
     try:
         ticket = policy_engine.propose_refund(
@@ -573,10 +639,14 @@ def request_refund(payment_id: str, req: RefundRequest, db: Session = Depends(ge
             reason=req.reason,
             requested_by="OPERATOR_UI",
         )
+        audit("refund_proposed", request, user=user.id, payment=payment_id, amount=req.amount)
         return RefundResponse(
             ticket_id=ticket.id,
             status="PENDING_APPROVAL",
             message="Refund proposal submitted. Awaiting human operator approval in Inbox.",
         )
-    except Exception as e:
+    except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        logger.error(f"Refund proposal failed for payment {payment_id}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Unable to submit the refund proposal")

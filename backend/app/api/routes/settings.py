@@ -36,9 +36,13 @@ def get_system_settings(db: Session = Depends(get_db), user: User = Depends(get_
         },
         "ai": {
             "is_configured": settings.is_ai_configured,
-            "provider": settings.AI_PROVIDER,
-            "model": settings.AI_MODEL,
-            "status_label": "Live LLM Provider" if settings.is_ai_configured else "Deterministic Fallback Engine (Active)",
+            "provider": settings.effective_ai_provider,
+            "model": settings.effective_ai_model,
+            "status_label": (
+                f"Live LLM Provider ({settings.effective_ai_provider.upper()})"
+                if settings.is_ai_configured
+                else "Deterministic Fallback Engine (Active)"
+            ),
         },
         "database": {
             "type": "PostgreSQL" if "postgres" in settings.DATABASE_URL else "SQLite (Local Dev)",

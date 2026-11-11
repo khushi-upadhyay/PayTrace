@@ -12,7 +12,7 @@ from app.core.config import settings
 from app.db.models.payment import Payment
 
 MAX_EVENTS_PER_BATCH = 500
-MAX_EVENT_PAYLOAD_SIZE = 100_000  # 100 KB limit per event
+MAX_EVENT_PAYLOAD_SIZE = 1_000_000  # 1 MB limit per event (a full DOM snapshot is ~200 KB)
 MAX_EVENTS_PER_SESSION = 10_000
 MAX_SESSION_METADATA_SIZE = 50_000
 
@@ -126,7 +126,7 @@ class SessionRecorder:
             except (TypeError, ValueError) as exc:
                 raise ValueError("Session event payload is not valid JSON") from exc
             if payload_size > MAX_EVENT_PAYLOAD_SIZE:
-                raise ValueError("Session event payload exceeds the 100 KB limit")
+                raise ValueError("Session event payload exceeds the 1 MB limit")
 
         session = db.query(BrowserSession).filter(BrowserSession.id == session_id).first()
         if not session:

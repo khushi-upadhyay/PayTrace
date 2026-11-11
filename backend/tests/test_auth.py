@@ -42,3 +42,56 @@ def test_short_password_rejected(client):
     _real_auth(client)
     r = client.post("/api/v1/auth/register", json={"name": "A", "email": "b@example.com", "password": "short"})
     assert r.status_code == 422
+
+
+def test_registration_closed_outside_development(client):
+    from app.core.config import settings
+    _real_auth(client)
+    original = settings.APP_ENV
+    settings.APP_ENV = "production"
+    try:
+        r = client.post("/api/v1/auth/register", json={"name": "A", "email": "z@example.com", "password": "longenough1"})
+        assert r.status_code == 403
+    finally:
+        settings.APP_ENV = original
+
+
+def test_login_sets_httponly_cookie_and_cookie_authenticates(client):
+    _real_auth(client)
+    client.post("/api/v1/auth/register", json={"name": "C", "email": "c@example.com", "password": "longenough1"})
+    r = client.post("/api/v1/auth/login", json={"email": "c@example.com", "password": "longenough1"})
+    cookie = r.headers["set-cookie"].lower()
+    assert "paytrace_session=" in cookie and "httponly" in cookie and "samesite=lax" in cookie
+    assert "max-age" in cookie
+    client.cookies.set("paytrace_session", r.json()["access_token"])
+    assert client.get("/api/v1/auth/me").status_code == 200
+
+    # Unsafe cookie-authenticated requests need the CSRF header; with it they get past auth.
+    assert client.post("/api/v1/auth/logout").status_code == 204  # public route
+    assert client.post("/api/v1/approvals/x/decision", json={"decision": "APPROVED"}).status_code == 403
+    r2 = client.post(
+        "/api/v1/approvals/x/decision", json={"decision": "APPROVED"}, headers={"X-Requested-With": "PayTrace"}
+    )
+    assert r2.status_code != 401 and "CSRF" not in r2.text  # authenticated; reaches the route
+    assert "CSRF" not in r2.text
+
+
+def test_session_only_cookie_without_remember(client):
+    _real_auth(client)
+    client.post("/api/v1/auth/register", json={"name": "D", "email": "d@example.com", "password": "longenough1"})
+    r = client.post("/api/v1/auth/login", json={"email": "d@example.com", "password": "longenough1", "remember": False})
+    assert "max-age" not in r.headers["set-cookie"].lower()
+
+
+def test_logout_clears_cookie(client):
+    r = client.post("/api/v1/auth/logout")
+    assert r.status_code == 204 and "paytrace_session=" in r.headers["set-cookie"]
+
+
+def test_register_rejects_malformed_emails_and_strips_nul(client):
+    _real_auth(client)
+    for bad in ("a@@b.com", "a@b", "a b@c.com", "@b.com", "a@.com"):
+        r = client.post("/api/v1/auth/register", json={"name": "X", "email": bad, "password": "longenough1"})
+        assert r.status_code == 422, bad
+    ok = client.post("/api/v1/auth/register", json={"name": "a\x00b", "email": "nul@example.com", "password": "longenough1"})
+    assert ok.status_code == 201 and ok.json()["user"]["name"] == "ab"

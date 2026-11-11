@@ -1,9 +1,11 @@
+import logging
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.api.dependencies import get_db
 from app.core.config import settings
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/health", tags=["Health"])
 
 @router.get("")
@@ -12,8 +14,9 @@ def get_health(db: Session = Depends(get_db)):
     db_status = "healthy"
     try:
         db.execute(text("SELECT 1"))
-    except Exception as e:
-        db_status = f"unhealthy: {str(e)}"
+    except Exception:
+        logger.error("Health check database probe failed", exc_info=True)
+        db_status = "unhealthy"
 
     return {
         "status": "healthy" if db_status == "healthy" else "degraded",

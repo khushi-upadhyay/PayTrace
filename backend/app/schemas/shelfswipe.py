@@ -142,6 +142,75 @@ class ApproveResponse(BaseModel):
 
 
 # ---------------------------------------------------------
+# Onboarding History / Cross-Shop Views
+# ---------------------------------------------------------
+
+class ShelfSwipeSellerSummary(BaseModel):
+    seller_id: str
+    shop_id: str
+    shop_name: str
+    source_url: str
+    is_demo: bool
+    draft_count: int
+    live_count: int
+    created_at: str
+
+
+class ShelfSwipeSellerListResponse(BaseModel):
+    sellers: List[ShelfSwipeSellerSummary]
+    total_shops: int
+    total_live_products: int
+
+
+class ShelfSwipeProductWithShop(ShelfSwipeDraftProductItem):
+    seller_id: str
+    shop_id: str
+    shop_name: str
+
+
+class ShelfSwipeAllProductsResponse(BaseModel):
+    products: List[ShelfSwipeProductWithShop]
+    total_matches: int
+
+
+# ---------------------------------------------------------
+# Buyer Swipe Deck (sourced from live SSProduct)
+# ---------------------------------------------------------
+
+class BuyerDeckProductItem(BaseModel):
+    id: str
+    shop_id: str
+    shop_name: str
+    name: str
+    price: float
+    currency: str
+    image_url: Optional[str] = None
+    description: str
+    category: str
+    tags: List[str] = Field(default_factory=list)
+    stock: int
+
+
+class BuyerDeckResponse(BaseModel):
+    deck: List[BuyerDeckProductItem]
+    total_matches: int
+    shop_id: Optional[str] = None
+    query: Optional[str] = None
+
+
+class BuyerSwipeRequest(BaseModel):
+    buyer_id: str
+    product_id: str
+    direction: str  # "left" or "right"
+
+
+class BuyerSwipeResponse(BaseModel):
+    status: str
+    direction: str
+    product_id: str
+
+
+# ---------------------------------------------------------
 # Legacy Schemas (kept for backward compatibility)
 # ---------------------------------------------------------
 
@@ -179,9 +248,16 @@ class SwipeRecordRequest(BaseModel):
     direction: str  # "right" or "left"
 
 
+class ShelfSwipeCartLine(BaseModel):
+    product_id: str
+    quantity: int = Field(default=1, ge=1, le=99)
+
+
 class ShelfSwipeCheckoutRequest(BaseModel):
     product_id: str
+    items: Optional[List[ShelfSwipeCartLine]] = None  # multi-item cart; overrides product_id/quantity
+    return_path: Optional[str] = None  # one of the whitelisted frontend return pages
     buyer_ref: str
     quantity: int = 1
     session_id: Optional[str] = None
-    simulate_scenario: Optional[str] = None
+    simulate_scenario: Optional[str] = None # e.g. "timeout_before_response"

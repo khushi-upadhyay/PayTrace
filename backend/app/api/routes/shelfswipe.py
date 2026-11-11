@@ -9,11 +9,14 @@ from sqlalchemy.orm import Session
 import httpx
 from app.api.dependencies import get_db
 from app.core.config import settings
+from app.core.security import create_checkout_token
 from app.db.models.payment import Payment
 from app.db.models.shelfswipe import (
     SSSeller,
     SSShop,
     SSProduct,
+    SSBuyerProfile,
+    SSSwipe,
     Seller,
     ShelfProduct,
     SwipeAction,
@@ -26,6 +29,7 @@ from app.schemas.shelfswipe import (
     ShelfProductSchema,
     ShelfProductDeckResponse,
     SwipeRecordRequest,
+    ShelfSwipeCartLine,
     ShelfSwipeCheckoutRequest,
     ProductPatchRequest,
     ProductCreateRequest,
@@ -33,6 +37,14 @@ from app.schemas.shelfswipe import (
     ApproveRequest,
     ApproveResponse,
     ApproveRejectedItem,
+    ShelfSwipeSellerSummary,
+    ShelfSwipeSellerListResponse,
+    ShelfSwipeProductWithShop,
+    ShelfSwipeAllProductsResponse,
+    BuyerDeckProductItem,
+    BuyerDeckResponse,
+    BuyerSwipeRequest,
+    BuyerSwipeResponse,
 )
 from app.services.lifecycle.engine import lifecycle_engine
 from app.services.paypal.client import (
@@ -530,6 +542,194 @@ def approve_seller_draft_products(
 
 
 # =========================================================
+# Onboarding History / Cross-Shop Views
+# =========================================================
+
+@router.get("/sellers", response_model=ShelfSwipeSellerListResponse)
+def list_sellers(db: Session = Depends(get_db)):
+    """
+    Returns every onboarded seller/shop so far (the 'history' of store URLs
+    that have been imported), each with its draft/live product counts.
+    """
+    rows = (
+        db.query(SSSeller, SSShop)
+        .join(SSShop, SSShop.seller_id == SSSeller.id)
+        .order_by(SSSeller.created_at.desc())
+        .all()
+    )
+
+    summaries: List[ShelfSwipeSellerSummary] = []
+    total_live_products = 0
+    for seller, shop in rows:
+        draft_count = (
+            db.query(SSProduct)
+            .filter(SSProduct.shop_id == shop.id, SSProduct.status == "draft")
+            .count()
+        )
+        live_count = (
+            db.query(SSProduct)
+            .filter(SSProduct.shop_id == shop.id, SSProduct.status == "live")
+            .count()
+        )
+        total_live_products += live_count
+        summaries.append(
+            ShelfSwipeSellerSummary(
+                seller_id=str(seller.id),
+                shop_id=str(shop.id),
+                shop_name=shop.name,
+                source_url=seller.source_url,
+                is_demo=shop.is_demo,
+                draft_count=draft_count,
+                live_count=live_count,
+                created_at=seller.created_at.isoformat(),
+            )
+        )
+
+    return ShelfSwipeSellerListResponse(
+        sellers=summaries,
+        total_shops=len(summaries),
+        total_live_products=total_live_products,
+    )
+
+
+@router.get("/products", response_model=ShelfSwipeAllProductsResponse)
+def list_all_products(
+    status_filter: Optional[str] = Query(default="draft", alias="status", pattern="^(draft|live|all)$"),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns products across ALL onboarded shops (not just one seller), each
+    annotated with which shop/seller it belongs to. Powers the 'All Products'
+    aggregate view; bulk-approving across shops is done by grouping the
+    returned items by seller_id and calling the existing per-seller
+    /sellers/{seller_id}/approve endpoint once per seller.
+    """
+    query = (
+        db.query(SSProduct, SSShop)
+        .join(SSShop, SSProduct.shop_id == SSShop.id)
+    )
+    if status_filter in ("draft", "live"):
+        query = query.filter(SSProduct.status == status_filter)
+
+    rows = query.order_by(SSProduct.created_at.asc()).all()
+
+    items = [
+        ShelfSwipeProductWithShop(
+            id=str(p.id),
+            external_id=p.external_id,
+            name=p.name,
+            price=float(p.price),
+            currency=p.currency,
+            image_url=p.image_url,
+            description=p.description,
+            category=p.category,
+            tags=p.tags or [],
+            stock=p.stock,
+            status=p.status,
+            data_source=p.source,
+            source_url=p.source_url,
+            provider_ref=p.provider_ref,
+            review_flags=p.review_flags or [],
+            seller_id=str(shop.seller_id),
+            shop_id=str(shop.id),
+            shop_name=shop.name,
+        )
+        for p, shop in rows
+    ]
+
+    return ShelfSwipeAllProductsResponse(products=items, total_matches=len(items))
+
+
+# =========================================================
+# Buyer Swipe Deck (live SSProduct only, across onboarded shops)
+# =========================================================
+
+@router.get("/buyer/deck", response_model=BuyerDeckResponse)
+def get_buyer_deck(
+    shop_id: Optional[str] = Query(default=None),
+    query: Optional[str] = Query(default=None),
+    db: Session = Depends(get_db),
+):
+    """
+    Returns live (approved) products a buyer can swipe through, optionally
+    scoped to one shop (shop_id) or spanning every onboarded shop, with an
+    optional simple keyword filter.
+    """
+    rows_query = (
+        db.query(SSProduct, SSShop)
+        .join(SSShop, SSProduct.shop_id == SSShop.id)
+        .filter(SSProduct.status == "live")
+    )
+    if shop_id:
+        rows_query = rows_query.filter(SSProduct.shop_id == shop_id)
+
+    rows = rows_query.order_by(SSProduct.created_at.desc()).all()
+
+    if query:
+        terms = {t for t in re.findall(r"[a-z0-9]+", query.lower()) if len(t) > 2}
+        if terms:
+            def matches(p: SSProduct) -> bool:
+                haystack = " ".join((p.name, p.category, p.description or "")).lower()
+                return bool(terms.intersection(re.findall(r"[a-z0-9]+", haystack)))
+            rows = [(p, shop) for p, shop in rows if matches(p)]
+
+    deck_items = [
+        BuyerDeckProductItem(
+            id=str(p.id),
+            shop_id=str(shop.id),
+            shop_name=shop.name,
+            name=p.name,
+            price=float(p.price),
+            currency=p.currency,
+            image_url=p.image_url,
+            description=p.description,
+            category=p.category,
+            tags=p.tags or [],
+            stock=p.stock,
+        )
+        for p, shop in rows
+    ]
+
+    return BuyerDeckResponse(
+        deck=deck_items,
+        total_matches=len(deck_items),
+        shop_id=shop_id,
+        query=query,
+    )
+
+
+@router.post("/buyer/swipe", response_model=BuyerSwipeResponse)
+def record_buyer_swipe(req: BuyerSwipeRequest, db: Session = Depends(get_db)):
+    """
+    Records a buyer's swipe (left=pass, right=interested) against a live
+    SSProduct. Gets-or-creates the SSBuyerProfile row for the client-generated
+    buyer_id so no separate 'create profile' round trip is needed.
+    """
+    if req.direction not in ("left", "right"):
+        raise HTTPException(status_code=400, detail="direction must be 'left' or 'right'")
+
+    product = db.query(SSProduct).filter(SSProduct.id == req.product_id, SSProduct.status == "live").first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Live product not found")
+
+    buyer = db.query(SSBuyerProfile).filter(SSBuyerProfile.id == req.buyer_id).first()
+    if not buyer:
+        buyer = SSBuyerProfile(id=req.buyer_id)
+        db.add(buyer)
+        db.flush()
+
+    db.add(SSSwipe(
+        id=str(uuid.uuid4()),
+        buyer_id=buyer.id,
+        product_id=product.id,
+        direction=req.direction,
+    ))
+    db.commit()
+
+    return BuyerSwipeResponse(status="recorded", direction=req.direction, product_id=req.product_id)
+
+
+# =========================================================
 # Legacy Compatibility Endpoints (retained for test_shelfswipe)
 # =========================================================
 
@@ -713,19 +913,48 @@ def record_swipe(req: SwipeRecordRequest, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "recorded", "direction": req.direction, "product_id": req.product_id}
 
+ALLOWED_RETURN_PATHS = {
+    "/shelfswipe",
+    "/shelfswipe/buyer-onboarding",
+    "/shelfswipe/buyer-prototype",
+}
+RETURN_KEYS = {
+    "/shelfswipe": "shelfswipe",
+    "/shelfswipe/buyer-onboarding": "buyer-onboarding",
+    "/shelfswipe/buyer-prototype": "buyer-prototype",
+}
+
+
 @router.post("/checkout")
 async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depends(get_db)):
     """
     Seamless PayPal Checkout for ShelfSwipe items, wired with PayTrace's lifecycle and recovery engine.
     """
-    prod = db.query(ShelfProduct).filter(ShelfProduct.id == req.product_id).first()
-    if not prod:
-        raise HTTPException(status_code=404, detail="Product not found")
-    if prod.stock < req.quantity:
-        raise HTTPException(status_code=400, detail="Insufficient stock")
+    lines = req.items or [ShelfSwipeCartLine(product_id=req.product_id, quantity=req.quantity)]
+    merged: Dict[str, int] = {}
+    for line in lines:
+        merged[line.product_id] = merged.get(line.product_id, 0) + line.quantity
+    cart: List[tuple] = []
+    for product_id, qty in merged.items():
+        # Buyer deck products live in ss_products; legacy prototype products in shelfswipe_products.
+        item = db.query(SSProduct).filter(SSProduct.id == product_id, SSProduct.status == "live").first()
+        source = "ss"
+        if not item:
+            item = db.query(ShelfProduct).filter(ShelfProduct.id == product_id).first()
+            source = "legacy"
+        if not item:
+            raise HTTPException(status_code=404, detail="Product not found")
+        if item.stock < qty:
+            raise HTTPException(status_code=400, detail=f"Insufficient stock for {item.name}")
+        cart.append((item, qty, source))
+    if len({item.currency for item, _, _ in cart}) != 1:
+        raise HTTPException(status_code=400, detail="Cart items must share one currency")
+    prod = cart[0][0]
+    return_page = req.return_path if req.return_path in ALLOWED_RETURN_PATHS else "/shelfswipe"
+    cart_name = prod.name if len(cart) == 1 else f"{prod.name} + {len(cart) - 1} more"
 
     payment_id = str(uuid.uuid4())
-    total_amount = Decimal(str(prod.price)) * req.quantity
+    total_amount = sum((Decimal(str(i.price)) * q for i, q, _ in cart), Decimal("0"))
     is_mock = not settings.is_paypal_configured
 
     paypal_order_id = ""
@@ -733,15 +962,15 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
 
     if settings.is_paypal_configured:
         try:
+            if prod.currency != "USD":
+                raise ValueError("ShelfSwipe PayPal checkout requires USD")
             order_data = await paypal_client.create_order(
                 amount=total_amount,
                 currency=prod.currency,
                 custom_id=payment_id,
-                return_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=approved",
-                cancel_url=f"{settings.FRONTEND_ORIGIN}/shelfswipe?status=cancelled",
+                return_url=f"{settings.FRONTEND_ORIGIN}{return_page}?status=approved",
+                cancel_url=f"{settings.FRONTEND_ORIGIN}{return_page}?status=cancelled",
             )
-            if prod.currency != "USD":
-                raise ValueError("ShelfSwipe Sandbox checkout requires USD")
             validate_created_order_amount(order_data, total_amount, prod.currency)
             paypal_order_id = order_data["id"]
             for link in order_data.get("links", []):
@@ -764,7 +993,7 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
             custom_id=payment_id,
         )
         paypal_order_id = order_data["id"]
-        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to=shelfswipe"
+        approval_url = f"{settings.FRONTEND_ORIGIN}/demo/approval?token={paypal_order_id}&return_to={RETURN_KEYS.get(return_page, 'shelfswipe')}"
 
     # Register in PayTrace unified payment ledger
     payment = Payment(
@@ -788,7 +1017,13 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
         source="SHELVESWIPE_APP",
         status="SUCCESS",
         paypal_order_id=paypal_order_id,
-        metadata={"product_name": prod.name, "quantity": req.quantity, "seller_id": prod.seller_id},
+        metadata={
+            "product_name": prod.name,
+            "quantity": cart[0][1],
+            "seller_id": getattr(prod, "seller_id", None) or getattr(prod, "shop_id", None),
+            "shop_id": getattr(prod, "shop_id", None),
+            "items": [{"id": i.id, "name": i.name, "quantity": q, "source": src} for i, q, src in cart],
+        },
         is_simulated=is_mock,
     )
     db.commit()
@@ -796,9 +1031,10 @@ async def checkout_shelf_item(req: ShelfSwipeCheckoutRequest, db: Session = Depe
     return {
         "payment_id": payment_id,
         "paypal_order_id": paypal_order_id,
+        "checkout_token": create_checkout_token(paypal_order_id),
         "approval_url": approval_url,
         "amount": float(total_amount),
         "currency": prod.currency,
-        "product_name": prod.name,
+        "product_name": cart_name,
         "is_mock": is_mock,
     }

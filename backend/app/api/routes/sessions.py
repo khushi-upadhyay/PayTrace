@@ -1,3 +1,4 @@
+from app.core.rate_limit import rate_limit
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -55,7 +56,7 @@ def list_sessions(
         ))
     return result
 
-@router.post("", response_model=SessionResponse)
+@router.post("", response_model=SessionResponse, dependencies=[Depends(rate_limit("session-create", 30, 60))])
 def create_session(req: SessionCreateRequest, db: Session = Depends(get_db)):
     """Initializes a privacy-masked browser recording session."""
     try:
@@ -75,7 +76,7 @@ def create_session(req: SessionCreateRequest, db: Session = Depends(get_db)):
         raise HTTPException(status_code=413, detail=str(exc)) from exc
     return SessionResponse.model_validate(session)
 
-@router.post("/{session_id}/events")
+@router.post("/{session_id}/events", dependencies=[Depends(rate_limit("session-events", 300, 60))])
 def ingest_session_events(
     session_id: str,
     req: SessionEventsBatchRequest,
@@ -99,7 +100,7 @@ def ingest_session_events(
         raise HTTPException(status_code=status_code, detail=message) from exc
     return {"status": "success", "session_id": session_id, "events_ingested": count}
 
-@router.post("/{session_id}/stop", status_code=204)
+@router.post("/{session_id}/stop", status_code=204, dependencies=[Depends(rate_limit("session-stop", 60, 60))])
 def stop_session(session_id: str, db: Session = Depends(get_db)):
     if not session_recorder.stop_session(db, session_id):
         raise HTTPException(status_code=404, detail=f"Session {session_id} not found")

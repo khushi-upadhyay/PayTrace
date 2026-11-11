@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowRight, History, Loader2, RefreshCw, Video } from "lucide-react";
+import { Activity, ArrowRight, History, Loader2, Video } from "lucide-react";
+import { RefreshButton } from "@/components/ui/RefreshButton";
 import { api, type BrowserSessionItem } from "@/lib/api";
 
 export default function SessionsPage() {
@@ -31,9 +32,7 @@ export default function SessionsPage() {
           <h1 className="flex items-center gap-2 text-2xl font-bold text-black"><History className="h-6 w-6 text-cyan-400" /> Sessions</h1>
           <p className="mt-1 text-xs text-slate-400">Privacy-masked browser recordings correlate with PayTrace payments when available. Recording starts automatically and can be stopped from the notice. PayPal-hosted pages are not recorded.</p>
         </div>
-        <button onClick={() => void load()} disabled={loading} className="inline-flex items-center gap-2 self-start rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs text-slate-200 hover:bg-slate-800 disabled:opacity-50">
-          <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
-        </button>
+        <RefreshButton onClick={() => void load()} loading={loading} />
       </header>
 
       {loading ? (

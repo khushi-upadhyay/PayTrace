@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Activity, AlertTriangle, ArrowRight, CircleCheck, CreditCard, Loader2, RefreshCw, ShieldAlert } from "lucide-react";
+import { RefreshButton } from "@/components/ui/RefreshButton";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { api, type AnalyticsData, type IncidentItem, type PaymentItem, type PaymentWorkspaceData } from "@/lib/api";
 
@@ -46,7 +47,7 @@ export default function DashboardPage() {
   return <div className="space-y-7">
     <header className="flex flex-wrap items-end justify-between gap-3">
       <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-600">Monitor</p><h1 className="mt-1 text-3xl font-bold tracking-tight text-ink">Overview</h1><p className="mt-1 text-sm text-slate-500">Live payment health from records available in this workspace.</p></div>
-      <button onClick={() => void load()} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"><RefreshCw className="h-4 w-4" />Refresh</button>
+      <RefreshButton onClick={() => void load()} />
     </header>
 
     <section aria-label="Payment KPIs" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
@@ -71,7 +72,7 @@ export default function DashboardPage() {
 
     <section className="glass-panel overflow-hidden rounded-xl border border-slate-200">
       <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4"><div><h2 className="font-semibold text-ink">Recent payments</h2><p className="mt-1 text-xs text-slate-500">Latest persisted payment records</p></div><Link href="/payments" className="text-xs font-semibold text-cyan-700 hover:underline">Open payments <ArrowRight className="ml-1 inline h-3.5 w-3.5" /></Link></div>
-      {payments.length ? <div className="overflow-x-auto"><table className="w-full min-w-[650px] text-left text-sm"><thead className="border-b border-slate-200 bg-white text-xs text-slate-500"><tr><th className="px-5 py-3">Payment</th><th className="px-5 py-3">Customer</th><th className="px-5 py-3">Amount</th><th className="px-5 py-3">Status</th><th className="px-5 py-3">Created</th></tr></thead><tbody className="divide-y divide-slate-100">{payments.map((payment) => <tr key={payment.id} className="bg-white hover:bg-blue-50/60 focus-within:bg-blue-50"><td className="px-5 py-3"><Link className="font-mono text-xs text-cyan-700 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600" href={`/payments/${payment.id}`}>{payment.id.slice(0, 12)}…</Link></td><td className="px-5 py-3 text-slate-600">{payment.customer_ref}</td><td className="px-5 py-3 font-medium text-ink">{money(Number(payment.amount), payment.currency)}</td><td className="px-5 py-3"><span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${FAILING.has(payment.status) ? "bg-rose-50 text-rose-700" : payment.status === "CAPTURED" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{payment.status.replaceAll("_", " ")}</span></td><td className="px-5 py-3 text-xs text-slate-500">{new Date(payment.created_at).toLocaleString()}</td></tr>)}</tbody></table></div> : <Empty>No payments have been recorded.</Empty>}
+      {payments.length ? <div className="overflow-x-auto"><table className="w-full min-w-[650px] text-left text-sm"><thead className="border-b border-slate-200 bg-white text-xs text-slate-500"><tr><th className="px-5 py-3">Payment</th><th className="px-5 py-3">Customer</th><th className="px-5 py-3">Amount</th><th className="px-5 py-3">Status</th><th className="px-5 py-3">Created</th></tr></thead><tbody className="divide-y divide-slate-100">{payments.map((payment) => <tr key={payment.id} className="bg-white hover:bg-blue-50/60 focus-within:bg-blue-50"><td className="px-5 py-3"><Link className="font-mono text-xs text-cyan-700 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600" href={`/payments/${payment.id}`}>{payment.id.slice(0, 12)}…</Link></td><td className="px-5 py-3 text-slate-600">{payment.customer_ref}</td><td className="px-5 py-3 font-medium text-ink">{money(Number(payment.amount), payment.currency)}</td><td className="px-5 py-3"><span className={`rounded-full border px-2 py-1 text-[10px] font-semibold ${FAILING.has(payment.status) ? "border-rose-700 bg-rose-950 text-rose-300" : payment.status === "CAPTURED" ? "border-emerald-700 bg-emerald-950 text-emerald-300" : "border-amber-700 bg-amber-950 text-amber-300"}`}>{payment.status.replaceAll("_", " ")}</span></td><td className="px-5 py-3 text-xs text-slate-500">{new Date(payment.created_at).toLocaleString()}</td></tr>)}</tbody></table></div> : <Empty>No payments have been recorded.</Empty>}
     </section>
   </div>;
 }
