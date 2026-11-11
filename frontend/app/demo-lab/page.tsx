@@ -2,12 +2,18 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { AlertTriangle, CheckCircle2, FlaskConical, Loader2, RotateCcw, Timer, XCircle } from "lucide-react";
+import { AlertTriangle, ArrowUpRight, CheckCircle2, CreditCard, FlaskConical, Loader2, RotateCcw, ShoppingBag, Store, Timer, XCircle } from "lucide-react";
 import { api } from "@/lib/api";
 
 const SCENARIOS = [
   { id: "timeout_before_response", title: "Simulated timeout fixture (offline)", detail: "Creates a labeled demo-only uncertain payment. It does not call PayPal; use checkout for the real Sandbox response-loss demo.", icon: Timer },
   { id: "capture_denied", title: "Payment declined", detail: "Creates an explicitly simulated declined payment and its lifecycle evidence.", icon: XCircle },
+];
+
+const DEMO_APPS = [
+  { href: "/checkout", title: "PayPal Sandbox Checkout", detail: "Create an order, complete buyer approval, and inspect its persisted payment timeline.", icon: CreditCard },
+  { href: "/shelfswipe/buyer-onboarding", title: "ShelfSwipe Store", detail: "Search approved inventory, chat with the catalog, build a cart, and check out.", icon: ShoppingBag },
+  { href: "/shelfswipe/seller-onboarding", title: "Seller Store Onboarding", detail: "Import a demo or Channel3 catalog, review products, and approve items for the store.", icon: Store },
 ];
 
 export default function DemoLabPage() {
@@ -34,15 +40,21 @@ export default function DemoLabPage() {
 
   return <div className="mx-auto max-w-5xl space-y-7">
     <header className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-800 pb-5">
-      <div><div className="inline-flex items-center gap-2 rounded-full border border-amber-700/50 bg-amber-950/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-300"><FlaskConical className="h-3.5 w-3.5" /> Demo environment</div>
+      <div><div className="inline-flex items-center gap-2 rounded-full border border-amber-700/50 bg-amber-950/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-200"><FlaskConical className="h-3.5 w-3.5" /> Controlled demo workspace</div>
         <h1 className="mt-3 text-3xl font-bold tracking-tight text-ink">Demo Lab</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">Generate controlled, labelled payment failure scenarios using PayTrace’s observability pipeline. These records are simulated evidence, not PayPal Sandbox transactions or verified provider events.</p>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">Run a real checkout journey or generate a labelled simulation. Simulated evidence is kept distinct from PayPal Sandbox transactions and verified provider events.</p>
       </div>
     </header>
+    <section aria-label="Customer journey demos" className="grid gap-3 md:grid-cols-3">
+      {DEMO_APPS.map(({ href, title, detail, icon: Icon }) => <Link key={href} href={href} className="group rounded-xl border border-slate-700 bg-slate-900/70 p-4 transition-colors hover:border-cyan-500/70 hover:bg-slate-900">
+        <div className="flex items-center justify-between"><Icon className="h-5 w-5 text-cyan-300" /><ArrowUpRight className="h-4 w-4 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /></div>
+        <h2 className="mt-3 text-sm font-semibold text-white">{title}</h2><p className="mt-1 text-xs leading-relaxed text-slate-300">{detail}</p>
+      </Link>)}
+    </section>
     {error && <div role="alert" className="rounded-xl border border-rose-700 bg-rose-950 p-4 text-sm text-rose-300"><AlertTriangle className="mr-2 inline h-4 w-4" />{error}</div>}
     {notice && <div role="status" className="rounded-xl border border-emerald-700 bg-emerald-950 p-4 text-sm text-emerald-300"><CheckCircle2 className="mr-2 inline h-4 w-4" />{notice.message}{notice.paymentId && <> <Link className="ml-2 underline" href={`/payments/${notice.paymentId}`}>Inspect payment</Link></>}</div>}
     <section className="grid gap-4 md:grid-cols-2" aria-label="Demo scenarios">
-      {SCENARIOS.map(({ id, title, detail, icon: Icon }) => <article key={id} className="glass-panel rounded-xl border border-slate-800 p-5">
+      {SCENARIOS.map(({ id, title, detail, icon: Icon }) => <article key={id} className="glass-panel rounded-xl border border-slate-700 p-5">
         <div className="flex items-start gap-3"><span className="rounded-lg bg-cyan-950 p-2 text-paypal-blue"><Icon className="h-5 w-5" /></span><div><h2 className="font-semibold text-ink">{title}</h2><p className="mt-1 text-sm leading-relaxed text-slate-500">{detail}</p></div></div>
         <button type="button" disabled={!!busy} onClick={() => void run(id)} className="mt-5 inline-flex items-center gap-2 rounded-lg bg-paypal-navy px-4 py-2.5 text-sm font-semibold text-white hover:bg-paypal-blue disabled:opacity-50">
           {busy === id ? <Loader2 className="h-4 w-4 animate-spin" /> : <FlaskConical className="h-4 w-4" />} Generate scenario

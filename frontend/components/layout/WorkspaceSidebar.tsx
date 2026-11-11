@@ -25,7 +25,7 @@ const GROUPS = [
   ] },
   { label: "Workspace", items: [
     { href: "/investigate", label: "AI Investigator", icon: Sparkles },
-    { href: "/shelfswipe", label: "ShelfSwipe", icon: Store },
+    { href: "/shelfswipe/seller-onboarding", label: "Seller Store Onboarding", icon: Store },
     { href: "/settings", label: "Settings", icon: Settings },
   ] },
 ];

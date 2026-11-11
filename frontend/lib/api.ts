@@ -724,6 +724,24 @@ export const api = {
     });
   },
 
+  checkoutShelfCart(
+    items: { product_id: string; quantity: number }[],
+    buyerRef: string,
+    options: { returnPath?: string; sessionId?: string; simulateScenario?: string } = {}
+  ) {
+    return request<ShelfCheckoutResponse>("/shelfswipe/checkout", {
+      method: "POST",
+      body: JSON.stringify({
+        product_id: items[0]?.product_id,
+        items,
+        buyer_ref: buyerRef,
+        session_id: options.sessionId,
+        simulate_scenario: options.simulateScenario,
+        return_path: options.returnPath,
+      }),
+    });
+  },
+
   approveMockOrder(orderId: string) {
     return request<{ id: string; status: string }>(
       `/paypal/orders/${encodeURIComponent(orderId)}/approve`,

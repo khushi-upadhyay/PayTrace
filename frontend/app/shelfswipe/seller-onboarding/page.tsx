@@ -11,12 +11,10 @@ import {
   AlertCircle,
   Loader2,
   ArrowRight,
-  ArrowLeft,
   Clock,
   WifiOff,
   ShieldCheck,
   PlusCircle,
-  Compass,
 } from "lucide-react";
 import {
   DemoShopItem,
@@ -236,13 +234,6 @@ export default function ShelfSwipeOnboardingPage() {
       <div className="border-b border-[#e2e8f0] bg-white">
         <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <Link
-              href="/shelfswipe"
-              className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[#cbd5e1] px-2.5 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f1f5f9] transition-colors"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back</span>
-            </Link>
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-paypal-navy text-white shadow-sm">
               <Store className="h-5 w-5" />
             </div>
@@ -252,13 +243,6 @@ export default function ShelfSwipeOnboardingPage() {
             </div>
           </div>
 
-          <Link
-            href="/shelfswipe/buyer-onboarding"
-            className="hidden sm:flex items-center gap-1.5 rounded-full border border-[#e2e8f0] bg-[#f8fafc] px-3 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f1f5f9] transition-colors shrink-0"
-          >
-            <Compass className="h-3.5 w-3.5 text-paypal-blue" />
-            <span>Preview buyer deck</span>
-          </Link>
         </div>
       </div>
 
@@ -573,13 +557,6 @@ export default function ShelfSwipeOnboardingPage() {
         </div>
         </div>
 
-        {/* Small Bottom Note */}
-        <div className="mt-8 text-center text-xs text-[#94a3b8] flex items-center justify-center gap-1.5">
-          <Compass className="h-3.5 w-3.5" />
-          <Link href="/shelfswipe/buyer-onboarding" className="hover:text-paypal-blue hover:underline">
-            Preview the buyer swipe deck
-          </Link>
-        </div>
       </div>
     </div>
   );

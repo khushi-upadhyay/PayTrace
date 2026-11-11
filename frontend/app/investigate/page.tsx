@@ -113,10 +113,10 @@ export default function InvestigateHubPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="font-display text-4xl font-bold tracking-tight text-black">
+          <h1 className="font-display text-4xl font-bold tracking-tight text-white">
             AI Investigation Hub
           </h1>
-          <p className="text-base text-black/70 mt-2">
+          <p className="text-base text-slate-300 mt-2">
             Investigates stored payment and incident records, lifecycle events, verified webhooks, and linked browser telemetry.
           </p>
         </div>
@@ -167,9 +167,9 @@ export default function InvestigateHubPage() {
           </div>
         </div>
 
-        <div className="border-t border-slate-200 pt-3">
-          <p className="mb-2 text-xs font-medium text-slate-600">Suggested questions</p>
-          <div className="flex flex-wrap gap-2">{promptSuggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => { setQuestion(suggestion); setSelectedPaymentId(""); }} className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-700 hover:border-cyan-500 hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-600">{suggestion}</button>)}</div>
+        <div className="border-t border-slate-700 pt-3">
+          <p className="mb-2 text-xs font-semibold text-slate-200">Suggested questions</p>
+          <div className="flex flex-wrap gap-2">{promptSuggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => { setQuestion(suggestion); setSelectedPaymentId(""); }} className="rounded-lg border border-slate-600 bg-slate-800 px-3 py-2 text-left text-xs font-medium text-slate-100 shadow-sm hover:border-cyan-400 hover:bg-slate-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400">{suggestion}</button>)}</div>
         </div>
         {error && <div role="alert" className="rounded-lg border border-rose-700 bg-rose-950 px-3 py-2 text-sm text-rose-300">{error}</div>}
 
@@ -329,21 +329,24 @@ export default function InvestigateHubPage() {
 
           {/* Follow-up chat is payment/incident scoped; fleet questions run through Incident Command above. */}
           {(selectedPayment || incidentContext) && <div className="lg:col-span-5 space-y-6">
-            <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 className="text-sm font-bold text-ink flex items-center gap-2">
-                  <Brain className="w-4 h-4 text-cyan-400" />
-                  Interactive Investigation Chat
-                </h3>
-                <span className="text-[10px] text-slate-500">EVIDENCE-GROUNDED</span>
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+              <div className="flex items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                <div>
+                  <h3 className="flex items-center gap-2 text-sm font-bold text-slate-900">
+                    <Brain className="h-4 w-4 text-blue-600" />
+                    Ask a follow-up
+                  </h3>
+                  <p className="mt-1 text-[11px] text-slate-600">Continue with the same payment or incident evidence.</p>
+                </div>
+                <span className="rounded-full border border-blue-200 bg-blue-50 px-2 py-1 text-[9px] font-semibold tracking-wide text-blue-800">EVIDENCE-GROUNDED</span>
               </div>
 
-              <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+              <div className="max-h-80 space-y-3 overflow-y-auto rounded-xl bg-slate-50 p-3 pr-2">
                 {chatMessages.length === 0 ? (
-                  <div className="text-center py-8 text-xs text-slate-500 space-y-2">
-                    <HelpCircle className="w-6 h-6 mx-auto text-slate-600" />
+                  <div className="space-y-2 py-8 text-center text-xs text-slate-600">
+                    <HelpCircle className="mx-auto h-6 w-6 text-slate-400" />
                   <p>Have specific questions about {incidentContext ? "this incident and its linked records" : "this payment outcome"}?</p>
-                    <p className="text-[11px] text-cyan-400">Try: &ldquo;Why shouldn&apos;t I retry right now?&rdquo;</p>
+                    <p className="text-[11px] font-medium text-blue-700">Try: &ldquo;Why shouldn&apos;t I retry right now?&rdquo;</p>
                   </div>
                 ) : (
                   chatMessages.map((msg, i) => (
@@ -351,27 +354,27 @@ export default function InvestigateHubPage() {
                       key={i}
                       className={`p-3 rounded-lg text-xs leading-relaxed ${
                         msg.role === "user"
-                          ? "bg-slate-800 text-ink ml-6"
-                          : "bg-cyan-950/60 border border-cyan-800/60 text-cyan-100 mr-6"
+                        ? "ml-6 border border-blue-200 bg-blue-50 text-slate-800"
+                          : "mr-6 border border-slate-200 bg-white text-slate-800 shadow-xs"
                       }`}
                     >
-                      <span className="text-[9px] text-slate-400 block mb-1">
-                        {msg.role === "user" ? "OPERATOR" : "INVESTIGATOR"}
+                      <span className={`mb-1 block text-[9px] font-semibold tracking-wide ${msg.role === "user" ? "text-blue-800" : "text-slate-500"}`}>
+                        {msg.role === "user" ? "YOU" : "PAYTRACE INVESTIGATOR"}
                       </span>
                       {msg.content}
                       {msg.activity && (
-                        <div className="mt-2 border-t border-cyan-800/60 pt-2 text-[10px] text-cyan-200/80 space-y-1">
+                        <div className="mt-2 space-y-1 border-t border-slate-200 pt-2 text-[10px] text-slate-600">
                           <p>Workflow nodes: {msg.activity.nodes.join(" → ") || "No graph run for this answer"}</p>
                           <p>Answer: {msg.activity.answerMode}{msg.activity.model ? ` · ${msg.activity.model}` : ""} · LangSmith tracing {msg.activity.tracing ? "enabled" : "disabled"}</p>
                           <p>Tools: {msg.activity.tools.join(", ") || "none"}</p>
-                          {msg.activity.fallbackReason && <p className="text-amber-300">Fallback reason: {msg.activity.fallbackReason}</p>}
+                          {msg.activity.fallbackReason && <p className="text-amber-700">Fallback reason: {msg.activity.fallbackReason}</p>}
                         </div>
                       )}
                     </div>
                   ))
                 )}
                 {chatLoading && (
-                  <div className="p-3 rounded-lg bg-cyan-950/40 text-xs text-cyan-300 flex items-center gap-2">
+                  <div role="status" className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 text-xs text-blue-800">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                     Consulting payment records...
                   </div>
@@ -379,18 +382,20 @@ export default function InvestigateHubPage() {
                 <div ref={chatThreadEndRef} />
               </div>
 
-              <form onSubmit={handleSendChat} className="flex gap-2 pt-2 border-t border-slate-800">
+              <form onSubmit={handleSendChat} className="flex gap-2 border-t border-slate-200 pt-3">
                 <input
                   type="text"
-                  placeholder="Ask a question..."
+                  aria-label="Ask a follow-up question"
+                  placeholder="Ask a follow-up about this evidence…"
                   value={chatInput}
                   onChange={(e) => setChatInput(e.target.value)}
-                  className="flex-1 bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-ink placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 />
                 <button
                   type="submit"
+                  aria-label="Send follow-up question"
                   disabled={chatLoading || !chatInput.trim() || (!selectedPaymentId && !incidentContext)}
-                  className="px-3 py-2 bg-cyan-500 hover:bg-cyan-400 text-onsolid rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-700 text-white transition-colors hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <Send className="w-3.5 h-3.5" />
                 </button>

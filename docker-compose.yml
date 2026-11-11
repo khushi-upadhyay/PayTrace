@@ -23,10 +23,14 @@ services:
       dockerfile: Dockerfile
     container_name: paytrace-backend
     restart: unless-stopped
-    # Runtime secrets/config belong in the host-side file; it is excluded from
-    # the Docker build context and is not copied into the image.
+    # Runtime secrets/config are injected at runtime and never copied into the
+    # image. The root env file is the standard local source; the backend file
+    # remains an optional override for developer-specific settings.
     env_file:
-      - ./backend/.env
+      - path: ./.env
+        required: false
+      - path: ./backend/.env
+        required: false
     environment:
       APP_ENV: development
       APP_HOST: 0.0.0.0

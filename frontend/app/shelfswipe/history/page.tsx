@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft,
   Store,
   Loader2,
   AlertCircle,
@@ -125,14 +124,6 @@ export default function ShelfSwipeHistoryPage() {
       <div className="border-b border-[#e2e8f0] bg-white sticky top-0 z-20">
         <div className="mx-auto max-w-6xl px-4 py-3 sm:px-6 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Link
-              href="/shelfswipe/seller-onboarding"
-              className="inline-flex items-center gap-1 rounded-lg border border-[#cbd5e1] px-2.5 py-1.5 text-xs font-semibold text-[#334155] hover:bg-[#f1f5f9] transition-colors"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Back to Onboarding</span>
-            </Link>
-            <div className="h-4 w-px bg-[#e2e8f0] hidden sm:block" />
             <span className="text-xs font-bold uppercase tracking-wider text-paypal-navy hidden sm:inline">
               Onboarding History
             </span>
