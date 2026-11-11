@@ -56,6 +56,7 @@ export default function InvestigateHubPage() {
   const [question, setQuestion] = useState("Investigate payment outcome, uncertainty, and root cause");
   const [investigation, setInvestigation] = useState<AIInvestigationData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [contextLoading, setContextLoading] = useState(true);
 
   // Chat follow-up
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string; activity?: { nodes: string[]; tools: string[]; tracing: boolean; answerMode: string; model: string; fallbackReason: string | null } }>>([]);
@@ -64,6 +65,7 @@ export default function InvestigateHubPage() {
   const [error, setError] = useState<string | null>(null);
   const chatThreadRef = useRef<HTMLDivElement | null>(null);
   const autoInvestigatedIncidents = useRef(new Set<string>());
+  const autoInvestigatedPayments = useRef(new Set<string>());
   const promptSuggestions = ["Why did checkout failures increase in the last 15 minutes?", "Which failure pattern affects the most transactions?", "Are failures related to PayPal API latency or merchant backend errors?", "Which transactions require reconciliation?"];
 
   // The chat thread is a fixed-height scrollable box; without this, new
@@ -96,9 +98,23 @@ export default function InvestigateHubPage() {
           } finally { setLoading(false); }
         } else if (res.items.length > 0) {
           const preferred = res.items.find((p) => p.status === "CAPTURE_UNCERTAIN" || p.status === "DENIED") || res.items[0];
-          setSelectedPaymentId(res.items.some((payment) => payment.id === requestedPayment) ? requestedPayment! : preferred.id);
+          const selected = res.items.find((payment) => payment.id === requestedPayment) || preferred;
+          setSelectedPaymentId(selected.id);
+          const initialQuestion = "Investigate payment outcome, uncertainty, and root cause";
+          if (!autoInvestigatedPayments.current.has(selected.id)) {
+            autoInvestigatedPayments.current.add(selected.id);
+            setLoading(true);
+            try {
+              setInvestigation(await api.investigatePayment(selected.id, initialQuestion));
+            } catch (err) {
+              setError(err instanceof Error ? err.message : "Payment investigation could not be completed.");
+            } finally {
+              setLoading(false);
+            }
+          }
         }
-      }).catch((err) => { setError(err instanceof Error ? err.message : "Investigation context could not be loaded."); setLoading(false); });
+      }).catch((err) => { setError(err instanceof Error ? err.message : "Investigation context could not be loaded."); setLoading(false); })
+      .finally(() => setContextLoading(false));
   }, []);
 
   const handleRunInvestigation = async (e?: React.FormEvent) => {
@@ -147,14 +163,16 @@ export default function InvestigateHubPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
         <div>
-          <h1 className="font-display text-4xl font-bold tracking-tight text-white">
+          <h1 className="font-display text-4xl font-bold tracking-tight text-ink">
             AI Investigation Hub
           </h1>
-          <p className="text-base text-slate-300 mt-2">
+          <p className="text-base text-slate-600 mt-2">
             Investigates stored payment and incident records, lifecycle events, verified webhooks, and linked browser telemetry.
           </p>
         </div>
       </div>
+
+      {contextLoading && !loading && <div role="status" className="glass-panel rounded-2xl border border-slate-200 p-6 text-sm text-slate-600">Loading payment and incident evidence…</div>}
 
       {/* Query Formulation Card */}
       <div className="glass-panel rounded-2xl p-6 border border-slate-800 space-y-4">
