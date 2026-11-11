@@ -24,9 +24,14 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 target_metadata = Base.metadata
 
+
+def migration_database_url() -> str:
+    """Prefer a direct connection for migrations; app traffic can stay pooled."""
+    return (settings.DATABASE_URL_UNPOOLED or settings.DATABASE_URL).strip()
+
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
-    url = settings.DATABASE_URL
+    url = migration_database_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -42,7 +47,7 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = settings.DATABASE_URL
+    configuration["sqlalchemy.url"] = migration_database_url()
 
     connectable = engine_from_config(
         configuration,

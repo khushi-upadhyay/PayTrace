@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: paytrace-backend
+    runtime: docker
+    plan: starter
+    region: singapore
+    branch: main
+    rootDir: backend
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    dockerCommand: "sh -c 'exec uvicorn app.main:app --host 0.0.0.0 --port \"${PORT:-10000}\"'"
+    preDeployCommand: alembic upgrade head
+    healthCheckPath: /api/v1/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: PAYPAL_MODE
+        value: sandbox
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_URL_UNPOOLED
+        sync: false
+      - key: FRONTEND_ORIGIN
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: AUTH_SECRET_KEY
+        generateValue: true

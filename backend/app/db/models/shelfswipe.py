@@ -269,3 +269,42 @@ class SwipeAction(Base):
     )
     direction: Mapped[str] = mapped_column(String(16))
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now)
+
+
+# Retained tables from the ShelfSwipe cart migration. Keep them represented in
+# metadata so Alembic autogenerate never proposes dropping persisted tables.
+class ShelfSwipeCartItem(Base):
+    __tablename__ = "shelfswipe_cart_items"
+    __table_args__ = (
+        Index("ix_shelfswipe_cart_items_buyer_ref", "buyer_ref"),
+        Index("ix_shelfswipe_cart_items_product_id", "product_id"),
+        Index("ix_shelfswipe_cart_buyer_product", "buyer_ref", "product_id", unique=True),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    buyer_ref: Mapped[str] = mapped_column(String(64), nullable=False)
+    product_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), nullable=False
+    )
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    added_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+
+
+class ShelfSwipeOrderItem(Base):
+    __tablename__ = "shelfswipe_order_items"
+    __table_args__ = (
+        Index("ix_shelfswipe_order_items_payment_id", "payment_id"),
+        Index("ix_shelfswipe_order_items_product_id", "product_id"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    payment_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("payments.id", ondelete="CASCADE"), nullable=False
+    )
+    product_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("shelfswipe_products.id", ondelete="CASCADE"), nullable=False
+    )
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    unit_price: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
+    name_snapshot: Mapped[str] = mapped_column(String(256), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)

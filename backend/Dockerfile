@@ -20,6 +20,7 @@ RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 RUN useradd --uid 10001 --no-create-home appuser && chown -R appuser /app
 USER appuser
 
-EXPOSE 8000
+# Compose uses 8000; Render's default web-service port is 10000.
+EXPOSE 8000 10000
 
 CMD ["/app/entrypoint.sh"]
